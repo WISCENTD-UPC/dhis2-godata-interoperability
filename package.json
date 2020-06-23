@@ -1,0 +1,19 @@
+{
+  "name": "dhis2-godata-interoperability",
+  "version": "0.0.1",
+  "description": "Scripts to exchange data between dhis2 and Go.Data instances",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WISCENTD-UPC/dhis2-godata-interoperability.git"
+  },
+  "author": "Pablo-Rodriguez <rodpepablo@gmail.com>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/WISCENTD-UPC/dhis2-godata-interoperability/issues"
+  },
+  "homepage": "https://github.com/WISCENTD-UPC/dhis2-godata-interoperability#readme"
+}
