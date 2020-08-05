@@ -15,5 +15,12 @@
   "bugs": {
     "url": "https://github.com/WISCENTD-UPC/dhis2-godata-interoperability/issues"
   },
-  "homepage": "https://github.com/WISCENTD-UPC/dhis2-godata-interoperability#readme"
+  "homepage": "https://github.com/WISCENTD-UPC/dhis2-godata-interoperability#readme",
+  "dependencies": {
+    "commander": "^5.1.0",
+    "dhis2-api-wrapper": "git+ssh://git@github.com/WISCENTD-UPC/dhis2-api-wrapper.git#feature/basic-enpoints",
+    "godata-api-wrapper": "git+ssh://git@github.com/WISCENTD-UPC/godata-api-wrapper.git#feature/cases",
+    "ramda": "^0.27.0",
+    "reselect": "^4.0.0"
+  }
 }
