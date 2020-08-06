@@ -1,5 +1,5 @@
 
-const { v1: uuid } = require('uuid')
+const { v4: uuid } = require('uuid')
 
 const locationMappings = require('../../mappings/location')
 const constants = require('../../config/constants')

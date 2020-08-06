@@ -1,6 +1,6 @@
 
 const R = require('ramda')
-const { v1: uuid } = require('uuid')
+const { v4: uuid } = require('uuid')
 
 const outbreakMappings = require('../../mappings/outbreak')
 const config = require('../../config')
