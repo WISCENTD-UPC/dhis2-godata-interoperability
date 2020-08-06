@@ -1,7 +1,7 @@
 
 const R = require('ramda')
 
-const { completeSchema } = require('./util')
+const { completeSchema } = require('../util')
 const constants = require('../config/constants')
 
 const caseOutbreakSelector = R.prop('outbreak')
@@ -16,7 +16,7 @@ const caseAttributeSelector = (attributeID) => R.pipe(
   R.find(R.propEq('attribute', attributeID)),
   R.prop('value'))
 
-const trackedEntityToCase = (config) => R.partial(completeSchema, [{
+const trackedEntityToCase = (config) => completeSchema({
   outbreak: caseOutbreakSelector,
   firstName: caseAttributeSelector(config.dhis2KeyAttributes.firstName),
   lastName: caseAttributeSelector(config.dhis2KeyAttributes.surname),
@@ -34,10 +34,9 @@ const trackedEntityToCase = (config) => R.partial(completeSchema, [{
   classification: caseClassificationSelector,
   dateRanges: [],
   questionnaireAnswers: {},
-  // There's also dateOfBirth
   dateOfBirth: caseAttributeSelector(config.dhis2KeyAttributes.dateOfBirth),
   dob: null
-}])
+})
 
 module.exports = { trackedEntityToCase }
 

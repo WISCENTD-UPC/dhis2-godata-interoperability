@@ -1,7 +1,7 @@
 
 const R = require('ramda')
 
-const { completeSchema } = require('./util')
+const { completeSchema } = require('../util')
 const { geographicalLevelId } = require('../config/constants')
 
 const locationNameSelector = R.prop('name')
@@ -13,7 +13,7 @@ const locationGeographicalLevelIDSelector = R.pipe(R.prop('level'), geographical
 const locationUpdatedAtSelector = R.prop('lastUpdated')
 const locationCreatedAtSelector = R.prop('created')
 
-const organisationUnitToLocation = R.partial(completeSchema, [{
+const organisationUnitToLocation = completeSchema({
   id: locationIDSelector,
   parentLocationId: locationParentIDSelector,
   name: locationNameSelector,
@@ -28,7 +28,7 @@ const organisationUnitToLocation = R.partial(completeSchema, [{
   identifiers: _ => [],
   synonyms: _ => [],
   children: _ => []
-}])
+})
 
 module.exports = { organisationUnitToLocation }
 

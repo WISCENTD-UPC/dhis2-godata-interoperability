@@ -38,7 +38,7 @@ module.exports = {
   },
   // 0 -> GROUP, 1 -> EXPAND
   outbreakCreationMode: 0,
-  outbreakCreationGroupingLevel: 1,
+  outbreakCreationGroupingLevel: 0,
   outbreakConfig: {
     periodOfFollowup: 1,
     frequencyOfFollowUpPerDay: 1,

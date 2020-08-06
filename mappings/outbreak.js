@@ -1,11 +1,10 @@
 
 const R = require('ramda')
 
-const { completeSchema } = require('./util')
+const { completeSchema } = require('../util')
 const { geographicalLevelId, disease, followupAssignmentAlgorithm, country } = require('../config/constants')
 const config = require('../config')
 
-const { outbreakConfig } = config
 const outbreakNameSelector = R.path(['orgUnit', 'name'])
 const outbreakStartDateSelector = R.pipe(
   R.prop('trackedEntities'),
@@ -15,13 +14,14 @@ const outbreakStartDateSelector = R.pipe(
   R.defaultTo(new Date())
 )
 const outbreakCountriesSelector = R.map(_ => ({ id: country(_) }))
-const outbreakLocationIDsSelector = _ => [R.path(['orgUnit', 'id'], _)]
+const outbreakLocationIDsSelector = _ =>
+  R.prepend(R.path(['orgUnit', 'id'], _), R.prop('mergedLocationsIDs', _))
 const outbreakReportingGeographicalLevelIdSeletor = R.pipe(
-  R.path(['orgUnit', 'level']),
+  R.path([ 'orgUnit', 'level' ]),
   geographicalLevelId)
 
-const createOutbreakMapping = (config) => R.partial(completeSchema, [{
-  ...outbreakConfig,
+const createOutbreakMapping = (config) => completeSchema({
+  ...config.outbreakConfig,
   name: outbreakNameSelector,
   disease: disease(config.disease),
   startDate: outbreakStartDateSelector,
@@ -34,7 +34,7 @@ const createOutbreakMapping = (config) => R.partial(completeSchema, [{
   contactFollowUpTemplate: () => [],
   labResultsTemplate: () => [],
   arcGisServers: () => []
-}])
+})
 
 module.exports = { createOutbreakMapping }
 

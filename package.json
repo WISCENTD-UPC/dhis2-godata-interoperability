@@ -4,7 +4,8 @@
   "description": "Scripts to exchange data between dhis2 and Go.Data instances",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test-watch": "jest --watch"
   },
   "repository": {
     "type": "git",
@@ -20,7 +21,10 @@
     "commander": "^5.1.0",
     "dhis2-api-wrapper": "git+ssh://git@github.com/WISCENTD-UPC/dhis2-api-wrapper.git#feature/basic-enpoints",
     "godata-api-wrapper": "git+ssh://git@github.com/WISCENTD-UPC/godata-api-wrapper.git#feature/cases",
-    "ramda": "^0.27.0",
-    "reselect": "^4.0.0"
+    "ramda": "^0.27.0"
+  },
+  "devDependencies": {
+    "jest": "^26.2.2",
+    "uuid": "^8.3.0"
   }
 }
