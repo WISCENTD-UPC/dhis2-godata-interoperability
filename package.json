@@ -4,8 +4,8 @@
   "description": "Scripts to exchange data between dhis2 and Go.Data instances",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
-    "test-watch": "jest --watch"
+    "test": "NODE_ENV=dev jest",
+    "test-watch": "NODE_ENV=dev jest --watch"
   },
   "repository": {
     "type": "git",
