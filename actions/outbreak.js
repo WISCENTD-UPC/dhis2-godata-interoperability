@@ -6,7 +6,11 @@ const { loadTrackedEntityInstances } = require('./common')
 const { getIDFromDisplayName } = require('../util')
 const { createOutbreakMapping } = require('../mappings/outbreak')
 
-const createOutbreaks = (dhis2, godata, config) => async () => {
+const createOutbreaks = (dhis2, godata, config, _ = {
+  postOutbreaks,
+  loadTrackedEntityInstances,
+  Date
+}) => async () => {
   const [ programs, organisationUnits ] = await Promise.all([
     dhis2.getPrograms(),
     dhis2.getOrganisationUnitsFromParent(config.rootID)
@@ -14,7 +18,7 @@ const createOutbreaks = (dhis2, godata, config) => async () => {
 
   const casesProgramID = getIDFromDisplayName(programs, config.dhis2CasesProgram)
 
-  const trackedEntities = await loadTrackedEntityInstances(dhis2, organisationUnits, casesProgramID)
+  const trackedEntities = await _.loadTrackedEntityInstances(dhis2, organisationUnits, casesProgramID)
 
   const maxLevel = R.pipe(R.map(R.prop('level')), R.reduce(R.max, 0))(organisationUnits)
   const groupingLevel = config.outbreakCreationMode === constants.OUTBREAK_CREATION_MODE.EXPAND
@@ -51,8 +55,8 @@ const createOutbreaks = (dhis2, godata, config) => async () => {
       }
     }, {}, R.values(outbreaks)),
     R.values,
-    R.map(createOutbreakMapping(config)),
-    postOutbreaks(godata)
+    R.map(createOutbreakMapping(config, _)),
+    _.postOutbreaks(godata)
   )(trackedEntities)
 }
 

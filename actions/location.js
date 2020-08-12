@@ -5,10 +5,13 @@ const R = require('ramda')
 
 const { organisationUnitToLocation } = require('../mappings/location')
 
-const copyOrganisationUnits = (dhis2, godata, config) => async (outputFile) => {
+const stringify = JSON.stringify.bind(JSON)
+
+const copyOrganisationUnits = (dhis2, godata, config, _ = { fs, stringify }) =>
+  async (outputFile) => {
   const organisationUnits = await dhis2.getOrganisationUnitsFromParent(config.rootID)
   const locations = await sendLocationsToGoData(organisationUnits)
-  fs.writeFileSync(outputFile, JSON.stringify(locations))
+  _.fs.writeFileSync(outputFile, _.stringify(locations))
 }
 
 // HELPERS
@@ -21,6 +24,8 @@ function adaptLocationToHierarchy (location) {
 }
 
 function createLocationHierarchy (locations) {
+  if (locations.length === 0) return {}
+
   const rootID = locations[0].id
   const indexedLocations = R.reduce((acc, location) => R.assoc(location.id, location, acc), {}, locations)
   return R.pipe(

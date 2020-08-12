@@ -5,7 +5,9 @@ const { loadTrackedEntityInstances } = require('./common')
 const { getIDFromDisplayName } = require('../util')
 const { trackedEntityToCase } = require('../mappings/case')
 
-const copyCases = (dhis2, godata, config) => async () => {
+const copyCases = (dhis2, godata, config, _ = {
+  loadTrackedEntityInstances
+}) => async () => {
   const [ programs, programStages, dataElements, attributes, organisationUnits, outbreaks ] = await Promise.all([
     dhis2.getPrograms(),
     dhis2.getProgramStages(),
@@ -27,7 +29,7 @@ const copyCases = (dhis2, godata, config) => async () => {
   config = R.over(
     R.lensProp('dhis2KeyAttributes'),
     R.mapObjIndexed((value) => {
-      return R.tap(console.log, R.find(R.propEq('displayName', value), attributes).id)
+      return R.find(R.propEq('displayName', value), attributes).id
     }),
     config)
 
@@ -42,7 +44,7 @@ const copyCases = (dhis2, godata, config) => async () => {
     )),
     R.map(trackedEntityToCase(config)),
     sendCasesToGoData(godata)
-  )(await loadTrackedEntityInstances(dhis2, organisationUnits, casesProgramID))
+  )(await _.loadTrackedEntityInstances(dhis2, organisationUnits, casesProgramID))
 }
 
 function findOutbreackForCase (available, orgUnits, locationID) {
@@ -113,7 +115,7 @@ function addCaseClassification () {
       ? 'CONFIRMED'
       : te.labResult === 'NEGATIVE' && te.labResultStage != null
         ? 'NOT_A_CASE_DISCARDED'
-        : te.labResult == null && te.labRequestStage != null
+        : te.labResultStage == null && te.labRequestStage != null
           ? 'PROBABLE'
           : 'SUSPECT',
     te)

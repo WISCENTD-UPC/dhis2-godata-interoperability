@@ -8,10 +8,9 @@ const config = require('../config')
 const outbreakNameSelector = R.path(['orgUnit', 'name'])
 const outbreakStartDateSelector = R.pipe(
   R.prop('trackedEntities'),
+  R.sortBy(R.prop('created')),
   R.map(R.prop('created')),
-  R.sort(R.subtract),
-  R.prop(0),
-  R.defaultTo(new Date())
+  R.prop(0)
 )
 const outbreakCountriesSelector = R.map(_ => ({ id: country(_) }))
 const outbreakLocationIDsSelector = _ =>
@@ -20,11 +19,11 @@ const outbreakReportingGeographicalLevelIdSeletor = R.pipe(
   R.path([ 'orgUnit', 'level' ]),
   geographicalLevelId)
 
-const createOutbreakMapping = (config) => completeSchema({
+const createOutbreakMapping = (config, _ = { Date }) => completeSchema({
   ...config.outbreakConfig,
   name: outbreakNameSelector,
   disease: disease(config.disease),
-  startDate: outbreakStartDateSelector,
+  startDate: R.pipe(outbreakStartDateSelector, R.defaultTo(_.Date())),
   endDate: null,
   countries: R.map(_ => ({ id: country(_) }), config.countries),
   locationIds: outbreakLocationIDsSelector,
