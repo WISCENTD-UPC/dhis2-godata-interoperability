@@ -95,10 +95,14 @@ const attributes = [
   { id: uuids('a-22'), displayName: 'Workplace/school physical address' }
 ]
 
+const relationshipTypes = [
+  { id: uuids('rt-0'), displayName: 'Has Been in Contact with' }
+]
+
 const trackedEntities = [
   [
     {
-      trackedEntity: uuids('te-0'),
+      trackedEntityInstance: uuids('te-0'),
       orgUnit: uuids('ou-0'),
       created: '2020-08-01',
       events: [
@@ -124,7 +128,7 @@ const trackedEntities = [
   ],
   [
     {
-      trackedEntity: uuids('te-1'),
+      trackedEntityInstance: uuids('te-1'),
       orgUnit: uuids('ou-1'),
       created: '2020-08-02',
       events: [
@@ -145,7 +149,7 @@ const trackedEntities = [
   [],
   [
     {
-      trackedEntity: uuids('te-2'),
+      trackedEntityInstance: uuids('te-2'),
       orgUnit: uuids('ou-3'),
       created: '2020-08-03',
       events: [
@@ -179,6 +183,53 @@ const outbreaks = [
   }
 ]
 
+const outbreakCases = [
+  { id: uuids('te-0') },
+  { id: uuids('te-1') },
+  { id: uuids('te-2') }
+]
+
+const relationships = [
+  [{
+    relationshipType: uuids('rt-0'),
+    created: '2020-09-01',
+    from: {
+      trackedEntityInstance: {
+        trackedEntityInstance: uuids('te-0')
+      }
+    },
+    to: {
+      trackedEntityInstance: {
+        trackedEntityInstance: uuids('te-1')
+      }
+    }
+  }],
+  [{
+    relationshipType: uuids('rt-0'),
+    created: '2020-09-02',
+    from: {
+      trackedEntityInstance: {
+        trackedEntityInstance: uuids('te-3'),
+        orgUnit: uuids('ou-0'),
+        created: '2020-09-01',
+        attributes: [
+          { attribute: uuids('a-9'), value: 'John' },
+          { attribute: uuids('a-16'), value: 'Smith' },
+          { attribute: uuids('a-15'), value: 'Male' },
+          { attribute: uuids('a-11'), value: 'street 20B' },
+          { attribute: uuids('a-2'), value: '1970-02-22' }
+        ]
+      }
+    },
+    to: {
+      trackedEntityInstance: {
+        trackedEntityInstance: uuids('te-1')
+      }
+    }
+  }],
+  []
+]
+
 const user = {
   userId: uuids('u-0')
 }
@@ -192,8 +243,11 @@ module.exports = {
   programStages,
   dataElements,
   attributes,
+  relationshipTypes,
   trackedEntities,
+  relationships,
   outbreaks,
+  outbreakCases,
   user
 }
 

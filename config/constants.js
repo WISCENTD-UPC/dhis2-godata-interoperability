@@ -12,6 +12,7 @@ module.exports = {
   riskLevel: (level = 'NONE') => `LNG_REFERENCE_DATA_CATEGORY_RISK_LEVEL_${level.toUpperCase()}`,
   addressTypeID: 'LNG_REFERENCE_DATA_CATEGORY_ADDRESS_TYPE_USUAL_PLACE_OF_RESIDENCE',
   caseClassification: (classification = 'SUSPECT') => `LNG_REFERENCE_DATA_CATEGORY_CASE_CLASSIFICATION_${classification.toUpperCase()}`,
+  certaintyLevel: (level = '3_HIGH') => `LNG_REFERENCE_DATA_CATEGORY_CERTAINTY_LEVEL_${level.toUpperCase()}`,
   OUTBREAK_CREATION_MODE: {
     GROUP: 0,
     EXPAND: 1

@@ -2,6 +2,9 @@
 const R = require('ramda')
 
 const util = require('../../util/index')
+const config = require('../../config')
+
+const { attributes } = require('../test-util/mocks')
 
 test('util.getIDFromDisplayName', () => {
   const arr = [
@@ -12,6 +15,17 @@ test('util.getIDFromDisplayName', () => {
   expect(util.getIDFromDisplayName(arr, 'foo')).toBe('1')
   expect(util.getIDFromDisplayName(arr, 'bar')).toBe('2')
   expect(util.getIDFromDisplayName(arr, 'other')).toStrictEqual(undefined)
+})
+
+test('util.mapAttributeNamesToIDs', () => {
+  expect(util.mapAttributeNamesToIDs(attributes)(config).dhis2KeyAttributes)
+    .toStrictEqual({
+      firstName: attributes[9].id,
+      surname: attributes[16].id,
+      sex: attributes[15].id,
+      dateOfBirth: attributes[2].id,
+      address: attributes[11].id
+    })
 })
 
 test('util.completeSchema with simple schema', () => {
@@ -56,5 +70,9 @@ test('util.completeSchema with complex schema', () => {
       subfn: '11'
     }
   })
+})
+
+test('util.allPromises', async () => {
+  expect(await util.allPromises([Promise.resolve(1), Promise.resolve(2)])).toStrictEqual([1, 2])
 })
 

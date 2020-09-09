@@ -2,19 +2,17 @@
 const R = require('ramda')
 
 const { loadTrackedEntityInstances } = require('./common')
-const { getIDFromDisplayName } = require('../util')
+const { getIDFromDisplayName, mapAttributeNamesToIDs, allPromises } = require('../util')
 const { trackedEntityToCase } = require('../mappings/case')
 
-const copyCases = (dhis2, godata, config, _ = {
-  loadTrackedEntityInstances
-}) => async () => {
-  const [ programs, programStages, dataElements, attributes, organisationUnits, outbreaks ] = await Promise.all([
-    dhis2.getPrograms(),
-    dhis2.getProgramStages(),
-    dhis2.getDataElements(),
-    dhis2.getTrackedEntitiesAttributes(),
-    dhis2.getOrganisationUnitsFromParent(config.rootID),
-    godata.getOutbreaks()])
+const copyCases = (dhis2, godata, config, _ = { loadTrackedEntityInstances }) => async () => {
+  const [
+    programs,
+    programStages,
+    dataElements,
+    attributes,
+    organisationUnits,
+    outbreaks ] = await loadResources(dhis2, godata, config)
 
   const casesProgramID = getIDFromDisplayName(programs, config.dhis2CasesProgram)
   const [ labRequestID, labResultsID, symptomsID ] = R.map(getIDFromDisplayName(programStages), [
@@ -25,33 +23,33 @@ const copyCases = (dhis2, godata, config, _ = {
   const confirmedTestConditions = R.map(
     R.adjust(0, getIDFromDisplayName(dataElements)),
     config.dhis2DataElementsChecks.confirmedTest)
-  // Change TrackedEntitiesAttributes names to ids
-  config = R.over(
-    R.lensProp('dhis2KeyAttributes'),
-    R.mapObjIndexed((value) => {
-      return R.find(R.propEq('displayName', value), attributes).id
-    }),
-    config)
+  config = mapAttributeNamesToIDs(attributes)(config)
 
   return await R.pipe(
     R.flatten,
     R.map(assignOutbreak(outbreaks, organisationUnits)),
-    R.map(R.pipe(
-      addLabResultStage(labResultsID),
-      addLabRequestStage(labRequestID),
-      addLabResult(confirmedTestConditions),
-      addCaseClassification(config)
-    )),
+    R.map(addLabInformation(labResultsID, labRequestID, confirmedTestConditions, config)),
     R.map(trackedEntityToCase(config)),
     sendCasesToGoData(godata)
   )(await _.loadTrackedEntityInstances(dhis2, organisationUnits, casesProgramID))
+}
+
+function loadResources (dhis2, godata, config) {
+  return allPromises([
+    dhis2.getPrograms(),
+    dhis2.getProgramStages(),
+    dhis2.getDataElements(),
+    dhis2.getTrackedEntitiesAttributes(),
+    dhis2.getOrganisationUnitsFromParent(config.rootID),
+    godata.getOutbreaks()])
 }
 
 function findOutbreackForCase (available, orgUnits, locationID) {
   if (available[locationID] != null) {
     return R.path([locationID, 0, 'id'], available)
   } else {
-    return findOutbreackForCase(available, orgUnits, R.find(R.propEq('id', locationID), orgUnits).parent.id)
+    const parentID = R.find(R.propEq('id', locationID), orgUnits).parent.id
+    return findOutbreackForCase(available, orgUnits, parentID)
   }
 }
 
@@ -121,6 +119,15 @@ function addCaseClassification () {
     te)
 }
 
+function addLabInformation (labResultsID, labRequestID, confirmedTestConditions, config) {
+  return R.pipe(
+    addLabResultStage(labResultsID),
+    addLabRequestStage(labRequestID),
+    addLabResult(confirmedTestConditions),
+    addCaseClassification(config)
+  )
+}
+
 function sendCasesToGoData (godata) {
   return R.pipe(
     R.groupBy(R.prop('outbreak')),
@@ -129,7 +136,7 @@ function sendCasesToGoData (godata) {
       for (let outbreak in outbreaks) {
         const cases = outbreaks[outbreak]
         await godata.activateOutbreakForUser(user.userId, outbreak)
-        await Promise.all(R.map(case_ => godata.createOutbreakCase(outbreak, R.dissoc('outbreak', case_)), cases))
+        await allPromises(R.map(case_ => godata.createOutbreakCase(outbreak, R.dissoc('outbreak', case_)), cases))
       }
     }
   )

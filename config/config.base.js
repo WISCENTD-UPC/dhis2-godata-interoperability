@@ -2,6 +2,8 @@
 module.exports = {
   disease: '2019_N_CO_V',
   dhis2CasesProgram: 'COVID-19 Case-based Surveillance',
+  dhis2ContactsProgram: 'COVID-19 Contact Registration & Follow-up',
+  dhis2ContactsRelationship: 'Has Been in Contact with',
   dhis2KeyProgramStages: {
     labRequest: 'Stage 2 - Lab Request',
     labResults: 'Stage 3 - Lab Results',

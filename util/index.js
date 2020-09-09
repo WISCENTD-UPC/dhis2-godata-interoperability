@@ -8,6 +8,14 @@ const getIDFromDisplayName = R.curry((arr, displayName) => {
   )(arr)
 })
 
+function mapAttributeNamesToIDs (attributes) {
+  return R.over(
+    R.lensProp('dhis2KeyAttributes'),
+    R.mapObjIndexed((value) => {
+      return R.find(R.propEq('displayName', value), attributes).id
+    }))
+}
+
 const completeSchema = R.curry((schema, model) => {
   const completedSchema = {}
 
@@ -33,5 +41,7 @@ const completeSchema = R.curry((schema, model) => {
   }
 })
 
-module.exports = { getIDFromDisplayName, completeSchema }
+const allPromises = Promise.all.bind(Promise)
+
+module.exports = { getIDFromDisplayName, mapAttributeNamesToIDs, completeSchema, allPromises }
 

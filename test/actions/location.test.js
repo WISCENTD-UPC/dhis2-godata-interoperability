@@ -41,10 +41,12 @@ test('locationActions.copyOrganisationUnits', async () => {
   const godata = {}
   const outputFile = uuid()
   
-  await locationActions.copyOrganisationUnits(
-    dhis2, godata, config, { fs, stringify })(outputFile)
+  const testConfig = R.mergeDeepRight(config, { rootID: location(0).id })
 
-  expect(getOrganisationUnitsFromParent).toHaveBeenCalledWith(config.rootID)
+  await locationActions.copyOrganisationUnits(
+    dhis2, godata, testConfig, { fs, stringify })(outputFile)
+
+  expect(getOrganisationUnitsFromParent).toHaveBeenCalledWith(testConfig.rootID)
   const expected = [{
     location: location(0),
     children: [
@@ -55,5 +57,6 @@ test('locationActions.copyOrganisationUnits', async () => {
       }
     ]
   }]
+  expect(writeFileSync).toHaveBeenCalledWith(outputFile, expected)
 })
 

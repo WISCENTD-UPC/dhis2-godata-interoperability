@@ -6,7 +6,14 @@ const { Command } = require('commander')
 
 const package = require('./package.json')
 const config = require('./config')
-const { copyOrganisationUnits, createOutbreaks, copyCases } = require('./actions')
+const {
+  copyOrganisationUnits,
+  createOutbreaks,
+  copyCases,
+  copyContacts,
+  queryDHIS2,
+  queryGoData
+} = require('./actions')
 
 const dhis2 = new DHIS2API(config.DHIS2APIConfig)
 const godata = new GoDataAPI(config.GoDataAPIConfig)
@@ -26,6 +33,18 @@ program
   .command('copy-cases')
   .description('Copy cases from DHIS2 to Go.Data')
   .action(copyCases(dhis2, godata, config))
+program
+  .command('copy-contacts')
+  .description('Copy contacts from DHIS2 to Go.Data')
+  .action(copyContacts(dhis2, godata, config))
+program
+  .command('query-dhis2 <action>')
+  .description('Direct use of dhis2-api-wrapper for development purposes')
+  .action(queryDHIS2(dhis2, godata, config))
+program
+  .command('query-godata <action>')
+  .description('Direct use of godata-api-wrapper for development purposes')
+  .action(queryGoData(dhis2, godata, config))
 
 async function main () {
   await godata.login()

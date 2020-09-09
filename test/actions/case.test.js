@@ -85,6 +85,7 @@ test('caseActions.copyCases', async () => {
 
 function case_ (te, base) {
   return R.mergeDeepLeft(base, {
+    id: te.trackedEntityInstance,
     firstName: te.attributes[0].value,
     lastName: te.attributes[1].value,
     gender: constants.gender(te.attributes[2].value),
