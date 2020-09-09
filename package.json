@@ -1,6 +1,6 @@
 {
   "name": "dhis2-godata-interoperability",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Scripts to exchange data between dhis2 and Go.Data instances",
   "main": "index.js",
   "scripts": {
