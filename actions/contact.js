@@ -13,19 +13,22 @@ const { trackedEntityToContact } = require('../mappings/case')
 const { trackedEntityToRelationship } = require('../mappings/relationship')
 
 const copyContacts = (dhis2, godata, config) => async () => {
-  const [ relationships, attributes, outbreaks, user ] = await allPromises([
-    dhis2.getRelationshipTypes(),
-    dhis2.getTrackedEntitiesAttributes(),
-    godata.getOutbreaks(),
-    godata.login()
-  ])
-
+  const [ relationships, attributes, outbreaks, user ] = await loadResources(dhis2, godata, config)
   config = mapAttributeNamesToIDs(attributes)(config)
   const contactsRelationshipID = getIDFromDisplayName(relationships, config.dhis2ContactsRelationship)
 
   const contacts = await loadContactsForOutbreaks(dhis2, godata, config)(outbreaks)
 
   return await sendContactsToGoData(godata, user)(contacts)
+}
+
+function loadResources (dhis2, godata, config) {
+  return allPromises([
+    dhis2.getRelationshipTypes(),
+    dhis2.getTrackedEntitiesAttributes(),
+    godata.getOutbreaks(),
+    godata.login()
+  ])
 }
 
 function selectRelationshipSide (caseID) {
@@ -61,6 +64,7 @@ function addRelationshipsAndContacts (config) {
 
 async function loadContactsForCase (dhis2, config, casesIDs, caseID) {
   const contacts = await dhis2.getTrackedEntityRelationships(caseID)
+
   return R.pipe(
     R.map(selectRelationshipSide(caseID)),
     R.map(checkIfIsCase(casesIDs)),
@@ -72,6 +76,7 @@ function loadContactsForOutbreak (dhis2, godata, config) {
   return R.map(async (outbreakID) => {
     const cases = await godata.getOutbreakCases(outbreakID)
     const casesIDs = R.pluck('id', cases)
+
     return {
       outbreakID: outbreakID,
       cases: await allPromises(R.map(async (id) => ({
@@ -95,6 +100,7 @@ function sendContactsToGoData (godata, user) {
     async (outbreak) => {
       const cases = outbreak.cases
       await godata.activateOutbreakForUser(user.userId, outbreak.outbreakID)
+
       return await allPromises(
         R.map(({ caseID, contacts, relationships }) => allPromises([
           contacts.length > 0
