@@ -3,10 +3,11 @@ const R = require('ramda')
 
 const { allPromises } = require('../util')
 
-async function loadTrackedEntityInstances (dhis2, organisationUnits, casesProgramID) {
+// Loads tracked entity instances related to an organisation unit and a program
+async function loadTrackedEntityInstances (dhis2, organisationUnits, programID) {
   return allPromises(
     R.map(async ou => {
-      const trackedEntityInstances = await dhis2.getTrackedEntityInstances(ou.id, { program: casesProgramID })
+      const trackedEntityInstances = await dhis2.getTrackedEntityInstances(ou.id, { program: programID })
       
       return allPromises(R.pipe(
         R.filter(_ => _ != null),

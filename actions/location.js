@@ -7,6 +7,7 @@ const { organisationUnitToLocation } = require('../mappings/location')
 
 const stringify = JSON.stringify.bind(JSON)
 
+// Copy organisation units and exports the result hierarchically in a file
 const copyOrganisationUnits = (dhis2, godata, config, _ = { fs, stringify }) =>
   async (outputFile) => {
   const organisationUnits = await dhis2.getOrganisationUnitsFromParent(config.rootID)
@@ -14,6 +15,7 @@ const copyOrganisationUnits = (dhis2, godata, config, _ = { fs, stringify }) =>
   _.fs.writeFileSync(outputFile, _.stringify(locations))
 }
 
+// Recursively separates a location in two parts: the location itself and its children
 function adaptLocationToHierarchy (location) {
   return {
     location: R.dissoc('children', location),
@@ -21,6 +23,7 @@ function adaptLocationToHierarchy (location) {
   }
 }
 
+// Adds a location to its parent children array
 function addLocationToParent (indexedLocations, location) {
   const parentID = location.parentLocationId
   return parentID != null
@@ -31,6 +34,9 @@ function addLocationToParent (indexedLocations, location) {
     : indexedLocations
 }
 
+// Given the list of locations (already transformed from organisation units)
+// creates a hierarchy (parent-children relationships) and returns the location
+// with administrative level 0
 function createLocationHierarchy (config) {
   return (locations) => {
     if (locations.length === 0) return {}
@@ -47,6 +53,9 @@ function createLocationHierarchy (config) {
   }
 }
 
+// Maps organisation unit to location, creates the hierarchy and returns and array
+// TODO: once godata supports pressisting ids through the API, push the result instead of
+// creating a file
 function sendLocationsToGoData (config, organisationUnits) {
   return R.pipe(
     R.map(organisationUnitToLocation),

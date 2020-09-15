@@ -4,8 +4,9 @@ const R = require('ramda')
 const { completeSchema } = require('../util')
 const { geographicalLevelId } = require('../config/constants')
 
+// SELECTORS
 const locationNameSelector = R.prop('name')
-//const locationSynonymsSelector = R.pipe(R.prop('shortName'), _ => [ _ ]) // if name == shortName, don't add synonym
+// const locationSynonymsSelector = R.pipe(R.prop('shortName'), _ => [ _ ]) // if name == shortName, don't add synonym
 const locationParentIDSelector = R.path(['parent', 'id'])
 const locationIDSelector = R.prop('id')
 const locationGeoLocationSelector = _ => ({ lat: 0, lng: 0 })
@@ -13,6 +14,7 @@ const locationGeographicalLevelIDSelector = R.pipe(R.prop('level'), geographical
 const locationUpdatedAtSelector = R.prop('lastUpdated')
 const locationCreatedAtSelector = R.prop('created')
 
+// MAPPINGS
 const organisationUnitToLocation = completeSchema({
   id: locationIDSelector,
   parentLocationId: locationParentIDSelector,

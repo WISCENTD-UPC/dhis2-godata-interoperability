@@ -4,9 +4,11 @@ const R = require('ramda')
 const { completeSchema } = require('../util')
 const constants = require('../config/constants')
 
+// SELECTORS
 const contactIDSelector = R.prop('trackedEntityInstance')
 const contactDateSelector = R.path(['relationship', 'created'])
 
+// MAPPINGS
 const trackedEntityToRelationship = (config) => completeSchema({
   persons: [
     {

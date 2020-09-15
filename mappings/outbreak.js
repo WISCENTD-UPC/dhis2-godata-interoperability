@@ -5,6 +5,7 @@ const { completeSchema } = require('../util')
 const { geographicalLevelId, disease, followupAssignmentAlgorithm, country } = require('../config/constants')
 const config = require('../config')
 
+// SELECTORS
 const outbreakNameSelector = R.path(['orgUnit', 'name'])
 const outbreakStartDateSelector = R.pipe(
   R.prop('trackedEntities'),
@@ -19,6 +20,7 @@ const outbreakReportingGeographicalLevelIdSeletor = R.pipe(
   R.path([ 'orgUnit', 'level' ]),
   geographicalLevelId)
 
+// MAPPINGS
 const createOutbreakMapping = (config, _ = { Date }) => completeSchema({
   ...config.outbreakConfig,
   name: outbreakNameSelector,

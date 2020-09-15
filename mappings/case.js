@@ -4,6 +4,7 @@ const R = require('ramda')
 const { completeSchema } = require('../util')
 const constants = require('../config/constants')
 
+// SELECTORS
 const caseOutbreakSelector = R.prop('outbreak')
 const caseIDSelector = R.prop('trackedEntityInstance')
 const caseLocationIDSelector = R.prop('orgUnit')
@@ -17,6 +18,7 @@ const caseAttributeSelector = (attributeID) => R.pipe(
   R.find(R.propEq('attribute', attributeID)),
   R.prop('value'))
 
+// MAPPINGS
 const trackedEntityToCase = (config) => completeSchema({
   outbreak: caseOutbreakSelector,
   id: caseIDSelector,

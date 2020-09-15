@@ -5,6 +5,8 @@ const { loadTrackedEntityInstances } = require('./common')
 const { getIDFromDisplayName, mapAttributeNamesToIDs, allPromises } = require('../util')
 const { trackedEntityToCase } = require('../mappings/case')
 
+// Copy tracked enitities in the case program from dhis2 to godata (transforming the schema
+// and adding extra information like case classifiction)
 const copyCases = (dhis2, godata, config, _ = { loadTrackedEntityInstances }) => async () => {
   const [
     programs,
@@ -34,6 +36,7 @@ const copyCases = (dhis2, godata, config, _ = { loadTrackedEntityInstances }) =>
   )(await _.loadTrackedEntityInstances(dhis2, organisationUnits, casesProgramID))
 }
 
+// Load resources from dhis2 and godata
 function loadResources (dhis2, godata, config) {
   return allPromises([
     dhis2.getPrograms(),
@@ -44,6 +47,8 @@ function loadResources (dhis2, godata, config) {
     godata.getOutbreaks()])
 }
 
+// Find the grouping outbreak a tracked entity instance (its associated org unit)
+// belongs to from the avaliable locations.
 function findOutbreackForCase (available, orgUnits, locationID) {
   if (available[locationID] != null) {
     return R.path([locationID, 0, 'id'], available)
@@ -53,6 +58,8 @@ function findOutbreackForCase (available, orgUnits, locationID) {
   }
 }
 
+// Find the grouping outbreak a tracked entity instance (its associated org unit)
+// belongs to from the outbreak list.
 function assignOutbreak (outbreaks, orgUnits) {
   const locationsAvaliable = R.pipe(
     R.reduceBy((acc, el) => R.append(el, acc), [], R.path(['locationIds', 0]))
@@ -63,11 +70,13 @@ function assignOutbreak (outbreaks, orgUnits) {
     trackedEntity)
 }
 
+// Add lab request stage to a tracked entity instance
 function addLabRequestStage (labRequestID) {
   return (te) =>
     R.assoc('labRequestStage', R.find(R.propEq('programStage', labRequestID), te.events), te)
 }
 
+// Add lab results stage to a tracked entity instance
 // TODO: one tracked entity can have more than one event of this kind
 // This is not handled right now
 function addLabResultStage (labResultsID) {
@@ -75,10 +84,12 @@ function addLabResultStage (labResultsID) {
     R.assoc('labResultStage', R.find(R.propEq('programStage', labResultsID), te.events), te)
 }
 
+// Find data value from the data values list given the id of the element
 function findDataValueByID (dataValues, id) {
   return R.find(R.propEq('dataElement', id), dataValues || [])
 }
 
+// Check that a dataElement from a list has a specific value
 function checkDataValue (dataValues, dataElement, value) {
   return R.propEq(
     'value',
@@ -87,6 +98,7 @@ function checkDataValue (dataValues, dataElement, value) {
   )
 }
 
+// Check a series of data elements in a list have specific values
 function checkDataValuesConditions (conditions) {
   return R.allPass(
     R.map(
@@ -96,6 +108,7 @@ function checkDataValuesConditions (conditions) {
     ))
 }
 
+// Add lab result to a tracked entity
 // TODO: support for 'inconclusive', 'not performed'... results
 function addLabResult (confirmedTestConditions) {
   return (te) => R.ifElse(
@@ -107,6 +120,7 @@ function addLabResult (confirmedTestConditions) {
   )(te)
 }
 
+// Add case classification to a tracked entity instance
 function addCaseClassification () {
   return (te) => R.assoc('caseClassification',
     te.labResult === 'POSITIVE'
@@ -119,6 +133,7 @@ function addCaseClassification () {
     te)
 }
 
+// Add additional lab information and case classification to a tracked entity instance
 function addLabInformation (labResultsID, labRequestID, confirmedTestConditions, config) {
   return R.pipe(
     addLabResultStage(labResultsID),
@@ -128,6 +143,7 @@ function addLabInformation (labResultsID, labRequestID, confirmedTestConditions,
   )
 }
 
+// Send cases to go data, activating outbreaks and login user automatically
 function sendCasesToGoData (godata) {
   return R.pipe(
     R.groupBy(R.prop('outbreak')),

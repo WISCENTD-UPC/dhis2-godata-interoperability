@@ -1,6 +1,8 @@
 
 const R = require('ramda')
 
+// Given a displayName and a list of objects with ID and displayName,
+// finds an element with the given displayName and returns the ID
 const getIDFromDisplayName = R.curry((arr, displayName) => {
   return R.pipe(
     R.find(R.propEq('displayName', displayName)),
@@ -8,6 +10,8 @@ const getIDFromDisplayName = R.curry((arr, displayName) => {
   )(arr)
 })
 
+// Maps the displayNames of config.dhis2KeyAttributes to its IDs
+// given the attributes list fetched from dhis2
 function mapAttributeNamesToIDs (attributes) {
   return R.over(
     R.lensProp('dhis2KeyAttributes'),
@@ -16,6 +20,7 @@ function mapAttributeNamesToIDs (attributes) {
     }))
 }
 
+// Creates and object with data from "model" as defined by the selectors in "schema"
 const completeSchema = R.curry((schema, model) => {
   const completedSchema = {}
 
