@@ -42,12 +42,16 @@ function loadResources (dhis2, config) {
 // grouping based on the config and the maxLevel defined in the
 // fetched organisation units
 function selectGroupingLevel (organisationUnits, config) {
-  const maxLevel = R.pipe(R.pluck('level'), R.reduce(R.max, 0))(organisationUnits)
+  const maxLevel = R.pipe(
+    R.pluck('level'),
+    R.reduce(R.max, 0)
+  )(organisationUnits)
+
   return config.outbreakCreationMode === constants.OUTBREAK_CREATION_MODE.EXPAND
-    ? maxLevel
+    ? maxLevel - 1
     : config.outbreakCreationGroupingLevel != null
-      ? R.min(config.outbreakCreationGroupingLevel, maxLevel)
-      : maxLevel
+      ? R.min(config.outbreakCreationGroupingLevel, maxLevel - 1)
+      : maxLevel - 1
 }
 
 // From a list of organization units creates and object where they are
@@ -107,5 +111,5 @@ function postOutbreaks (godata) {
   ))
 }
 
-module.exports = { createOutbreaks }
+module.exports = { createOutbreaks, loadResources, selectGroupingLevel }
 
