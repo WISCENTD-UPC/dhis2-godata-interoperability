@@ -9,7 +9,16 @@ const locationNameSelector = R.prop('name')
 // const locationSynonymsSelector = R.pipe(R.prop('shortName'), _ => [ _ ]) // if name == shortName, don't add synonym
 const locationParentIDSelector = R.path(['parent', 'id'])
 const locationIDSelector = R.prop('id')
-const locationGeoLocationSelector = _ => ({ lat: 0, lng: 0 })
+const locationPointSelector = R.pipe(R.prop('coordinates'), R.zipObj(['lat', 'lng']))
+const locationMultiPolygonSelector = R.pipe(R.path(['coordinates', 0, 0]), R.transpose, R.map(R.mean), R.zipObj(['lat', 'lng']))
+const locationGeoLocationSelectors = {
+  Point: locationPointSelector,
+  MultiPolygon: locationMultiPolygonSelector
+}
+const locationGeoLocationSelector = R.pipe(
+  R.prop('geometry'),
+  _ => locationGeoLocationSelectors[_.type](_)
+)
 const locationGeographicalLevelIDSelector = R.pipe(R.prop('level'), geographicalLevelId)
 const locationUpdatedAtSelector = R.prop('lastUpdated')
 const locationCreatedAtSelector = R.prop('created')

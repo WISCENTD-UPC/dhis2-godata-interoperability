@@ -4,30 +4,61 @@ const { v4: uuid } = require('uuid')
 const locationMappings = require('../../mappings/location')
 const constants = require('../../config/constants')
 
-test('locationMappings.organisationUnitToLocation', () => {
-  const model = {
-    id: uuid(),
-    parent: { id: uuid() },
-    name: 'Trainingland',
-    level: 1,
-    lastUpdated: new Date().toString(),
-    created: new Date().toString(),
-    noise: uuid()
-  }
+test('locationMappings.organisationUnitToLocation base', organisationUnitToLocationTest())
 
-  expect(locationMappings.organisationUnitToLocation(model)).toStrictEqual({
-    id: model.id,
-    parentLocationId: model.parent.id,
-    name: model.name,
-    geoLocation: { lat: 0, lng: 0 },
-    geographicalLevelId: constants.geographicalLevelId(1),
-    updatedAt: model.lastUpdated,
-    createdAt: model.created,
-    active: true,
-    deleted: false,
-    identifiers: [],
-    synonyms: [],
-    children: []
-  })
-})
+test('locationMappings.organisationUnitToLocation polygon geometry', organisationUnitToLocationTest({
+  model: {
+    geometry: {
+      type: 'MultiPolygon',
+      coordinates: [[[
+        [ 164.7706, -67.6056 ],
+        [ 164.7213, -67.6005 ],
+        [ 164.7213, -67.6003 ],
+        [ 164.7239, -67.5099 ],
+        [ 164.7903, -67.5091 ],
+        [ 164.8237, -67.5516 ],
+        [ 164.8258, -67.5705 ],
+        [ 164.8106, -67.5826 ],
+        [ 164.7706, -67.6056 ]
+      ]]]
+    }
+  },
+  expected: {
+    geoLocation: { lat: 164.77312222222224, lng: -67.57063333333332 }
+  }
+}))
+
+function organisationUnitToLocationTest ({ model = {}, expected = {} } = {}) {
+  return () => {
+    const orgUnit = {
+      id: uuid(),
+      parent: { id: uuid() },
+      name: 'Trainingland',
+      level: 1,
+      geometry: { type: 'Point', coordinates: [ 164.7706, -67.6056 ] },
+      lastUpdated: new Date().toString(),
+      created: new Date().toString(),
+      noise: uuid(),
+      ...model
+    }
+
+    const expectedResult = {
+      id: orgUnit.id,
+      parentLocationId: orgUnit.parent.id,
+      name: orgUnit.name,
+      geoLocation: { lat: 164.7706, lng: -67.6056 },
+      geographicalLevelId: constants.geographicalLevelId(1),
+      updatedAt: orgUnit.lastUpdated,
+      createdAt: orgUnit.created,
+      active: true,
+      deleted: false,
+      identifiers: [],
+      synonyms: [],
+      children: [],
+      ...expected
+    }
+
+    expect(locationMappings.organisationUnitToLocation(orgUnit)).toStrictEqual(expectedResult)
+  }
+}
 

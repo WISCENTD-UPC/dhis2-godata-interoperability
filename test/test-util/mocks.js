@@ -12,6 +12,10 @@ const orgUnits = [
     parent: undefined,
     name: 'Trainingland',
     level: 1,
+    geometry: {
+      type: 'Point',
+      coordinates: [ 164.7706, -67.6056 ]
+    },
     children: [
       { id: uuids('ou-1') },
       { id: uuids('ou-2') }
@@ -22,6 +26,10 @@ const orgUnits = [
     parent: { id: uuids('ou-0') },
     name: 'Animal Region',
     level: 2,
+    geometry: {
+      type: 'Point',
+      coordinates: [ 164.7706, -67.6056 ]
+    },
     children: [
       { id: uuids('ou-3') }
     ]
@@ -31,6 +39,10 @@ const orgUnits = [
     parent: { id: uuids('ou-0') },
     name: 'Food Region',
     level: 2,
+    geometry: {
+      type: 'Point',
+      coordinates: [ 164.7706, -67.6056 ]
+    },
     children: []
   },
   {
@@ -38,6 +50,10 @@ const orgUnits = [
     parent: { id: uuids('ou-1') },
     name: 'Bird Region',
     level: 3,
+    geometry: {
+      type: 'Point',
+      coordinates: [ 164.7706, -67.6056 ]
+    },
     children: []
   }
 ]
