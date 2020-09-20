@@ -158,5 +158,19 @@ function sendCasesToGoData (godata) {
   )
 }
 
-module.exports = { copyCases }
+module.exports = { 
+  copyCases, 
+  loadResources, 
+  assignOutbreak, 
+  findOutbreackForCase, 
+  addLabRequestStage, 
+  addLabResultStage,
+  findDataValueByID,
+  checkDataValue,
+  checkDataValuesConditions,
+  addLabResult,
+  addCaseClassification,
+  addLabInformation,
+  sendCasesToGoData
+}
 
