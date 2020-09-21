@@ -8,19 +8,29 @@ const {
   getIDFromDisplayName,
   mapAttributeNamesToIDs,
   completeSchema,
-  allPromises } = require('../util')
+  allPromises,
+  logAction,
+  logDone } = require('../util')
 const { trackedEntityToContact } = require('../mappings/case')
 const { trackedEntityToRelationship } = require('../mappings/relationship')
 
 // Copy dhis2 contacts and create additional persons and their relationships in Go.Data
 const copyContacts = (dhis2, godata, config) => async () => {
+  logAction('Fetching resources')
   const [ relationships, attributes, outbreaks, user ] = await loadResources(dhis2, godata, config)
+  logDone()
+  logAction('Reading configuration')
   config = mapAttributeNamesToIDs(attributes)(config)
   const contactsRelationshipID = getIDFromDisplayName(relationships, config.dhis2ContactsRelationship)
+  logDone()
 
+  logAction('Fetching tracked entity instances and transforming them')
   const contacts = await loadContactsForOutbreaks(dhis2, godata, config)(outbreaks)
-
-  return await sendContactsToGoData(godata, user)(contacts)
+  logDone()
+  
+  logAction('Sending contacts to Go.Data')
+  await sendContactsToGoData(godata, user)(contacts)
+  logDone()
 }
 
 // Load resources from DHIS2 and Go.Data

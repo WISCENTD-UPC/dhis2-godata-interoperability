@@ -4,15 +4,24 @@ const fs = require('fs')
 const R = require('ramda')
 
 const { organisationUnitToLocation } = require('../mappings/location')
+const { logAction, logDone } = require('../util')
 
 const stringify = JSON.stringify.bind(JSON)
 
 // Copy organisation units and exports the result hierarchically in a file
 const copyOrganisationUnits = (dhis2, godata, config, _ = { fs, stringify }) =>
   async (outputFile) => {
+  logAction('Fetching organisation units')
   const organisationUnits = await dhis2.getOrganisationUnitsFromParent(config.rootID)
+  logDone()
+
+  logAction('Transforming organisation units to locations')
   const locations = await sendLocationsToGoData(config, organisationUnits)
+  logDone()
+  
+  logAction(`Writing result into ${outputFile}`)
   _.fs.writeFileSync(outputFile, _.stringify(locations))
+  logDone()
 }
 
 // Recursively separates a location in two parts: the location itself and its children
