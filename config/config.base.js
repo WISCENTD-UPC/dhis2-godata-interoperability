@@ -33,7 +33,6 @@ module.exports = {
     noDaysNotSeen: 1,
     noLessContacts: 1,
     noDaysNewContacts: 1,
-    reportingGeographicalLevelId: 0,
     caseIdMask: "CASE-YYYY-9999",
     contactIdMask: "CONTACT-YYYY-9999",
     longPeriodsBetweenCaseOnset: 1,
