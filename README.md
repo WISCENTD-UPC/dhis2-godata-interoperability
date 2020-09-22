@@ -18,11 +18,19 @@ The functionallity of the package is splitted among different steps.
 
 + **node dhis2-godata-interoperability.js copy-organisation-units <dest>**: get all organisation units from DHIS2, transforms them to fit Go.Data's schema and saves them hierarchally in a json file in <dest>.
 
+![Screenshot of copy-organisation-units log](./images/copy-org-units.png)
+
 + **node dhis2-godata-interoperability.js create-outbreaks**: Create Go.Data outbreaks based on the organisation units and tracked entities of the DHIS2 instance. There are two modes avaliable that can be configured in the configuration file: *GROUP* mode and *EXPAND* mode. *EXPAND* mode create one outbreak for each organisation unit with tracked entities, while *GROUP* mode only creates one outbreak for each group of organisation units under a certain administrative level (that can be configured in the configuration file). *GROUP* mode is the default value with a grouping level of 0 (i.e.: only one outbreak is going to be created in most cases).
+
+![Screenshot of create-outbreaks log](./images/create-outbreaks.png)
 
 + **node dhis2-godata-interoperability.js copy-cases**: transfers tracked entities from DHIS2 to Go.Data, transforming the data to fit Go.Data's schema and assigning an outbreak automatically.
 
+![Screenshot of copy-cases log](./images/copy-cases.png)
+
 + **node dhis2-godata-interoperability.js copy-contacts**: transfers contacts from DHIS2 to Go.Data, adding aditional persons and the relationships among them.
+
+![Screenshot of copy-contacts log](./images/copy-contacts.png)
 
 ## Configuration
 
