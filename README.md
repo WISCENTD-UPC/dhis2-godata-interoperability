@@ -71,7 +71,7 @@ module.exports = {
 
 ```{js}
 module.exports = {
-  rootID: [ 'Trainingland' ]
+  countries: [ 'Trainingland' ]
 }
 ```
 ## Testing
