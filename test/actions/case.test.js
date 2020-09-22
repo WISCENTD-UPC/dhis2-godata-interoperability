@@ -163,39 +163,39 @@ test('caseActions.addLabResultStage', () => {
   expect(response).toStrictEqual(expected)
 })
 
-test('caseActions.findDataValueByID w/ dataValues', findDataValueByID({
+test('caseActions.findDataValueByID w/ dataValues', findDataValueByIDTest({
   id: uuids('1'),
   dataValues: [
-    { dataElement: uuids('1'), value: uuids('2')}
+    { dataElement: uuids('1'), value: uuids('2') }
   ],
-  expectedResult: { dataElement: uuids('1'), value: uuids('2')}
+  expectedResult: { dataElement: uuids('1'), value: uuids('2') }
 }))
 
-test('caseActions.findDataValueByID w/o dataValues', findDataValueByID({
+test('caseActions.findDataValueByID w/o dataValues', findDataValueByIDTest({
   id: uuid(),
   expectedResult: undefined
 }))
 
-test('caseActions.checkDataValue correct value', checkDataValue({
+test('caseActions.checkDataValue correct value', checkDataValueTest({
   dataValues: [
-    { dataElement: uuids('1'), value: uuids('2')}
+    { dataElement: uuids('1'), value: uuids('2') }
   ],
   dataElement: uuids('1'),
   value: uuids('2'),
   expectedResult: true
 }))
 
-test('caseActions.checkDataValue incorrect value', checkDataValue({
+test('caseActions.checkDataValue incorrect value', checkDataValueTest({
   dataValues: [
-    { dataElement: uuids('1'), value: uuids('2')}
+    { dataElement: uuids('1'), value: uuids('2') }
   ],
   dataElement: uuids('1'),
   value: uuids('3'),
   expectedResult: false
 }))
 
-test('caseActions.checkDataValuesConditions positive value', checkDataValuesConditions({
-  conditions: [[uuids('1'), 'Positive']], 
+test('caseActions.checkDataValuesConditions positive value', checkDataValuesConditionsTest({
+  conditions: [ [ uuids('1'), 'Positive' ] ], 
   dataValues: { 
     dataElement: uuids('1'), 
     value: 'Positive'
@@ -203,8 +203,8 @@ test('caseActions.checkDataValuesConditions positive value', checkDataValuesCond
   expectedResult: true
 }))
 
-test('caseActions.checkDataValuesConditions negative value', checkDataValuesConditions({
-  conditions: [[uuids('1'), 'Positive']], 
+test('caseActions.checkDataValuesConditions negative value', checkDataValuesConditionsTest({
+  conditions: [ [ uuids('1'), 'Positive' ] ], 
   dataValues: { 
     dataElement: uuids('1'), 
     value: 'Negative'
@@ -212,8 +212,8 @@ test('caseActions.checkDataValuesConditions negative value', checkDataValuesCond
   expectedResult: false
 }))
 
-test('caseActions.addLabResult positive value', addLabResult({
-  conditions: [[uuids('1'), 'Positive']], 
+test('caseActions.addLabResult positive value', addLabResultTest({
+  conditions: [ [ uuids('1'), 'Positive' ] ], 
   dataValues: { 
     dataElement: uuids('1'), 
     value: 'Positive'
@@ -221,8 +221,8 @@ test('caseActions.addLabResult positive value', addLabResult({
   expectedResult: 'POSITIVE'
 }))
 
-test('caseActions.addLabResult negative value', addLabResult({
-  conditions: [[uuids('1'), 'Positive']], 
+test('caseActions.addLabResult negative value', addLabResultTest({
+  conditions: [ [ uuids('1'), 'Positive' ] ], 
   dataValues: { 
     dataElement: uuids('1'), 
     value: 'Negative'
@@ -230,7 +230,7 @@ test('caseActions.addLabResult negative value', addLabResult({
   expectedResult: 'NEGATIVE'
 }))
 
-test('caseActions.addCaseClassification CONFIRMED', addCaseClassification({
+test('caseActions.addCaseClassification CONFIRMED', addCaseClassificationTest({
   trackedEntity: {
     labResult: 'POSITIVE',
     labResultStage: uuid(),
@@ -239,7 +239,7 @@ test('caseActions.addCaseClassification CONFIRMED', addCaseClassification({
   expectedResult: 'CONFIRMED'
 }))
 
-test('caseActions.addCaseClassification NOT_A_CASE_DISCARDED', addCaseClassification({
+test('caseActions.addCaseClassification NOT_A_CASE_DISCARDED', addCaseClassificationTest({
   trackedEntity: {
     labResult: 'NEGATIVE',
     labResultStage: uuid(),
@@ -248,7 +248,7 @@ test('caseActions.addCaseClassification NOT_A_CASE_DISCARDED', addCaseClassifica
   expectedResult: 'NOT_A_CASE_DISCARDED'
 }))
 
-test('caseActions.addCaseClassification PROBABLE', addCaseClassification({
+test('caseActions.addCaseClassification PROBABLE', addCaseClassificationTest({
   trackedEntity: {
     labResult: null,
     labResultStage: null,
@@ -257,7 +257,7 @@ test('caseActions.addCaseClassification PROBABLE', addCaseClassification({
   expectedResult: 'PROBABLE'
 }))
 
-test('caseActions.addCaseClassification SUSPECT', addCaseClassification({
+test('caseActions.addCaseClassification SUSPECT', addCaseClassificationTest({
   trackedEntity: {
     labResult: null,
     labResultStage: null,
@@ -270,7 +270,7 @@ test('caseActions.addLabInformation', () => {
   const labResultsID = uuid()
   const labRequestID = uuid()
   const dataID = uuid()
-  const conditions = [[dataID, 'Positive']]
+  const conditions = [ [ dataID, 'Positive' ] ]
   const te = {
     events: [
       {
@@ -347,21 +347,21 @@ test('caseActions.sendCasesToGoData', async () => {
 
 })
 
-function findDataValueByID ({ id, dataValues = null, expectedResult }) {
+function findDataValueByIDTest ({ id, dataValues = null, expectedResult }) {
   return () => {
     const result = caseActions.findDataValueByID(dataValues, id)
     expect(result).toStrictEqual(expectedResult)
   }
 }
 
-function checkDataValue ({ dataValues = null, dataElement, value, expectedResult }) {
+function checkDataValueTest ({ dataValues = null, dataElement, value, expectedResult }) {
   return () => {
     const result = caseActions.checkDataValue(dataValues, dataElement, value)
     expect(result).toBe(expectedResult)
   }
 }
 
-function checkDataValuesConditions ({ conditions, dataValues = null, expectedResult }) {
+function checkDataValuesConditionsTest ({ conditions, dataValues = null, expectedResult }) {
   return () => {
     const trackedEntity = {
       labResultStage: {
@@ -373,7 +373,7 @@ function checkDataValuesConditions ({ conditions, dataValues = null, expectedRes
   }
 }
 
-function addLabResult ({ conditions, dataValues = null, expectedResult }) {
+function addLabResultTest ({ conditions, dataValues = null, expectedResult }) {
   return () => {
     const trackedEntity = {
       labResultStage: {
@@ -386,7 +386,7 @@ function addLabResult ({ conditions, dataValues = null, expectedResult }) {
   }
 }
 
-function addCaseClassification ({ trackedEntity, expectedResult }) {
+function addCaseClassificationTest ({ trackedEntity, expectedResult }) {
   return () => {
     const response = caseActions.addCaseClassification()(trackedEntity)
     const expected = R.assoc('caseClassification', expectedResult, trackedEntity)
