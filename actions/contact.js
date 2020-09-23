@@ -8,20 +8,32 @@ const {
   getIDFromDisplayName,
   mapAttributeNamesToIDs,
   completeSchema,
-  allPromises } = require('../util')
+  allPromises,
+  logAction,
+  logDone } = require('../util')
 const { trackedEntityToContact } = require('../mappings/case')
 const { trackedEntityToRelationship } = require('../mappings/relationship')
 
+// Copy dhis2 contacts and create additional persons and their relationships in Go.Data
 const copyContacts = (dhis2, godata, config) => async () => {
+  logAction('Fetching resources')
   const [ relationships, attributes, outbreaks, user ] = await loadResources(dhis2, godata, config)
+  logDone()
+  logAction('Reading configuration')
   config = mapAttributeNamesToIDs(attributes)(config)
   const contactsRelationshipID = getIDFromDisplayName(relationships, config.dhis2ContactsRelationship)
+  logDone()
 
+  logAction('Fetching tracked entity instances and transforming them')
   const contacts = await loadContactsForOutbreaks(dhis2, godata, config)(outbreaks)
-
-  return await sendContactsToGoData(godata, user)(contacts)
+  logDone()
+  
+  logAction('Sending contacts to Go.Data')
+  await sendContactsToGoData(godata, user)(contacts)
+  logDone()
 }
 
+// Load resources from DHIS2 and Go.Data
 function loadResources (dhis2, godata, config) {
   return allPromises([
     dhis2.getRelationshipTypes(),
@@ -31,6 +43,7 @@ function loadResources (dhis2, godata, config) {
   ])
 }
 
+// Selects the side of the relationship that represents the contact
 function selectRelationshipSide (caseID) {
   return (relationship) => {
     const fromID = R.path(['from', 'trackedEntityInstance', 'trackedEntityInstance'], relationship)
@@ -43,10 +56,12 @@ function selectRelationshipSide (caseID) {
   }
 }
 
+// Check if the contact is already a case
 function checkIfIsCase (casesIDs) {
   return (contact) => R.assoc('isCase', R.includes(contact.trackedEntityInstance, casesIDs), contact)
 }
 
+// Groups relationship and contacts of a case
 function addRelationshipsAndContacts (config) {
   return R.reduce((acc, contact) => {
     const { isCase } = contact
@@ -62,6 +77,7 @@ function addRelationshipsAndContacts (config) {
   }, { contacts: [], relationships: [] })
 }
 
+// Loads contacts and relationships for a case
 async function loadContactsForCase (dhis2, config, casesIDs, caseID) {
   const contacts = await dhis2.getTrackedEntityRelationships(caseID)
 
@@ -72,6 +88,7 @@ async function loadContactsForCase (dhis2, config, casesIDs, caseID) {
   )(contacts)
 }
 
+// Load relationships and contacts for an entire outbreaks
 function loadContactsForOutbreak (dhis2, godata, config) {
   return R.map(async (outbreakID) => {
     const cases = await godata.getOutbreakCases(outbreakID)
@@ -87,6 +104,7 @@ function loadContactsForOutbreak (dhis2, godata, config) {
   })
 }
 
+// Load relationships and contacts for all the outbreaks
 function loadContactsForOutbreaks (dhis2, godata, config) {
   return R.pipe(
     R.pluck('id'),
@@ -95,6 +113,7 @@ function loadContactsForOutbreaks (dhis2, godata, config) {
   )
 }
 
+// Push relationships and contacts to Go.Data
 function sendContactsToGoData (godata, user) {
   return R.pipe(R.map(
     async (outbreak) => {

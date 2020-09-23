@@ -2,12 +2,18 @@
 const R = require('ramda')
 
 const { loadTrackedEntityInstances } = require('./common')
-const { getIDFromDisplayName, mapAttributeNamesToIDs, allPromises } = require('../util')
+const {
+  getIDFromDisplayName,
+  mapAttributeNamesToIDs,
+  allPromises,
+  logAction,
+  logDone } = require('../util')
 const { trackedEntityToCase } = require('../mappings/case')
 
 // Copy tracked enitities in the case program from dhis2 to godata (transforming the schema
 // and adding extra information like case classifiction)
 const copyCases = (dhis2, godata, config, _ = { loadTrackedEntityInstances }) => async () => {
+  logAction('Fetching resources')
   const [
     programs,
     programStages,
@@ -15,7 +21,9 @@ const copyCases = (dhis2, godata, config, _ = { loadTrackedEntityInstances }) =>
     attributes,
     organisationUnits,
     outbreaks ] = await loadResources(dhis2, godata, config)
+  logDone()
 
+  logAction('Reading configuration')
   const casesProgramID = getIDFromDisplayName(programs, config.dhis2CasesProgram)
   const [ labRequestID, labResultsID, symptomsID ] = R.map(getIDFromDisplayName(programStages), [
     config.dhis2KeyProgramStages.labRequest,
@@ -26,14 +34,28 @@ const copyCases = (dhis2, godata, config, _ = { loadTrackedEntityInstances }) =>
     R.adjust(0, getIDFromDisplayName(dataElements)),
     config.dhis2DataElementsChecks.confirmedTest)
   config = mapAttributeNamesToIDs(attributes)(config)
+  logDone()
 
-  return await R.pipe(
+  logAction('Fetching tracked entity instances')
+  const trackedEntities = await _.loadTrackedEntityInstances(dhis2, organisationUnits, casesProgramID)
+  logDone()
+
+  await R.pipe(
     R.flatten,
+    R.tap(() => logAction('Assiging outbreaks to tracked entity instances')),
     R.map(assignOutbreak(outbreaks, organisationUnits)),
+    R.tap(() => logDone()),
+    R.tap(() => logAction('Adding additional information to tracked entity instances')),
     R.map(addLabInformation(labResultsID, labRequestID, confirmedTestConditions, config)),
+    R.tap(() => logDone()),
+    R.tap(() => logAction('Transforming tracked entity instances to cases')),
     R.map(trackedEntityToCase(config)),
+    R.tap(() => logDone()),
+    R.tap(() => logAction('Sending cases to Go.Data')),
     sendCasesToGoData(godata)
-  )(await _.loadTrackedEntityInstances(dhis2, organisationUnits, casesProgramID))
+  )(trackedEntities)
+
+  logDone()
 }
 
 // Load resources from dhis2 and godata

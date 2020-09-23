@@ -5,7 +5,8 @@ module.exports = {
     credentials: {
       email: 'test@who.int',
       password: '123412341234'
-    }
+    },
+    debug: true
   },
   DHIS2APIConfig: {
     baseURL: 'https://covid19.dhis2.org/demo/api',

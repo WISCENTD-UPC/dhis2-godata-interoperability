@@ -48,5 +48,17 @@ const completeSchema = R.curry((schema, model) => {
 
 const allPromises = Promise.all.bind(Promise)
 
-module.exports = { getIDFromDisplayName, mapAttributeNamesToIDs, completeSchema, allPromises }
+const log = process.stdout.write.bind(process.stdout)
+const logAction = (str, padding = 80, separator = ' ') => log(str.concat('...').padEnd(padding, separator))
+const logDone = () => log('DONE.\n')
+
+module.exports = {
+  getIDFromDisplayName,
+  mapAttributeNamesToIDs,
+  completeSchema,
+  allPromises,
+  log,
+  logAction,
+  logDone
+}
 
