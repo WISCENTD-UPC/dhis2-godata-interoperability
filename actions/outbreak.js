@@ -3,7 +3,7 @@ const R = require('ramda')
 
 const constants = require('../config/constants')
 const { loadTrackedEntityInstances } = require('./common')
-const { getIDFromDisplayName, allPromises } = require('../util')
+const { getIDFromDisplayName, allPromises, logAction, logDone } = require('../util')
 const { createOutbreakMapping } = require('../mappings/outbreak')
 
 // Creates an outbreak or a series of outbreaks (depending on the configuration)
@@ -14,19 +14,29 @@ const createOutbreaks = (dhis2, godata, config, _ = {
   loadTrackedEntityInstances,
   Date
 }) => async () => {
+  logAction('Fetching resources')
   const [ programs, organisationUnits ] = await loadResources(dhis2, config)
+  logDone()
   const casesProgramID = getIDFromDisplayName(programs, config.dhis2CasesProgram)
   const groupingLevel = selectGroupingLevel(organisationUnits, config)
+  logAction('Initializing outbreaks')
   const outbreaks = initializeOutbreaks(organisationUnits)
+  logDone()
+  logAction('Fetching tracked entity instances')
   const trackedEntities = await _.loadTrackedEntityInstances(dhis2, organisationUnits, casesProgramID)
+  logDone()
 
   return R.pipe(
     R.flatten,
+    R.tap(() => logAction('Processing outbreaks')),
     addTrackedEntitiesToOutbreaks(outbreaks),
     groupOutbreaks(outbreaks, groupingLevel),
     R.values,
     R.map(createOutbreakMapping(config, _)),
-    _.postOutbreaks(godata)
+    R.tap(() => logDone()),
+    R.tap(() => logAction('Creating outbreaks in Go.Data')),
+    _.postOutbreaks(godata),
+    R.tap(() => logDone())
   )(trackedEntities)
 }
 
@@ -42,12 +52,16 @@ function loadResources (dhis2, config) {
 // grouping based on the config and the maxLevel defined in the
 // fetched organisation units
 function selectGroupingLevel (organisationUnits, config) {
-  const maxLevel = R.pipe(R.pluck('level'), R.reduce(R.max, 0))(organisationUnits)
+  const maxLevel = R.pipe(
+    R.pluck('level'),
+    R.reduce(R.max, 0)
+  )(organisationUnits)
+
   return config.outbreakCreationMode === constants.OUTBREAK_CREATION_MODE.EXPAND
-    ? maxLevel
+    ? maxLevel - 1
     : config.outbreakCreationGroupingLevel != null
-      ? R.min(config.outbreakCreationGroupingLevel, maxLevel)
-      : maxLevel
+      ? R.min(config.outbreakCreationGroupingLevel, maxLevel - 1)
+      : maxLevel - 1
 }
 
 // From a list of organization units creates and object where they are
@@ -107,5 +121,5 @@ function postOutbreaks (godata) {
   ))
 }
 
-module.exports = { createOutbreaks }
+module.exports = { createOutbreaks, loadResources, selectGroupingLevel }
 

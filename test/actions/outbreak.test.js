@@ -1,5 +1,6 @@
 
 const R = require('ramda')
+const { v4: uuid } = require('uuid')
 
 const outbreakActions = require('../../actions/outbreak')
 const config = require('../../config')
@@ -84,6 +85,39 @@ test('outbreakActions.createOutbreaks expand mode', outbreakCreationTest({
   ]
 }))
 
+test('outbreakActions.loadResources', async () => {
+  const programs = uuid()
+  const orgUnits = uuid()
+  const getPrograms = jest.fn().mockReturnValue(programs)
+  const getOrganisationUnitsFromParent = jest.fn().mockReturnValue(orgUnits)
+  const dhis2 = { getPrograms, getOrganisationUnitsFromParent }
+
+  const rootID = uuid()
+  const testConfig = R.assoc('rootID', rootID, config)
+
+  const response = await outbreakActions.loadResources(dhis2, testConfig)
+
+  expect(response).toStrictEqual([ programs, orgUnits ])
+  expect(getOrganisationUnitsFromParent).toHaveBeenCalledWith(rootID)
+})
+
+test('outbreakActions.selectGroupingLevel group 0 mode', selectGroupingLevelTest({
+  mode: 'GROUP',
+  administrativeLevel: 0,
+  expectedResult: 0
+}))
+
+test('outbreakActions.selectGroupingLevel group 5 mode', selectGroupingLevelTest({
+  mode: 'GROUP',
+  administrativeLevel: 5,
+  expectedResult: 2
+}))
+
+test('outbreakActions.selectGroupingLevel expand mode', selectGroupingLevelTest({
+  mode: 'EXPAND',
+  expectedResult: 2
+}))
+
 function outbreakCreationTest ({ testConfig, expected }) {
   return async () => {
     const getPrograms = jest.fn().mockReturnValue(resolve(programs))
@@ -106,6 +140,19 @@ function outbreakCreationTest ({ testConfig, expected }) {
     expect(loadTrackedEntityInstances)
       .toHaveBeenCalledWith(dhis2, orgUnits, programs[0].id)
     expect(response).toStrictEqual(expected(testConfig))
+  }
+}
+
+function selectGroupingLevelTest ({ mode, administrativeLevel = null, expectedResult }) {
+  return () => {
+    const testConfig = R.pipe(
+      R.assoc('outbreakCreationMode', constants.OUTBREAK_CREATION_MODE[mode]),
+      R.assoc('outbreakCreationGroupingLevel', administrativeLevel)
+    )(config)
+
+    const result = outbreakActions.selectGroupingLevel(orgUnits, testConfig)
+
+    expect(result).toBe(expectedResult)
   }
 }
 

@@ -12,8 +12,7 @@ module.exports = {
     credentials: {
       user: 'COVID',
       password: 'StopCovid19!'
-    },
-    debug: true
+    }
   },
   countries: [ 'Trainingland' ],
   rootID: 'GD7TowwI46c'
