@@ -6,7 +6,7 @@ const outbreakActions = require('../../actions/outbreak')
 const config = require('../../config')
 const constants = require('../../config/constants')
 
-const { programs, orgUnits, trackedEntities } = require('../test-util/mocks')
+const { programs, orgUnits, trackedEntities, outbreaks } = require('../test-util/mocks')
 
 const defaultDate = '2020-09-01'
 const resolve = Promise.resolve.bind(Promise)
@@ -118,6 +118,113 @@ test('outbreakActions.selectGroupingLevel expand mode', selectGroupingLevelTest(
   expectedResult: 2
 }))
 
+test('outbreakActions.initializeOutbreaks', () => {
+  const id = uuid()
+  const organisationUnits = [{
+    id: id
+  }]
+  const response = outbreakActions.initializeOutbreaks(organisationUnits)
+  const expected = R.assoc(id, {orgUnit: organisationUnits[0], trackedEntities: []}, [])
+  expect(response).toStrictEqual(expected)
+})
+
+test('outbreakActions.addTrackedEntitiesToOutbreaks', () => {
+  const outbreakID = uuid()
+  const orgUnitID = uuid()
+  const outbreaks = [{
+    id: outbreakID,
+    locationIds: [ orgUnitID ]
+  }]
+  const trackedEntities = [{
+    orgUnit: orgUnitID
+  }]
+  const response = outbreakActions.addTrackedEntitiesToOutbreaks(outbreaks)(trackedEntities)
+  const expected = R.assoc('0', outbreaks[0], R.assoc(orgUnitID, {trackedEntities: trackedEntities}, []))
+
+  expect(response).toStrictEqual(expected)
+})
+
+test('outbreakActions.findGroupingOutbreak no parent.id', findGroupingOutbreakTest({
+  outbreaks: [
+    { orgUnit: { level: 1 } }
+  ],
+  groupingLevel: 0
+}))
+
+test('outbreakActions.findGroupingOutbreak looking for parent.id', findGroupingOutbreakTest({
+  outbreaks: [
+    {
+      id: uuid('1'),
+      orgUnit: {
+        level: 0,
+        parent: undefined
+      }
+    },
+    {
+      id: uuid('2'),
+      orgUnit: {
+        level: 2,
+        parent: { id: uuid('1') }
+      }
+    }
+  ],
+  groupingLevel: 0
+}))
+
+test('outbreakActions.groupOutbreaks not related', () => {
+  const groupingLevel = 0
+  const orgUnitID = uuid()
+  const outbreak = {
+    orgUnit: {
+      id: orgUnitID,
+      level: 0,
+      parent: undefined
+    },
+    trackedEntities: []
+  }
+  const outbreaks = R.assoc(orgUnitID, outbreak, {})
+
+  const f = outbreakActions.groupOutbreaks(outbreaks, groupingLevel)
+  const expected = outbreaks
+  expect(f(outbreaks)).toStrictEqual(expected)
+})
+
+test('outbreakActions.groupOutbreaks related', () => {
+  const groupingLevel = 0
+  const orgUnitID1 = uuid()
+  const orgUnitID2 = uuid()
+  const outbreak1 = {
+    orgUnit: {
+      id: orgUnitID1,
+      level: 0,
+      parent: undefined
+    },
+    trackedEntities: []
+  }
+  const outbreak2 = {
+    orgUnit: {
+      id: orgUnitID2,
+      level: 2,
+      parent: { id: orgUnitID1 }
+    },
+    trackedEntities: []
+  }
+  const outbreaks = R.assoc(orgUnitID2, outbreak2, R.assoc(orgUnitID1, outbreak1, {}))
+
+  const f = outbreakActions.groupOutbreaks(outbreaks, groupingLevel)
+  const expected = R.assoc(orgUnitID1, R.assoc('mergedLocationsIDs', [ orgUnitID2 ], outbreak1), {})
+  expect(f(outbreaks)).toStrictEqual(expected)
+})
+
+test('outbreakActions.postOutbreaks', async () => {
+  const createOutbreak = jest.fn()
+  const godata = { createOutbreak }
+
+  const response = await outbreakActions.postOutbreaks(godata)(outbreaks)
+  expect(createOutbreak).toHaveBeenCalledTimes(1)
+  expect(createOutbreak).toHaveBeenCalledWith(outbreaks[0])
+})
+
 function outbreakCreationTest ({ testConfig, expected }) {
   return async () => {
     const getPrograms = jest.fn().mockReturnValue(resolve(programs))
@@ -153,6 +260,14 @@ function selectGroupingLevelTest ({ mode, administrativeLevel = null, expectedRe
     const result = outbreakActions.selectGroupingLevel(orgUnits, testConfig)
 
     expect(result).toBe(expectedResult)
+  }
+}
+
+function findGroupingOutbreakTest ({ outbreaks, groupingLevel }) {
+  return () => {
+    const expectedResult = outbreaks[0]
+    const response = outbreakActions.findGroupingOutbreak(outbreaks, groupingLevel, outbreaks[0])
+    expect(response).toStrictEqual(expectedResult)
   }
 }
 
