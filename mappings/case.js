@@ -31,7 +31,7 @@ const trackedEntityToCase = (config) => completeSchema({
   vaccinesReceived: () => [],
   documents: () => [],
   addresses: [{
-    typeID: constants.addressTypeID,
+    typeID: constants.addressTypeID(),
     locationId: caseLocationIDSelector,
     address: caseAttributeSelector(config.dhis2KeyAttributes.address)
   }],
@@ -53,7 +53,7 @@ const trackedEntityToContact = (config) => completeSchema({
   vaccinesReceived: [],
   documents: [],
   addresses: [{
-    typeID: constants.addressTypeID,
+    typeID: constants.addressTypeID(),
     locationId: caseLocationIDSelector,
     address: caseAttributeSelector(config.dhis2KeyAttributes.address)
   }],

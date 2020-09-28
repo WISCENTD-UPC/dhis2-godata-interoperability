@@ -33,7 +33,7 @@ test('caseMappings.trackedEntityToCase', () => {
     vaccinesReceived: [],
     documents: [],
     addresses: [{
-      typeID: constants.addressTypeID,
+      typeID: constants.addressTypeID(),
       locationId: model.orgUnit,
       address: '__address__'
     }],
@@ -57,7 +57,7 @@ test('caseMappings.trackedEntityToCase', () => {
     vaccinesReceived: [],
     documents: [],
     addresses: [{
-      typeID: constants.addressTypeID,
+      typeID: constants.addressTypeID(),
       locationId: model.orgUnit,
       address: '__address__'
     }],

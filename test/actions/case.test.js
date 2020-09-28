@@ -319,7 +319,7 @@ test('caseActions.sendCasesToGoData', async () => {
       vaccinesReceived: [],
       documents: [],
       addresses: [{
-        typeID: constants.addressTypeID,
+        typeID: constants.addressTypeID(),
         locationId: trackedEntities[0][0].orgUnit,
         address: trackedEntities[0][0].attributes[3].value
       }],
@@ -406,7 +406,7 @@ function case_ (te, base) {
     vaccinesReceived: [],
     documents: [],
     addresses: [{
-      typeID: constants.addressTypeID,
+      typeID: constants.addressTypeID(),
       locationId: te.orgUnit,
       address: te.attributes[3].value
     }],

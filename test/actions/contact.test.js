@@ -84,7 +84,7 @@ test('contactActions.copyContacts', async () => {
         vaccinesReceived: [],
         documents: [],
         addresses: [{
-          typeID: constants.addressTypeID,
+          typeID: constants.addressTypeID(),
           locationId: contact.orgUnit,
           address: contact.attributes[3].value
         }],

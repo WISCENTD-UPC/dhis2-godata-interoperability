@@ -10,7 +10,7 @@ module.exports = {
   gender: (gender = 'NONE') => `LNG_REFERENCE_DATA_CATEGORY_GENDER_${gender.toUpperCase()}`,
   ocupation: (ocupation = 'UNKNOWN') => `LNG_REFERENCE_DATA_CATEGORY_OCCUPATION_${ocupation.toUpperCase()}`,
   riskLevel: (level = 'NONE') => `LNG_REFERENCE_DATA_CATEGORY_RISK_LEVEL_${level.toUpperCase()}`,
-  addressTypeID: 'LNG_REFERENCE_DATA_CATEGORY_ADDRESS_TYPE_USUAL_PLACE_OF_RESIDENCE',
+  addressTypeID: (type = 'USUAL_PLACE_OF_RESIDENCE') => `LNG_REFERENCE_DATA_CATEGORY_ADDRESS_TYPE_${type}`,
   caseClassification: (classification = 'SUSPECT') => `LNG_REFERENCE_DATA_CATEGORY_CASE_CLASSIFICATION_${classification.toUpperCase()}`,
   certaintyLevel: (level = '3_HIGH') => `LNG_REFERENCE_DATA_CATEGORY_CERTAINTY_LEVEL_${level.toUpperCase()}`,
   OUTBREAK_CREATION_MODE: {
