@@ -1,5 +1,6 @@
 
 const {
+  copyMetadata,
   copyOrganisationUnits,
   createOutbreaks,
   copyCases,
@@ -9,6 +10,7 @@ const {
 } = require('./actions')
 
 module.exports = {
+  copyMetadata,
   copyOrganisationUnits,
   createOutbreaks,
   copyCases,

@@ -1,8 +1,6 @@
 
 const R = require('ramda')
 const { v4: uuid } = require('uuid')
-const { createUUIDs } = require('../test-util/util')
-const uuids = createUUIDs()
 
 const caseActions = require('../../actions/case')
 const config = require('../../config')
@@ -18,7 +16,9 @@ const {
   outbreaks,
   user
 } = require('../test-util/mocks')
+const { createUUIDs } = require('../test-util/util')
 
+const uuids = createUUIDs()
 const resolve = Promise.resolve.bind(Promise)
 
 test('caseActions.copyCases', async () => {

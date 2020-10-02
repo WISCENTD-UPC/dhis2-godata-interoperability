@@ -2,6 +2,7 @@
 const config = require('./')
 
 module.exports = {
+  referenceDataCategoryID: (_) => `LNG_REFERENCE_DATA_CATEGORY_${_.toUpperCase()}`,
   geographicalLevelId: (_) => `LNG_REFERENCE_DATA_CATEGORY_LOCATION_GEOGRAPHICAL_LEVEL_ADMIN_LEVEL_${Number(_) - 1}`,
   followupAssignmentAlgorithm: (index) => `LNG_REFERENCE_DATA_CATEGORY_FOLLOWUP_GENERATION_TEAM_ASSIGNMENT_ALGORITHM_${
     config.followupAssignmentAlgorithms[index]}`,

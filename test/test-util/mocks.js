@@ -6,6 +6,22 @@ const { createUUIDs } = require('./util')
 const uuids = createUUIDs()
 const date = () => new Date().toString()
 
+const optionSets = [
+  { 
+    id: uuids('ops-0'),
+    displayName: 'Vaccine types',
+    options: [
+      { id: uuids('op-0') },
+      { id: uuids('op-1') }
+    ]
+  }
+]
+
+const options = [
+  { id: uuids('op-0'), displayName: 'Malaria' },
+  { id: uuids('op-1'), displayName: 'Colera' }
+]
+
 const orgUnits = [
   {
     id: uuids('ou-0'),
@@ -251,6 +267,8 @@ const user = {
 }
 
 module.exports = {
+  optionSets,
+  options,
   orgUnits: R.map(R.pipe(
     R.assoc('lastUpdated', date()),
     R.assoc('created', date())

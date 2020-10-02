@@ -7,6 +7,7 @@ const { Command } = require('commander')
 const package = require('./package.json')
 const config = require('./config')
 const {
+  copyMetadata,
   copyOrganisationUnits,
   createOutbreaks,
   copyCases,
@@ -21,6 +22,10 @@ const program = new Command()
 
 program.version(package.version)
 
+program
+  .command('copy-metadata')
+  .description('Copy DHIS2 metadata into Go.Data')
+  .action(copyMetadata(dhis2, godata, config))
 program
   .command('copy-organisation-units <destination>')
   .description('Copy DHIS2 organisation units into Go.Data locations.')

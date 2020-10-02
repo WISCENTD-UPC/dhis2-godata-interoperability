@@ -40,6 +40,11 @@ module.exports = {
     isDateOfOnsetRequired: true,
     generateFollowUpsOverwriteExisting: false,
     generateFollowUpsKeepTeamAssignment: true
+  },
+  metadata: {
+    optionSets: {
+      Vaccine: 'Vaccine types'
+    }
   }
 }
 
