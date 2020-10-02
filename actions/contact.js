@@ -134,5 +134,15 @@ function sendContactsToGoData (godata, user) {
   ), allPromises)
 }
 
-module.exports = { copyContacts }
+module.exports = { 
+  copyContacts,
+  loadResources,
+  selectRelationshipSide,
+  checkIfIsCase,
+  addRelationshipsAndContacts,
+  loadContactsForCase,
+  loadContactsForOutbreak,
+  loadContactsForOutbreaks,
+  sendContactsToGoData
+}
 

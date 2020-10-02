@@ -182,32 +182,23 @@ test('outbreakActions.findGroupingOutbreak looking for parent.id', findGroupingO
   }
 }))
 
-test('outbreakActions.groupOutbreaks not related', () => {
-  const groupingLevel = 0
-  const orgUnitID = uuid()
-  const outbreak = {
+test('outbreakActions.groupOutbreaks not related', groupOutbreaksTest({
+  outbreaks: [{
     orgUnit: {
-      id: orgUnitID,
+      id: uuid(),
       level: 0,
       parent: undefined
     },
     trackedEntities: []
-  }
-  const outbreaks = R.assoc(orgUnitID, outbreak, {})
+  }],
+  expected: (outbreaks) => R.indexBy(R.path(['orgUnit', 'id']), outbreaks)
+}))
 
-  const f = outbreakActions.groupOutbreaks(outbreaks, groupingLevel)
-  const expected = outbreaks
-  expect(f(outbreaks)).toStrictEqual(expected)
-})
-
-test('outbreakActions.groupOutbreaks related', () => {
-  const groupingLevel = 0
-  const orgUnitID1 = uuid()
-  const orgUnitID2 = uuid()
-  const outbreaks = [
+test('outbreakActions.groupOutbreaks related', groupOutbreaksTest({
+  outbreaks: [
     {
       orgUnit: {
-        id: orgUnitID1,
+        id: uuids('1'),
         level: 0,
         parent: undefined
       },
@@ -215,18 +206,18 @@ test('outbreakActions.groupOutbreaks related', () => {
     },
     {
       orgUnit: {
-        id: orgUnitID2,
+        id: uuids('2'),
         level: 2,
-        parent: { id: orgUnitID1 }
+        parent: { id: uuids('1') }
       },
       trackedEntities: []
     }
-  ]
-  const testOutbreaks = R.indexBy(R.path(['orgUnit', 'id']), outbreaks)
-  const f = outbreakActions.groupOutbreaks(testOutbreaks, groupingLevel)
-  const expected = R.assoc(orgUnitID1, R.assoc('mergedLocationsIDs', [ orgUnitID2 ], outbreaks[0]), {})
-  expect(f(testOutbreaks)).toStrictEqual(expected)
-})
+  ],
+  expected: (outbreaks) => { 
+    const testOutbreaks =  [ R.assoc('mergedLocationsIDs', [ uuids('2') ], outbreaks[0]) ]
+    return R.indexBy(R.path(['orgUnit', 'id']), testOutbreaks)
+  }
+}))
 
 test('outbreakActions.postOutbreaks', async () => {
   const createOutbreak = jest.fn()
@@ -281,6 +272,15 @@ function findGroupingOutbreakTest ({ outbreaks, groupingLevel, outbreak }) {
     const expectedResult = outbreaks[0]
     const response = outbreakActions.findGroupingOutbreak(outbreaksTest, groupingLevel, outbreak)
     expect(response).toStrictEqual(expectedResult)
+  }
+}
+
+function groupOutbreaksTest ({ outbreaks, expected }) {
+  return () => {
+  const testOutbreaks = R.indexBy(R.path(['orgUnit', 'id']), outbreaks)
+  const groupingLevel = 0
+  const f = outbreakActions.groupOutbreaks(testOutbreaks, groupingLevel)
+  expect(f(testOutbreaks)).toStrictEqual(expected(outbreaks))
   }
 }
 
