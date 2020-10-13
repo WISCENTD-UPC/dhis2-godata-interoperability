@@ -18,6 +18,11 @@ const caseAttributeSelector = (attributeID) => R.pipe(
   R.find(R.propEq('attribute', attributeID)),
   R.prop('value'))
 
+const dataElementSelector = R.curry((programStage, dataElementName) => R.pipe(
+  R.prop(programStage),
+  R.find(R.propEq('displayName', dataElementName)),
+  R.prop('value')))
+
 // MAPPINGS
 const trackedEntityToCase = (config) => completeSchema({
   outbreak: caseOutbreakSelector,
@@ -39,7 +44,10 @@ const trackedEntityToCase = (config) => completeSchema({
   dateRanges: [],
   questionnaireAnswers: {},
   dateOfBirth: caseAttributeSelector(config.dhis2KeyAttributes.dateOfBirth),
-  dob: null
+  pregnancyStatus: R.pipe(
+    dataElementSelector('clinicalExamination', config.dhis2KeyDataElements.pregnancy),
+    constants.pregnancyStatus
+  )
 })
 
 const trackedEntityToContact = (config) => completeSchema({

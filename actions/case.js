@@ -25,7 +25,8 @@ const copyCases = (dhis2, godata, config, _ = { loadTrackedEntityInstances }) =>
 
   logAction('Reading configuration')
   const casesProgramID = getIDFromDisplayName(programs, config.dhis2CasesProgram)
-  const [ labRequestID, labResultsID, symptomsID ] = R.map(getIDFromDisplayName(programStages), [
+  const programStagesIDs = R.map(getIDFromDisplayName(programStages), [
+    config.dhis2KeyProgramStages.clinicalExamination,
     config.dhis2KeyProgramStages.labRequest,
     config.dhis2KeyProgramStages.labResults,
     config.dhis2KeyProgramStages.symptoms
@@ -39,14 +40,14 @@ const copyCases = (dhis2, godata, config, _ = { loadTrackedEntityInstances }) =>
   logAction('Fetching tracked entity instances')
   const trackedEntities = await _.loadTrackedEntityInstances(dhis2, organisationUnits, casesProgramID)
   logDone()
-
+  
   await R.pipe(
     R.flatten,
     R.tap(() => logAction('Assiging outbreaks to tracked entity instances')),
     R.map(assignOutbreak(outbreaks, organisationUnits)),
     R.tap(() => logDone()),
     R.tap(() => logAction('Adding additional information to tracked entity instances')),
-    R.map(addLabInformation(labResultsID, labRequestID, confirmedTestConditions, config)),
+    R.map(addLabInformation(programStagesIDs, dataElements, confirmedTestConditions, config)),
     R.tap(() => logDone()),
     R.tap(() => logAction('Transforming tracked entity instances to cases')),
     R.map(trackedEntityToCase(config)),
@@ -92,18 +93,26 @@ function assignOutbreak (outbreaks, orgUnits) {
     trackedEntity)
 }
 
-// Add lab request stage to a tracked entity instance
-function addLabRequestStage (labRequestID) {
-  return (te) =>
-    R.assoc('labRequestStage', R.find(R.propEq('programStage', labRequestID), te.events), te)
+// Find an event in a list by ID and parse is dataElements, including the displayName
+function findAndTransformEvent (dataElements, programID, events) {
+  return R.pipe(
+    R.find(R.propEq('programStage', programID)),
+    R.prop('dataValues'),
+    R.defaultTo([]),
+    R.map(dataValue => R.assoc(
+      'displayName',
+      R.pipe(R.find(R.propEq('id', dataValue.dataElement)), R.prop('displayName'))(dataElements),
+      dataValue))
+  )(events)
 }
 
-// Add lab results stage to a tracked entity instance
-// TODO: one tracked entity can have more than one event of this kind
-// This is not handled right now
-function addLabResultStage (labResultsID) {
-  return (te) =>
-    R.assoc('labResultStage', R.find(R.propEq('programStage', labResultsID), te.events), te)
+// ADD the parsed data elements of an event of a tracked entity instance
+// by the program stage ID the event is part of
+function addEvent (dataElements, eventName, programStageID) {
+  return (te) => {
+    const event = findAndTransformEvent(dataElements, programStageID, te.events)
+    return R.assoc(eventName, event, te)
+  }
 }
 
 // Find data value from the data values list given the id of the element
@@ -125,7 +134,7 @@ function checkDataValuesConditions (conditions) {
   return R.allPass(
     R.map(
       ([dataElement, value]) => te => 
-        checkDataValue(R.path(['labResultStage', 'dataValues'], te), dataElement, value),
+        checkDataValue(R.prop('labResultStage', te), dataElement, value),
       conditions
     ))
 }
@@ -134,7 +143,7 @@ function checkDataValuesConditions (conditions) {
 // TODO: support for 'inconclusive', 'not performed'... results
 function addLabResult (confirmedTestConditions) {
   return (te) => R.ifElse(
-    R.has('labResultStage'),
+    R.propSatisfies(_ => _ !== [], 'labResultStage'),
     R.assoc('labResult',
       checkDataValuesConditions(confirmedTestConditions)(te) ? 'POSITIVE' : 'NEGATIVE'
     ),
@@ -147,19 +156,23 @@ function addCaseClassification () {
   return (te) => R.assoc('caseClassification',
     te.labResult === 'POSITIVE'
       ? 'CONFIRMED'
-      : te.labResult === 'NEGATIVE' && te.labResultStage != null
+      : te.labResult === 'NEGATIVE' && te.labResultStage.length > 0
         ? 'NOT_A_CASE_DISCARDED'
-        : te.labResultStage == null && te.labRequestStage != null
+        : te.labRequestStage.length > 0
           ? 'PROBABLE'
           : 'SUSPECT',
     te)
 }
 
 // Add additional lab information and case classification to a tracked entity instance
-function addLabInformation (labResultsID, labRequestID, confirmedTestConditions, config) {
+function addLabInformation (programsIDs, dataElements, confirmedTestConditions, config) {
+  const [ clinicalExaminationID, labRequestID, labResultsID, symptomsID ] = programsIDs
+  const addEventByID = R.partial(addEvent, [ dataElements ])
   return R.pipe(
-    addLabResultStage(labResultsID),
-    addLabRequestStage(labRequestID),
+    addEventByID('clinicalExamination', clinicalExaminationID),
+    addEventByID('labRequestStage', labRequestID),
+    addEventByID('labResultStage', labResultsID),
+    addEventByID('symptoms', symptomsID),
     addLabResult(confirmedTestConditions),
     addCaseClassification(config)
   )
@@ -183,10 +196,10 @@ function sendCasesToGoData (godata) {
 module.exports = { 
   copyCases, 
   loadResources, 
-  assignOutbreak, 
+  assignOutbreak,
+  findAndTransformEvent,
+  addEvent,
   findOutbreackForCase, 
-  addLabRequestStage, 
-  addLabResultStage,
   findDataValueByID,
   checkDataValue,
   checkDataValuesConditions,

@@ -17,7 +17,8 @@ const model = {
     { attribute: config.dhis2KeyAttributes.sex, value: '__sex__' },
     { attribute: config.dhis2KeyAttributes.address, value: '__address__' },
     { attribute: config.dhis2KeyAttributes.dateOfBirth, value: '__dob__' }
-  ]
+  ],
+  clinicalExamination: []
 }
 
 test('caseMappings.trackedEntityToCase', () => {
@@ -41,7 +42,7 @@ test('caseMappings.trackedEntityToCase', () => {
     dateRanges: [],
     questionnaireAnswers: {},
     dateOfBirth: '__dob__',
-    dob: null
+    pregnancyStatus: null
   })
 })
 

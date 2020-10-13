@@ -5,6 +5,7 @@ module.exports = {
   dhis2ContactsProgram: 'COVID-19 Contact Registration & Follow-up',
   dhis2ContactsRelationship: 'Has Been in Contact with',
   dhis2KeyProgramStages: {
+    clinicalExamination: 'Stage 1 - Clinical examination and diagnosis',
     labRequest: 'Stage 2 - Lab Request',
     labResults: 'Stage 3 - Lab Results',
     symptoms: 'Symptoms'
@@ -15,6 +16,9 @@ module.exports = {
     sex: 'Sex',
     dateOfBirth: 'Date of birth',
     address: 'Home Address'
+  },
+  dhis2KeyDataElements: {
+    pregnancy: 'Pregnancy'
   },
   dhis2DataElementsChecks: {
     confirmedTest: [
