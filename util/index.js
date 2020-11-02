@@ -24,7 +24,9 @@ function mapAttributeNamesToIDs (attributes) {
 const completeSchema = R.curry((schema, model) => {
   const completedSchema = {}
 
-  if (typeof schema === 'object') {
+  if (R.is(Array, schema)) {
+    return R.map(completeSchema(R.__, model), schema)
+  } else if (typeof schema === 'object') {
     for (let prop in schema) {
       if (typeof schema[prop] === 'function') {
         completedSchema[prop] = schema[prop](model)

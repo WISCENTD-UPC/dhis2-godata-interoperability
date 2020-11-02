@@ -26,7 +26,7 @@ const createOutbreaks = (dhis2, godata, config, _ = {
   const trackedEntities = await _.loadTrackedEntityInstances(dhis2, organisationUnits, casesProgramID)
   logDone()
 
-  return R.pipe(
+  const results = await R.pipe(
     R.flatten,
     R.tap(() => logAction('Processing outbreaks')),
     addTrackedEntitiesToOutbreaks(outbreaks),
@@ -35,9 +35,12 @@ const createOutbreaks = (dhis2, godata, config, _ = {
     R.map(createOutbreakMapping(config, _)),
     R.tap(() => logDone()),
     R.tap(() => logAction('Creating outbreaks in Go.Data')),
-    _.postOutbreaks(godata),
-    R.tap(() => logDone())
+    _.postOutbreaks(godata)
   )(trackedEntities)
+
+  console.log(results)
+
+  logDone()
 }
 
 // Load resources from dhis2 and godata

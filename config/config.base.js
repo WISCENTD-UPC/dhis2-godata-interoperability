@@ -8,17 +8,23 @@ module.exports = {
     clinicalExamination: 'Stage 1 - Clinical examination and diagnosis',
     labRequest: 'Stage 2 - Lab Request',
     labResults: 'Stage 3 - Lab Results',
+    healthOutcome: 'Stage 4 - Health Outcome',
     symptoms: 'Symptoms'
   },
   dhis2KeyAttributes: {
+    caseID: 'System Generated Case ID',
     firstName: 'First Name',
     surname: 'Surname',
     sex: 'Sex',
     dateOfBirth: 'Date of birth',
-    address: 'Home Address'
+    address: 'Home Address',
+    passport: 'Passport Number'
   },
   dhis2KeyDataElements: {
-    pregnancy: 'Pregnancy'
+    pregnancy: 'Pregnancy',
+    dateOfOnset: 'Date of symptoms onset',
+    healthOutcome: 'Health outcome',
+    typeOfVaccine: 'Type of vaccine'
   },
   dhis2DataElementsChecks: {
     confirmedTest: [

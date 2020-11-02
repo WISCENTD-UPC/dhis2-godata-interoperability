@@ -29,6 +29,7 @@ const copyCases = (dhis2, godata, config, _ = { loadTrackedEntityInstances }) =>
     config.dhis2KeyProgramStages.clinicalExamination,
     config.dhis2KeyProgramStages.labRequest,
     config.dhis2KeyProgramStages.labResults,
+    config.dhis2KeyProgramStages.healthOutcome,
     config.dhis2KeyProgramStages.symptoms
   ])
   const confirmedTestConditions = R.map(
@@ -52,6 +53,7 @@ const copyCases = (dhis2, godata, config, _ = { loadTrackedEntityInstances }) =>
     R.tap(() => logAction('Transforming tracked entity instances to cases')),
     R.map(trackedEntityToCase(config)),
     R.tap(() => logDone()),
+    R.tap(R.pipe(R.pluck('vaccinesReceived'), R.forEach(console.log))),
     R.tap(() => logAction('Sending cases to Go.Data')),
     sendCasesToGoData(godata)
   )(trackedEntities)
@@ -166,12 +168,19 @@ function addCaseClassification () {
 
 // Add additional lab information and case classification to a tracked entity instance
 function addLabInformation (programsIDs, dataElements, confirmedTestConditions, config) {
-  const [ clinicalExaminationID, labRequestID, labResultsID, symptomsID ] = programsIDs
+  const [
+    clinicalExaminationID,
+    labRequestID,
+    labResultsID,
+    healthOutcomeID,
+    symptomsID ] = programsIDs
   const addEventByID = R.partial(addEvent, [ dataElements ])
+
   return R.pipe(
     addEventByID('clinicalExamination', clinicalExaminationID),
     addEventByID('labRequestStage', labRequestID),
     addEventByID('labResultStage', labResultsID),
+    addEventByID('healthOutcome', healthOutcomeID),
     addEventByID('symptoms', symptomsID),
     addLabResult(confirmedTestConditions),
     addCaseClassification(config)
@@ -187,7 +196,7 @@ function sendCasesToGoData (godata) {
       for (let outbreak in outbreaks) {
         const cases = outbreaks[outbreak]
         await godata.activateOutbreakForUser(user.userId, outbreak)
-        await allPromises(R.map(case_ => godata.createOutbreakCase(outbreak, R.dissoc('outbreak', case_)), cases))
+        console.log(await allPromises(R.map(case_ => godata.createOutbreakCase(outbreak, R.dissoc('outbreak', case_)), cases)))
       }
     }
   )
