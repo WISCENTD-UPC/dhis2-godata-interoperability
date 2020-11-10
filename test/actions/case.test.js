@@ -74,7 +74,7 @@ test('caseActions.copyCases', async () => {
     2,
     outbreaks[0].id,
     case_(trackedEntities[1][0], {
-      classification: constants.caseClassification('probable')
+      classification: constants.caseClassification('suspect')
     })
   )
   expect(createOutbreakCase).toHaveBeenNthCalledWith(
@@ -129,38 +129,25 @@ test('caseActions.assignOutbreak', () => {
   expect(response).toStrictEqual(expected)
 })
 
-test('caseActions.addLabRequestStage', () => {
-  const labRequestID = uuid()
-  const data = uuid()
-  const te = {
-    events: [
-      {
-        programStage: labRequestID,
-        dataValues: data
-      }
-    ]
-  }
-
-  const response = caseActions.addLabRequestStage(labRequestID)(te)
-  const expected = R.assoc('labRequestStage', te.events[0], te)
-  expect(response).toStrictEqual(expected)
+test('caseActions.findAndTransformEvent', () => {
+  const response = caseActions.findAndTransformEvent(
+    dataElements,
+    programStages[9].id,
+    trackedEntities[3][0].events)
+  expect(response).toStrictEqual([
+    { dataElement: dataElements[0].id, value: 'Negative', displayName: dataElements[0].displayName }
+  ])
 })
 
-test('caseActions.addLabResultStage', () => {
-  const labResultsID = uuid()
-  const data = uuid()
-  const te = {
-    events: [
-      {
-        programStage: labResultsID,
-        dataValues: data
-      }
-    ]
-  }
-
-  const response = caseActions.addLabResultStage(labResultsID)(te)
-  const expected = R.assoc('labResultStage', te.events[0], te)
-  expect(response).toStrictEqual(expected)
+test('caseActions.addEvent', () => {
+  const eventName = 'labResultStage'
+  const response = caseActions.addEvent(dataElements, eventName, programStages[9].id)(trackedEntities[3][0])
+  expect(response).toStrictEqual(
+    R.assoc(
+      eventName,
+      [ { dataElement: dataElements[0].id, value: 'Negative', displayName: dataElements[0].displayName } ],
+      trackedEntities[3][0])
+  )
 })
 
 test('caseActions.findDataValueByID w/ dataValues', findDataValueByIDTest({
@@ -233,8 +220,8 @@ test('caseActions.addLabResult negative value', addLabResultTest({
 test('caseActions.addCaseClassification CONFIRMED', addCaseClassificationTest({
   trackedEntity: {
     labResult: 'POSITIVE',
-    labResultStage: uuid(),
-    labRequestStage: uuid()
+    labResultStage: [ uuid() ],
+    labRequestStage: [ uuid() ]
   }, 
   expectedResult: 'CONFIRMED'
 }))
@@ -242,8 +229,8 @@ test('caseActions.addCaseClassification CONFIRMED', addCaseClassificationTest({
 test('caseActions.addCaseClassification NOT_A_CASE_DISCARDED', addCaseClassificationTest({
   trackedEntity: {
     labResult: 'NEGATIVE',
-    labResultStage: uuid(),
-    labRequestStage: uuid()
+    labResultStage: [ uuid() ],
+    labRequestStage: [ uuid() ]
   }, 
   expectedResult: 'NOT_A_CASE_DISCARDED'
 }))
@@ -251,8 +238,8 @@ test('caseActions.addCaseClassification NOT_A_CASE_DISCARDED', addCaseClassifica
 test('caseActions.addCaseClassification PROBABLE', addCaseClassificationTest({
   trackedEntity: {
     labResult: null,
-    labResultStage: null,
-    labRequestStage: uuid()
+    labResultStage: [],
+    labRequestStage: [ uuid() ]
   }, 
   expectedResult: 'PROBABLE'
 }))
@@ -260,16 +247,20 @@ test('caseActions.addCaseClassification PROBABLE', addCaseClassificationTest({
 test('caseActions.addCaseClassification SUSPECT', addCaseClassificationTest({
   trackedEntity: {
     labResult: null,
-    labResultStage: null,
-    labRequestStage: null
+    labResultStage: [],
+    labRequestStage: []
   }, 
   expectedResult: 'SUSPECT'
 }))
 
 test('caseActions.addLabInformation', () => {
-  const labResultsID = uuid()
+  const clinicalExaminationID = uuid()
   const labRequestID = uuid()
+  const labResultsID = uuid()
+  const symptomsID = uuid()
+  const programsIDs = [ clinicalExaminationID, labRequestID, labResultsID, symptomsID ]
   const dataID = uuid()
+  const dataElements = [ { id: dataID, displayName: 'Lab TEST Result' } ]
   const conditions = [ [ dataID, 'Positive' ] ]
   const te = {
     events: [
@@ -280,15 +271,19 @@ test('caseActions.addLabInformation', () => {
       {
         programStage: labResultsID,
         dataValues: [
-          { dataElement: dataID , value: 'Positive' }
+          { dataElement: dataID, value: 'Positive' }
         ]
       }
     ]
   }
-  const response = caseActions.addLabInformation(labResultsID, labRequestID, conditions, config)(te)
+  const response = caseActions.addLabInformation(programsIDs, dataElements, conditions, config)(te)
   const expected = R.pipe(
-    R.assoc('labResultStage', te.events[1]), 
-    R.assoc('labRequestStage', te.events[0]),
+    R.assoc('clinicalExamination', []),
+    R.assoc('labRequestStage', te.events[0].dataValues),
+    R.assoc('labResultStage', te.events[1].dataValues),
+    R.assoc('symptoms', []),
+    R.assoc('healthOutcome', []),
+    R.assocPath([ 'labResultStage', 0, 'displayName' ], dataElements[0].displayName),
     R.assoc('labResult', 'POSITIVE'),
     R.assoc('caseClassification', 'CONFIRMED')
   )(te)
@@ -315,8 +310,10 @@ test('caseActions.sendCasesToGoData', async () => {
       gender: constants.gender(trackedEntities[0][0].attributes[2].value),
       ocupation: constants.ocupation(),
       dateOfReporting: trackedEntities[0][0].created,
+      dateOfOnset: null,
       riskLevel: constants.riskLevel(),
-      vaccinesReceived: [],
+      outcomeId: null,
+      vaccinesReceived: null,
       documents: [],
       addresses: [{
         typeID: constants.addressTypeID(),
@@ -327,7 +324,7 @@ test('caseActions.sendCasesToGoData', async () => {
       dateRanges: [],
       questionnaireAnswers: {},
       dateOfBirth: trackedEntities[0][0].attributes[4].value,
-      dob: null
+      pregnancyStatus: null
     }
   ]
   
@@ -364,9 +361,7 @@ function checkDataValueTest ({ dataValues = null, dataElement, value, expectedRe
 function checkDataValuesConditionsTest ({ conditions, dataValues = null, expectedResult }) {
   return () => {
     const trackedEntity = {
-      labResultStage: {
-        dataValues: [ dataValues ]
-      }
+      labResultStage: [ dataValues ]
     }
     const response = caseActions.checkDataValuesConditions(conditions)(trackedEntity)
     expect(response).toBe(expectedResult)
@@ -376,9 +371,7 @@ function checkDataValuesConditionsTest ({ conditions, dataValues = null, expecte
 function addLabResultTest ({ conditions, dataValues = null, expectedResult }) {
   return () => {
     const trackedEntity = {
-      labResultStage: {
-        dataValues: [ dataValues ]
-      }
+      labResultStage: [ dataValues ]
     }
     const response = caseActions.addLabResult(conditions)(trackedEntity)
     const expected = R.assoc('labResult', expectedResult, trackedEntity)
@@ -402,7 +395,9 @@ function case_ (te, base) {
     gender: constants.gender(te.attributes[2].value),
     ocupation: constants.ocupation(),
     dateOfReporting: te.created,
+    dateOfOnset: null,
     riskLevel: constants.riskLevel(),
+    outcomeId: null,
     vaccinesReceived: [],
     documents: [],
     addresses: [{
@@ -413,7 +408,8 @@ function case_ (te, base) {
     dateRanges: [],
     questionnaireAnswers: {},
     dateOfBirth: te.attributes[4].value,
-    dob: null
+    pregnancyStatus: null,
+    vaccinesReceived: null
   })
 }
 

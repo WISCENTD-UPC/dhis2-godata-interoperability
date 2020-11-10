@@ -17,11 +17,6 @@ module.exports = {
     debug: true
   },
   countries: [ 'Trainingland' ],
-  rootID: 'GD7TowwI46c',
-  metadata: {
-    optionSets: {
-      'Vaccine': 'Vaccine types'
-    }
-  }
+  rootID: 'GD7TowwI46c'
 }
 

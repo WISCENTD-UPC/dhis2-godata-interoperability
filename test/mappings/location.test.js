@@ -24,7 +24,7 @@ test('locationMappings.organisationUnitToLocation polygon geometry', organisatio
     }
   },
   expected: {
-    geoLocation: { lat: 164.77312222222224, lng: -67.57063333333332 }
+    geoLocation: { lat: -67.57063333333332, lng: 164.77312222222224 }
   }
 }))
 
@@ -46,7 +46,7 @@ function organisationUnitToLocationTest ({ model = {}, expected = {} } = {}) {
       id: orgUnit.id,
       parentLocationId: orgUnit.parent.id,
       name: orgUnit.name,
-      geoLocation: { lat: 164.7706, lng: -67.6056 },
+      geoLocation: { lat: -67.6056, lng: 164.7706 },
       geographicalLevelId: constants.geographicalLevelId(1),
       updatedAt: orgUnit.lastUpdated,
       createdAt: orgUnit.created,

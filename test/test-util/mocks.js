@@ -138,10 +138,8 @@ const trackedEntities = [
       orgUnit: uuids('ou-0'),
       created: '2020-08-01',
       events: [
-        {
-          programStage: uuids('ps-8'),
-          dataValues: []
-        },
+        { programStage: uuids('ps-7'), dataValues: [] },
+        { programStage: uuids('ps-8'), dataValues: [] },
         {
           programStage: uuids('ps-9'),
           dataValues: [
@@ -163,12 +161,7 @@ const trackedEntities = [
       trackedEntityInstance: uuids('te-1'),
       orgUnit: uuids('ou-1'),
       created: '2020-08-02',
-      events: [
-        {
-          programStage: uuids('ps-8'),
-          dataValues: []
-        }
-      ],
+      events: [],
       attributes: [
         { attribute: uuids('a-9'), value: 'Zanele' },
         { attribute: uuids('a-16'), value: 'Thabede' },

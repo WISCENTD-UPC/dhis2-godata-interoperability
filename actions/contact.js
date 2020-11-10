@@ -72,7 +72,7 @@ function addRelationshipsAndContacts (config) {
         contact: trackedEntityToContact(config),
         relationship: trackedEntityToRelationship(config)
       }
-
+    
     return R.over(R.lensProp(prop), R.append(completeSchema(schema)(contact)), acc)
   }, { contacts: [], relationships: [] })
 }
@@ -80,7 +80,7 @@ function addRelationshipsAndContacts (config) {
 // Loads contacts and relationships for a case
 async function loadContactsForCase (dhis2, config, casesIDs, caseID) {
   const contacts = await dhis2.getTrackedEntityRelationships(caseID)
-
+  
   return R.pipe(
     R.map(selectRelationshipSide(caseID)),
     R.map(checkIfIsCase(casesIDs)),
