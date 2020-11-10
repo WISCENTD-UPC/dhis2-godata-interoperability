@@ -18,7 +18,9 @@ const model = {
     { attribute: config.dhis2KeyAttributes.address, value: '__address__' },
     { attribute: config.dhis2KeyAttributes.dateOfBirth, value: '__dob__' }
   ],
-  clinicalExamination: []
+  clinicalExamination: [
+    { displayName: config.dhis2KeyDataElements.dateOfOnset, value: '__date_of_onset__' }
+  ]
 }
 
 test('caseMappings.trackedEntityToCase', () => {
@@ -30,8 +32,10 @@ test('caseMappings.trackedEntityToCase', () => {
     gender: constants.gender('__sex__'),
     ocupation: constants.ocupation(),
     dateOfReporting: model.created,
+    dateOfOnset: '__date_of_onset__',
     riskLevel: constants.riskLevel(),
-    vaccinesReceived: [],
+    vaccinesReceived: null,
+    outcomeId: null,
     documents: [],
     addresses: [{
       typeID: constants.addressTypeID(),
@@ -46,7 +50,7 @@ test('caseMappings.trackedEntityToCase', () => {
   })
 })
 
-test('caseMappings.trackedEntityToCase', () => {
+test('caseMappings.trackedEntityToContact', () => {
   expect(caseMappings.trackedEntityToContact(config)(model)).toStrictEqual({
     id: model.trackedEntityInstance,
     firstName: '__name__',
@@ -55,14 +59,15 @@ test('caseMappings.trackedEntityToCase', () => {
     ocupation: constants.ocupation(),
     dateOfReporting: model.created,
     riskLevel: constants.riskLevel(),
-    vaccinesReceived: [],
+    vaccinesReceived: null,
     documents: [],
     addresses: [{
       typeID: constants.addressTypeID(),
       locationId: model.orgUnit,
       address: '__address__'
     }],
-    dateOfBirth: '__dob__'
+    dateOfBirth: '__dob__',
+    pregnancyStatus: null
   })
 })
 

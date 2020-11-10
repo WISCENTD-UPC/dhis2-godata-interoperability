@@ -53,7 +53,6 @@ const copyCases = (dhis2, godata, config, _ = { loadTrackedEntityInstances }) =>
     R.tap(() => logAction('Transforming tracked entity instances to cases')),
     R.map(trackedEntityToCase(config)),
     R.tap(() => logDone()),
-    R.tap(R.pipe(R.pluck('vaccinesReceived'), R.forEach(console.log))),
     R.tap(() => logAction('Sending cases to Go.Data')),
     sendCasesToGoData(godata)
   )(trackedEntities)
@@ -196,7 +195,7 @@ function sendCasesToGoData (godata) {
       for (let outbreak in outbreaks) {
         const cases = outbreaks[outbreak]
         await godata.activateOutbreakForUser(user.userId, outbreak)
-        console.log(await allPromises(R.map(case_ => godata.createOutbreakCase(outbreak, R.dissoc('outbreak', case_)), cases)))
+        await allPromises(R.map(case_ => godata.createOutbreakCase(outbreak, R.dissoc('outbreak', case_)), cases))
       }
     }
   )

@@ -17,14 +17,6 @@ module.exports = {
     debug: true
   },
   countries: [ 'Trainingland' ],
-  rootID: 'GD7TowwI46c',
-  outbreakConfig: {
-    caseIdMask: 'COVID19-9999'
-  },
-  metadata: {
-    optionSets: {
-      'Vaccine': 'Vaccine types'
-    }
-  }
+  rootID: 'GD7TowwI46c'
 }
 

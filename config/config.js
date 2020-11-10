@@ -15,9 +15,6 @@ module.exports = {
     }
   },
   countries: [ 'Trainingland' ],
-  rootID: 'GD7TowwI46c',
-  outbreakConfig: {
-    caseIdMask: 'COVID-9999'
-  }
+  rootID: 'GD7TowwI46c'
 }
 

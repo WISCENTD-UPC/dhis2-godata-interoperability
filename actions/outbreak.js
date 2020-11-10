@@ -38,9 +38,8 @@ const createOutbreaks = (dhis2, godata, config, _ = {
     _.postOutbreaks(godata)
   )(trackedEntities)
 
-  console.log(results)
-
   logDone()
+  return results
 }
 
 // Load resources from dhis2 and godata

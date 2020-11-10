@@ -20,8 +20,11 @@ const caseAttributeSelector = (attributeID) => R.pipe(
 
 const dataElementSelector = R.curry((programStage, dataElementName) => R.pipe(
   R.prop(programStage),
+  R.defaultTo([]),
   R.find(R.propEq('displayName', dataElementName)),
-  R.prop('value')))
+  R.prop('value'),
+  R.defaultTo(null)
+))
 const documentSelector = R.curry((documentName, attributeID) => R.pipe(
   caseAttributeSelector(attributeID),
   doc => doc != null ? ({
@@ -40,11 +43,14 @@ const vaccinesSelector = (dataElementID) => R.pipe(
   dataElementSelector('clinicalExamination', dataElementID),
   R.ifElse(
     vaccineType => vaccineType != null,
-    completeSchema([{
-      date: null,
-      status: constants.vaccineStatus('VACCINATED'),
-      vaccine: vaccineType => constants.vaccineType(vaccineType)
-    }]),
+    R.pipe(
+      vaccineType => vaccineType.split('_').slice(2).join('_'),
+      completeSchema([{
+        date: null,
+        status: constants.vaccineStatus('VACCINATED'),
+        vaccine: vaccineType => constants.vaccineType(vaccineType)
+      }])
+    ),
     () => null)
 )
 
@@ -91,8 +97,8 @@ const trackedEntityToContact = (config) => completeSchema({
   ocupation: constants.ocupation(),
   dateOfReporting: caseDateOfReportingSelector, // TODO: check that this is correct for contacts
   riskLevel: constants.riskLevel(),
-  vaccinesReceived: [],
-  documents: [],
+  vaccinesReceived: vaccinesSelector(config.dhis2KeyDataElements.typeOfVaccine),
+  documents: documentsSelector(config),
   addresses: [{
     typeID: constants.addressTypeID(),
     locationId: caseLocationIDSelector,
@@ -102,7 +108,7 @@ const trackedEntityToContact = (config) => completeSchema({
   pregnancyStatus: R.pipe(
     dataElementSelector('clinicalExamination', config.dhis2KeyDataElements.pregnancy),
     constants.pregnancyStatus
-  ),
+  )
 })
 
 module.exports = { trackedEntityToCase, trackedEntityToContact }

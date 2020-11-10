@@ -22,9 +22,11 @@ test('util.mapAttributeNamesToIDs', () => {
     .toStrictEqual({
       firstName: attributes[9].id,
       surname: attributes[16].id,
+      caseID: attributes[18].id,
       sex: attributes[15].id,
       dateOfBirth: attributes[2].id,
-      address: attributes[11].id
+      address: attributes[11].id,
+      passport: attributes[14].id
     })
 })
 
@@ -34,7 +36,8 @@ test('util.completeSchema with simple schema', () => {
     number: 42,
     obj: {
       str: 'asd',
-      arr: [ 1, 2, 3 ]
+      arr: [ 1, 2, 3 ],
+      emptyArr: []
     },
     date: new Date()
   }
@@ -49,7 +52,8 @@ test('util.completeSchema with complex schema', () => {
     arr: [ 1, R.pipe(R.prop('other'), Number, R.add(1)), 3],
     obj: {
       subbar: 42,
-      subfn: R.pipe(R.path(['obj', 'subfoo']), String)
+      subfn: R.pipe(R.path(['obj', 'subfoo']), String),
+      emptyArr: []
     }
   }
 
@@ -67,7 +71,8 @@ test('util.completeSchema with complex schema', () => {
     arr: [ 1, 14, 3 ],
     obj: {
       subbar: 42,
-      subfn: '11'
+      subfn: '11',
+      emptyArr: []
     }
   })
 })

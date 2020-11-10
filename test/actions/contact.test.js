@@ -81,14 +81,15 @@ test('contactActions.copyContacts', async () => {
         ocupation: constants.ocupation(),
         dateOfReporting: contact.created,
         riskLevel: constants.riskLevel(),
-        vaccinesReceived: [],
+        vaccinesReceived: null,
         documents: [],
         addresses: [{
           typeID: constants.addressTypeID(),
           locationId: contact.orgUnit,
           address: contact.attributes[3].value
         }],
-        dateOfBirth: contact.attributes[4].value
+        dateOfBirth: contact.attributes[4].value,
+        pregnancyStatus: null
       },
       relationship: {
         persons: [{

@@ -50,7 +50,11 @@ const completeSchema = R.curry((schema, model) => {
 
 const allPromises = Promise.all.bind(Promise)
 
-const log = process.stdout.write.bind(process.stdout)
+const log = (str) => {
+  if (process.env.NODE_ENV !== 'dev') {
+    process.stdout.write(str)
+  }
+}
 const logAction = (str, padding = 80, separator = ' ') => log(str.concat('...').padEnd(padding, separator))
 const logDone = () => log('DONE.\n')
 

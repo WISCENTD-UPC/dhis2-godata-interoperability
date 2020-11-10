@@ -67,9 +67,7 @@ function createLocationHierarchy (config) {
 // creating a file
 function sendLocationsToGoData (config, organisationUnits) {
   return R.pipe(
-    R.tap(R.pipe(R.pluck('geometry'), R.forEach(console.log))),
     R.map(organisationUnitToLocation),
-    R.tap(R.pipe(R.pluck('geoLocation'), R.forEach(console.log))),
     createLocationHierarchy(config),
     Array
   )(organisationUnits)

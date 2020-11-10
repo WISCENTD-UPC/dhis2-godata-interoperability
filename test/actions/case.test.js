@@ -282,6 +282,7 @@ test('caseActions.addLabInformation', () => {
     R.assoc('labRequestStage', te.events[0].dataValues),
     R.assoc('labResultStage', te.events[1].dataValues),
     R.assoc('symptoms', []),
+    R.assoc('healthOutcome', []),
     R.assocPath([ 'labResultStage', 0, 'displayName' ], dataElements[0].displayName),
     R.assoc('labResult', 'POSITIVE'),
     R.assoc('caseClassification', 'CONFIRMED')
@@ -309,8 +310,10 @@ test('caseActions.sendCasesToGoData', async () => {
       gender: constants.gender(trackedEntities[0][0].attributes[2].value),
       ocupation: constants.ocupation(),
       dateOfReporting: trackedEntities[0][0].created,
+      dateOfOnset: null,
       riskLevel: constants.riskLevel(),
-      vaccinesReceived: [],
+      outcomeId: null,
+      vaccinesReceived: null,
       documents: [],
       addresses: [{
         typeID: constants.addressTypeID(),
@@ -392,7 +395,9 @@ function case_ (te, base) {
     gender: constants.gender(te.attributes[2].value),
     ocupation: constants.ocupation(),
     dateOfReporting: te.created,
+    dateOfOnset: null,
     riskLevel: constants.riskLevel(),
+    outcomeId: null,
     vaccinesReceived: [],
     documents: [],
     addresses: [{
@@ -403,7 +408,8 @@ function case_ (te, base) {
     dateRanges: [],
     questionnaireAnswers: {},
     dateOfBirth: te.attributes[4].value,
-    pregnancyStatus: null
+    pregnancyStatus: null,
+    vaccinesReceived: null
   })
 }
 
