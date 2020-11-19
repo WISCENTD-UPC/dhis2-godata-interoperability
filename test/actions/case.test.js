@@ -31,7 +31,7 @@ test('caseActions.copyCases', async () => {
   const login = jest.fn().mockReturnValue(resolve(user))
   const activateOutbreakForUser = jest.fn()
   const createOutbreakCase = jest.fn()
-  const loadTrackedEntityInstances = jest.fn().mockReturnValue(resolve(trackedEntities))
+  const loadTrackedEntityInstances = jest.fn().mockReturnValue(resolve(R.flatten(trackedEntities)))
   
   const dhis2 = {
     getPrograms,

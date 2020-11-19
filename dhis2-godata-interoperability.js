@@ -12,6 +12,7 @@ const {
   createOutbreaks,
   copyCases,
   copyContacts,
+  fullTransfer,
   queryDHIS2,
   queryGoData
 } = require('./actions')
@@ -42,6 +43,10 @@ program
   .command('copy-contacts')
   .description('Copy contacts from DHIS2 to Go.Data')
   .action(copyContacts(dhis2, godata, config))
+program
+  .command('full-transfer')
+  .description('Performs a full transfer from DHIS2 to Go.Data (all but organisation units)')
+  .action(fullTransfer(dhis2, godata, config))
 program
   .command('query-dhis2 <action>')
   .description('Direct use of dhis2-api-wrapper for development purposes')

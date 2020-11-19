@@ -6,6 +6,7 @@ const {
   getIDFromDisplayName,
   mapAttributeNamesToIDs,
   allPromises,
+  promisePipeline,
   logAction,
   logDone } = require('../util')
 const { trackedEntityToCase } = require('../mappings/case')
@@ -25,39 +26,21 @@ const copyCases = (dhis2, godata, config, _ = { loadTrackedEntityInstances }) =>
 
   logAction('Reading configuration')
   const casesProgramID = getIDFromDisplayName(programs, config.dhis2CasesProgram)
-  const programStagesIDs = R.map(getIDFromDisplayName(programStages), [
-    config.dhis2KeyProgramStages.clinicalExamination,
-    config.dhis2KeyProgramStages.labRequest,
-    config.dhis2KeyProgramStages.labResults,
-    config.dhis2KeyProgramStages.healthOutcome,
-    config.dhis2KeyProgramStages.symptoms
-  ])
-  const confirmedTestConditions = R.map(
-    R.adjust(0, getIDFromDisplayName(dataElements)),
-    config.dhis2DataElementsChecks.confirmedTest)
   config = mapAttributeNamesToIDs(attributes)(config)
   logDone()
 
   logAction('Fetching tracked entity instances')
-  const trackedEntities = await _.loadTrackedEntityInstances(dhis2, organisationUnits, casesProgramID)
+  const cases = await _.loadTrackedEntityInstances(dhis2, organisationUnits, casesProgramID)
   logDone()
   
-  await R.pipe(
-    R.flatten,
-    R.tap(() => logAction('Assiging outbreaks to tracked entity instances')),
-    R.map(assignOutbreak(outbreaks, organisationUnits)),
-    R.tap(() => logDone()),
-    R.tap(() => logAction('Adding additional information to tracked entity instances')),
-    R.map(addLabInformation(programStagesIDs, dataElements, confirmedTestConditions, config)),
-    R.tap(() => logDone()),
-    R.tap(() => logAction('Transforming tracked entity instances to cases')),
-    R.map(trackedEntityToCase(config)),
-    R.tap(() => logDone()),
-    R.tap(() => logAction('Sending cases to Go.Data')),
-    sendCasesToGoData(godata)
-  )(trackedEntities)
-
-  logDone()
+  return await processCases(
+    godata,
+    config,
+    organisationUnits,
+    programStages,
+    dataElements,
+    cases
+  )(outbreaks)
 }
 
 // Load resources from dhis2 and godata
@@ -69,6 +52,43 @@ function loadResources (dhis2, godata, config) {
     dhis2.getTrackedEntitiesAttributes(),
     dhis2.getOrganisationUnitsFromParent(config.rootID),
     godata.getOutbreaks()])
+}
+
+function processCases (
+  godata,
+  config,
+  organisationUnits,
+  programStages,
+  dataElements,
+  cases
+) {
+  logAction('Transforming resources')
+  const programStagesIDs = R.map(getIDFromDisplayName(programStages), [
+    config.dhis2KeyProgramStages.clinicalExamination,
+    config.dhis2KeyProgramStages.labRequest,
+    config.dhis2KeyProgramStages.labResults,
+    config.dhis2KeyProgramStages.healthOutcome,
+    config.dhis2KeyProgramStages.symptoms
+  ])
+  const confirmedTestConditions = R.map(
+    R.adjust(0, getIDFromDisplayName(dataElements)),
+    config.dhis2DataElementsChecks.confirmedTest)
+  logDone()
+
+  return (outbreaks) => promisePipeline(
+    R.tap(() => logAction('Assiging outbreaks to tracked entity instances')),
+    R.map(assignOutbreak(outbreaks, organisationUnits)),
+    R.tap(() => logDone()),
+    R.tap(() => logAction('Adding additional information to tracked entity instances')),
+    R.map(addLabInformation(programStagesIDs, dataElements, confirmedTestConditions, config)),
+    R.tap(() => logDone()),
+    R.tap(() => logAction('Transforming tracked entity instances to cases')),
+    R.map(trackedEntityToCase(config)),
+    R.tap(() => logDone()),
+    R.tap(() => logAction('Sending cases to Go.Data')),
+    sendCasesToGoData(godata),
+    R.tap(() => logDone())
+  )(cases)
 }
 
 // Find the grouping outbreak a tracked entity instance (its associated org unit)
@@ -203,7 +223,8 @@ function sendCasesToGoData (godata) {
 
 module.exports = { 
   copyCases, 
-  loadResources, 
+  loadResources,
+  processCases,
   assignOutbreak,
   findAndTransformEvent,
   addEvent,

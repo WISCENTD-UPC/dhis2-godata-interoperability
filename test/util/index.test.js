@@ -77,6 +77,18 @@ test('util.completeSchema with complex schema', () => {
   })
 })
 
+test('util.promisePipeline', async () => {
+  const fn = util.promisePipeline(
+    R.flatten,
+    R.map(R.prop('a')),
+    Promise.resolve.bind(Promise),
+    R.map(R.toUpper())
+  )
+
+  const result = await fn([ [ { a: 'foo' } ], [ { a: 'bar' } ] ])
+  expect(result).toStrictEqual([ 'FOO', 'BAR' ])
+})
+
 test('util.allPromises', async () => {
   expect(await util.allPromises([Promise.resolve(1), Promise.resolve(2)])).toStrictEqual([1, 2])
 })

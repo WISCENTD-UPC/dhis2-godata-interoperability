@@ -5,6 +5,7 @@ const {
   createOutbreaks,
   copyCases,
   copyContacts,
+  fullTransfer,
   queryDHIS2,
   queryGoData
 } = require('./actions')
@@ -15,6 +16,7 @@ module.exports = {
   createOutbreaks,
   copyCases,
   copyContacts,
+  fullTransfer,
   queryDHIS2,
   queryGoData
 }

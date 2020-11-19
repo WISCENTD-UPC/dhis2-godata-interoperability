@@ -41,6 +41,8 @@ test('metadataActions.copyMetadata', async () => {
   })
 })
 
+test.todo('metadataActions.processMetadata')
+
 test('metadataActions.loadResources', async () => {
   const uuids = [ uuid(), uuid() ]
   const getOptionSets = jest.fn().mockReturnValue(resolve(uuids[0]))

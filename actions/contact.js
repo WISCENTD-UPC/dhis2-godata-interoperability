@@ -9,6 +9,7 @@ const {
   mapAttributeNamesToIDs,
   completeSchema,
   allPromises,
+  promisePipeline,
   logAction,
   logDone } = require('../util')
 const { trackedEntityToContact } = require('../mappings/case')
@@ -21,16 +22,9 @@ const copyContacts = (dhis2, godata, config) => async () => {
   logDone()
   logAction('Reading configuration')
   config = mapAttributeNamesToIDs(attributes)(config)
-  const contactsRelationshipID = getIDFromDisplayName(relationships, config.dhis2ContactsRelationship)
-  logDone()
-
-  logAction('Fetching tracked entity instances and transforming them')
-  const contacts = await loadContactsForOutbreaks(dhis2, godata, config)(outbreaks)
   logDone()
   
-  logAction('Sending contacts to Go.Data')
-  await sendContactsToGoData(godata, user)(contacts)
-  logDone()
+  return processContacts(dhis2, godata, config, user)(outbreaks)
 }
 
 // Load resources from DHIS2 and Go.Data
@@ -41,6 +35,17 @@ function loadResources (dhis2, godata, config) {
     godata.getOutbreaks(),
     godata.login()
   ])
+}
+
+function processContacts (dhis2, godata, config, user) {
+  return promisePipeline(
+    R.tap(() => logAction('Fetching contacts and transforming them')),
+    loadContactsForOutbreaks(dhis2, godata, config),
+    R.tap(() => logDone()),
+    R.tap(() => logAction('Sending contacts to Go.Data')),
+    sendContactsToGoData(godata, user),
+    R.tap(() => logDone())
+  )
 }
 
 // Selects the side of the relationship that represents the contact
@@ -134,5 +139,5 @@ function sendContactsToGoData (godata, user) {
   ), allPromises)
 }
 
-module.exports = { copyContacts }
+module.exports = { copyContacts, processContacts }
 

@@ -48,6 +48,14 @@ const completeSchema = R.curry((schema, model) => {
   }
 })
 
+const promisePipeline = (...fns) => {
+  return (args) => {
+    return fns.reduce(async (args, fn) => {
+      return fn(await args)
+    }, args)
+  }
+}
+
 const allPromises = Promise.all.bind(Promise)
 
 const log = (str) => {
@@ -62,6 +70,7 @@ module.exports = {
   getIDFromDisplayName,
   mapAttributeNamesToIDs,
   completeSchema,
+  promisePipeline,
   allPromises,
   log,
   logAction,

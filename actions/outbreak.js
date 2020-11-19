@@ -3,7 +3,7 @@ const R = require('ramda')
 
 const constants = require('../config/constants')
 const { loadTrackedEntityInstances } = require('./common')
-const { getIDFromDisplayName, allPromises, logAction, logDone } = require('../util')
+const { getIDFromDisplayName, allPromises, promisePipeline, logAction, logDone } = require('../util')
 const { createOutbreakMapping } = require('../mappings/outbreak')
 
 // Creates an outbreak or a series of outbreaks (depending on the configuration)
@@ -19,27 +19,11 @@ const createOutbreaks = (dhis2, godata, config, _ = {
   logDone()
   const casesProgramID = getIDFromDisplayName(programs, config.dhis2CasesProgram)
   const groupingLevel = selectGroupingLevel(organisationUnits, config)
-  logAction('Initializing outbreaks')
-  const outbreaks = initializeOutbreaks(organisationUnits)
-  logDone()
   logAction('Fetching tracked entity instances')
   const trackedEntities = await _.loadTrackedEntityInstances(dhis2, organisationUnits, casesProgramID)
   logDone()
-
-  const results = await R.pipe(
-    R.flatten,
-    R.tap(() => logAction('Processing outbreaks')),
-    addTrackedEntitiesToOutbreaks(outbreaks),
-    groupOutbreaks(outbreaks, groupingLevel),
-    R.values,
-    R.map(createOutbreakMapping(config, _)),
-    R.tap(() => logDone()),
-    R.tap(() => logAction('Creating outbreaks in Go.Data')),
-    _.postOutbreaks(godata)
-  )(trackedEntities)
-
-  logDone()
-  return results
+  
+  return processOutbreaks(godata, config, organisationUnits, groupingLevel, _)(trackedEntities)
 }
 
 // Load resources from dhis2 and godata
@@ -48,6 +32,26 @@ function loadResources (dhis2, config) {
     dhis2.getPrograms(),
     dhis2.getOrganisationUnitsFromParent(config.rootID)
   ])
+}
+
+function processOutbreaks (godata, config, organisationUnits, groupingLevel, _ = {
+  postOutbreaks, Date
+}) {
+  logAction('Initializing outbreaks')
+  const outbreaks = initializeOutbreaks(organisationUnits)
+  logDone()
+  
+  return promisePipeline(
+    R.tap(() => logAction('Processing outbreaks')),
+    addTrackedEntitiesToOutbreaks(outbreaks),
+    groupOutbreaks(outbreaks, groupingLevel),
+    R.values,
+    R.map(createOutbreakMapping(config, _)),
+    R.tap(() => logDone()),
+    R.tap(() => logAction('Creating outbreaks in Go.Data')),
+    _.postOutbreaks(godata),
+    R.tap(() => logDone())
+  )
 }
 
 // Selects the administrative level that is going to be used for
@@ -117,11 +121,10 @@ function groupOutbreaks (outbreaks, groupingLevel) {
 
 // Post outbreaks (one by one)
 function postOutbreaks (godata) {
-  return (outbreaks) => Promise.all(R.map(
-    outbreak => godata.createOutbreak(outbreak),
-    outbreaks
-  ))
+  return (outbreaks) => allPromises(
+    R.map(outbreak => godata.createOutbreak(outbreak), outbreaks)
+  )
 }
 
-module.exports = { createOutbreaks, loadResources, selectGroupingLevel }
+module.exports = { createOutbreaks, loadResources, processOutbreaks, selectGroupingLevel }
 

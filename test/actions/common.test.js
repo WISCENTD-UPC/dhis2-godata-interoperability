@@ -37,13 +37,9 @@ test('commonActions.loadTrackedEntityInstances', async () => {
     dhis2, organisationUnits, casesProgramID)
 
   expect(response).toStrictEqual([
-    [
-      { ...trackedEntities.ou1[0], events: events.te1 },
-      { ...trackedEntities.ou1[2], events: events.te2 }
-    ],
-    [
-      { ...trackedEntities.ou2[0], events: events.te3 }
-    ]
+    { ...trackedEntities.ou1[0], events: events.te1 },
+    { ...trackedEntities.ou1[2], events: events.te2 },
+    { ...trackedEntities.ou2[0], events: events.te3 }
   ])
   expect(getTrackedEntityInstances)
     .toHaveBeenNthCalledWith(1, organisationUnits[0].id, { program: casesProgramID })
