@@ -3,6 +3,7 @@ const R = require('ramda')
 const { v4: uuid } = require('uuid')
 
 const caseActions = require('../../actions/case')
+const { mapAttributeNamesToIDs } = require('../../util')
 const config = require('../../config')
 const constants = require('../../config/constants')
 
@@ -111,6 +112,56 @@ test('caseActions.loadResources', async () => {
 
   expect(response).toStrictEqual([ programs, programStages, dataElements, attributes, orgUnits, outbreaks])
   expect(getOrganisationUnitsFromParent).toHaveBeenCalledWith(rootID)
+})
+
+test('caseActions.processCases', async () => {
+  const activateOutbreakForUser = jest.fn()
+  const createOutbreakCase = jest.fn()
+  const login = jest.fn().mockReturnValue(resolve(user))
+  
+  const godata = {
+    activateOutbreakForUser,
+    createOutbreakCase,
+    login
+  }
+
+  const testConfig = mapAttributeNamesToIDs(attributes)(config)
+
+  await caseActions.processCases(
+    godata,
+    testConfig,
+    orgUnits,
+    programStages,
+    dataElements,
+    R.flatten(trackedEntities)
+  )(outbreaks)
+
+  expect(login).toHaveBeenCalledWith()
+  expect(login).toHaveBeenCalledTimes(1)
+  expect(activateOutbreakForUser).toHaveBeenCalledTimes(1)
+  expect(activateOutbreakForUser).toHaveBeenCalledWith(user.userId, outbreaks[0].id)
+  expect(createOutbreakCase).toHaveBeenCalledTimes(3)
+  expect(createOutbreakCase).toHaveBeenNthCalledWith(
+    1,
+    outbreaks[0].id,
+    case_(trackedEntities[0][0], {
+      classification: constants.caseClassification('confirmed')
+    })
+  )
+  expect(createOutbreakCase).toHaveBeenNthCalledWith(
+    2,
+    outbreaks[0].id,
+    case_(trackedEntities[1][0], {
+      classification: constants.caseClassification('suspect')
+    })
+  )
+  expect(createOutbreakCase).toHaveBeenNthCalledWith(
+    3,
+    outbreaks[0].id,
+    case_(trackedEntities[3][0], {
+      classification: constants.caseClassification('NOT_A_CASE_DISCARDED')
+    })
+  )
 })
 
 test('caseActions.findOutbreackForCase', () => {

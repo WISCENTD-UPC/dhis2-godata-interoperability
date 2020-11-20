@@ -37,6 +37,7 @@ function loadResources (dhis2, godata, config) {
   ])
 }
 
+// Transforms resources from dhis2 to send contacts to Go.Data
 function processContacts (dhis2, godata, config, user) {
   return promisePipeline(
     R.tap(() => logAction('Fetching contacts and transforming them')),
@@ -139,5 +140,8 @@ function sendContactsToGoData (godata, user) {
   ), allPromises)
 }
 
-module.exports = { copyContacts, processContacts }
+module.exports = {
+  copyContacts,
+  processContacts
+}
 

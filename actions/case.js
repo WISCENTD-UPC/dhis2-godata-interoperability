@@ -54,6 +54,7 @@ function loadResources (dhis2, godata, config) {
     godata.getOutbreaks()])
 }
 
+// Transform resources from dhis2 to create cases in Go.Data
 function processCases (
   godata,
   config,

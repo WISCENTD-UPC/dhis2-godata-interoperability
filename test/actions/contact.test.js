@@ -106,3 +106,21 @@ test('contactActions.copyContacts', async () => {
   ])
 })
 
+test.todo('contactActions.loadResources')
+
+test.todo('contactActions.processContacts')
+
+test.todo('contactActions.selectRelationshipSide')
+
+test.todo('contactActions.checkIfIsCase')
+
+test.todo('contactActions.addRelationshipsAndContacts')
+
+test.todo('contactActions.loadContactsForCase')
+
+test.todo('contactActions.loadContactsForOutbreak')
+
+test.todo('contactActions.loadContactsForOutbreaks')
+
+test.todo('contactActions.sendContactsToGoData')
+
