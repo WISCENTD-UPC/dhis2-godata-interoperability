@@ -126,5 +126,15 @@ function postOutbreaks (godata) {
   )
 }
 
-module.exports = { createOutbreaks, loadResources, processOutbreaks, selectGroupingLevel }
+module.exports = { 
+  createOutbreaks, 
+  loadResources,
+  processOutbreaks,
+  selectGroupingLevel,
+  initializeOutbreaks,
+  addTrackedEntitiesToOutbreaks,
+  findGroupingOutbreak,
+  groupOutbreaks,
+  postOutbreaks
+}
 

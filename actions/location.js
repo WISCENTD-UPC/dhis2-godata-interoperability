@@ -73,5 +73,11 @@ function sendLocationsToGoData (config, organisationUnits) {
   )(organisationUnits)
 }
 
-module.exports = { copyOrganisationUnits }
+module.exports = { 
+  copyOrganisationUnits,
+  adaptLocationToHierarchy,
+  addLocationToParent,
+  createLocationHierarchy,
+  sendLocationsToGoData
+}
 

@@ -140,8 +140,16 @@ function sendContactsToGoData (godata, user) {
   ), allPromises)
 }
 
-module.exports = {
+module.exports = { 
   copyContacts,
-  processContacts
+  loadResources,
+  processContacts,
+  selectRelationshipSide,
+  checkIfIsCase,
+  addRelationshipsAndContacts,
+  loadContactsForCase,
+  loadContactsForOutbreak,
+  loadContactsForOutbreaks,
+  sendContactsToGoData
 }
 

@@ -1,12 +1,14 @@
 
 const R = require('ramda')
 const { v4: uuid } = require('uuid')
+const { createUUIDs } = require('../test-util/util')
+const uuids = createUUIDs()
 
 const outbreakActions = require('../../actions/outbreak')
 const config = require('../../config')
 const constants = require('../../config/constants')
 
-const { programs, orgUnits, trackedEntities } = require('../test-util/mocks')
+const { programs, orgUnits, trackedEntities, outbreaks } = require('../test-util/mocks')
 
 const defaultDate = '2020-09-01'
 const resolve = Promise.resolve.bind(Promise)
@@ -118,6 +120,114 @@ test('outbreakActions.selectGroupingLevel expand mode', selectGroupingLevelTest(
   expectedResult: 2
 }))
 
+test('outbreakActions.initializeOutbreaks', () => {
+  const id = uuid()
+  const organisationUnits = [{
+    id: id
+  }]
+  const response = outbreakActions.initializeOutbreaks(organisationUnits)
+  const expected = R.assoc(id, {orgUnit: organisationUnits[0], trackedEntities: []}, [])
+  expect(response).toStrictEqual(expected)
+})
+
+test('outbreakActions.addTrackedEntitiesToOutbreaks', () => {
+  const outbreakID = uuid()
+  const orgUnitID = uuid()
+  const outbreaks = [{
+    id: outbreakID,
+    locationIds: [ orgUnitID ]
+  }]
+  const trackedEntities = [{
+    orgUnit: orgUnitID
+  }]
+  const response = outbreakActions.addTrackedEntitiesToOutbreaks(outbreaks)(trackedEntities)
+  const expected = R.assoc('0', outbreaks[0], R.assoc(orgUnitID, {trackedEntities: trackedEntities}, []))
+
+  expect(response).toStrictEqual(expected)
+})
+
+test('outbreakActions.findGroupingOutbreak no parent.id', findGroupingOutbreakTest({
+  outbreaks: [
+    { id: uuids('1'), orgUnit: { level: 1 } },
+    { id: uuids('2'), orgUnit: { level: 2 } }
+  ],
+  groupingLevel: 0,
+  outbreak: { id: uuids('1'), orgUnit: { level: 1 } }
+}))
+
+test('outbreakActions.findGroupingOutbreak looking for parent.id', findGroupingOutbreakTest({
+  outbreaks: [
+    {
+      id: uuids('1'),
+      orgUnit: {
+        level: 0,
+        parent: undefined
+      }
+    },
+    {
+      id: uuids('2'),
+      orgUnit: {
+        level: 2,
+        parent: { id: uuids('1') }
+      }
+    }
+  ],
+  groupingLevel: 0,
+  outbreak: {
+    id: uuids('2'),
+    orgUnit: {
+      level: 2,
+      parent: { id: uuids('1') }
+    }
+  }
+}))
+
+test('outbreakActions.groupOutbreaks not related', groupOutbreaksTest({
+  outbreaks: [{
+    orgUnit: {
+      id: uuid(),
+      level: 0,
+      parent: undefined
+    },
+    trackedEntities: []
+  }],
+  expected: (outbreaks) => R.indexBy(R.path(['orgUnit', 'id']), outbreaks)
+}))
+
+test('outbreakActions.groupOutbreaks related', groupOutbreaksTest({
+  outbreaks: [
+    {
+      orgUnit: {
+        id: uuids('1'),
+        level: 0,
+        parent: undefined
+      },
+      trackedEntities: []
+    },
+    {
+      orgUnit: {
+        id: uuids('2'),
+        level: 2,
+        parent: { id: uuids('1') }
+      },
+      trackedEntities: []
+    }
+  ],
+  expected: (outbreaks) => { 
+    const testOutbreaks =  [ R.assoc('mergedLocationsIDs', [ uuids('2') ], outbreaks[0]) ]
+    return R.indexBy(R.path(['orgUnit', 'id']), testOutbreaks)
+  }
+}))
+
+test('outbreakActions.postOutbreaks', async () => {
+  const createOutbreak = jest.fn()
+  const godata = { createOutbreak }
+
+  const response = await outbreakActions.postOutbreaks(godata)(outbreaks)
+  expect(createOutbreak).toHaveBeenCalledTimes(1)
+  expect(createOutbreak).toHaveBeenCalledWith(outbreaks[0])
+})
+
 function outbreakCreationTest ({ testConfig, expected }) {
   return async () => {
     const getPrograms = jest.fn().mockReturnValue(resolve(programs))
@@ -153,6 +263,24 @@ function selectGroupingLevelTest ({ mode, administrativeLevel = null, expectedRe
     const result = outbreakActions.selectGroupingLevel(orgUnits, testConfig)
 
     expect(result).toBe(expectedResult)
+  }
+}
+
+function findGroupingOutbreakTest ({ outbreaks, groupingLevel, outbreak }) {
+  return () => {
+    const outbreaksTest = R.indexBy(R.prop('id'), outbreaks)
+    const expectedResult = outbreaks[0]
+    const response = outbreakActions.findGroupingOutbreak(outbreaksTest, groupingLevel, outbreak)
+    expect(response).toStrictEqual(expectedResult)
+  }
+}
+
+function groupOutbreaksTest ({ outbreaks, expected }) {
+  return () => {
+  const testOutbreaks = R.indexBy(R.path(['orgUnit', 'id']), outbreaks)
+  const groupingLevel = 0
+  const f = outbreakActions.groupOutbreaks(testOutbreaks, groupingLevel)
+  expect(f(testOutbreaks)).toStrictEqual(expected(outbreaks))
   }
 }
 
