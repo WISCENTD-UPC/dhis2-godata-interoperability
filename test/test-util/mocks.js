@@ -6,12 +6,32 @@ const { createUUIDs } = require('./util')
 const uuids = createUUIDs()
 const date = () => new Date().toString()
 
+const optionSets = [
+  { 
+    id: uuids('ops-0'),
+    displayName: 'Vaccine types',
+    options: [
+      { id: uuids('op-0') },
+      { id: uuids('op-1') }
+    ]
+  }
+]
+
+const options = [
+  { id: uuids('op-0'), displayName: 'Malaria' },
+  { id: uuids('op-1'), displayName: 'Colera' }
+]
+
 const orgUnits = [
   {
     id: uuids('ou-0'),
     parent: undefined,
     name: 'Trainingland',
     level: 1,
+    geometry: {
+      type: 'Point',
+      coordinates: [ 164.7706, -67.6056 ]
+    },
     children: [
       { id: uuids('ou-1') },
       { id: uuids('ou-2') }
@@ -22,6 +42,10 @@ const orgUnits = [
     parent: { id: uuids('ou-0') },
     name: 'Animal Region',
     level: 2,
+    geometry: {
+      type: 'Point',
+      coordinates: [ 164.7706, -67.6056 ]
+    },
     children: [
       { id: uuids('ou-3') }
     ]
@@ -31,6 +55,10 @@ const orgUnits = [
     parent: { id: uuids('ou-0') },
     name: 'Food Region',
     level: 2,
+    geometry: {
+      type: 'Point',
+      coordinates: [ 164.7706, -67.6056 ]
+    },
     children: []
   },
   {
@@ -38,6 +66,10 @@ const orgUnits = [
     parent: { id: uuids('ou-1') },
     name: 'Bird Region',
     level: 3,
+    geometry: {
+      type: 'Point',
+      coordinates: [ 164.7706, -67.6056 ]
+    },
     children: []
   }
 ]
@@ -106,10 +138,8 @@ const trackedEntities = [
       orgUnit: uuids('ou-0'),
       created: '2020-08-01',
       events: [
-        {
-          programStage: uuids('ps-8'),
-          dataValues: []
-        },
+        { programStage: uuids('ps-7'), dataValues: [] },
+        { programStage: uuids('ps-8'), dataValues: [] },
         {
           programStage: uuids('ps-9'),
           dataValues: [
@@ -131,12 +161,7 @@ const trackedEntities = [
       trackedEntityInstance: uuids('te-1'),
       orgUnit: uuids('ou-1'),
       created: '2020-08-02',
-      events: [
-        {
-          programStage: uuids('ps-8'),
-          dataValues: []
-        }
-      ],
+      events: [],
       attributes: [
         { attribute: uuids('a-9'), value: 'Zanele' },
         { attribute: uuids('a-16'), value: 'Thabede' },
@@ -235,6 +260,8 @@ const user = {
 }
 
 module.exports = {
+  optionSets,
+  options,
   orgUnits: R.map(R.pipe(
     R.assoc('lastUpdated', date()),
     R.assoc('created', date())

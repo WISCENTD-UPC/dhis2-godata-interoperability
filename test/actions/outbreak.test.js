@@ -232,7 +232,7 @@ function outbreakCreationTest ({ testConfig, expected }) {
   return async () => {
     const getPrograms = jest.fn().mockReturnValue(resolve(programs))
     const getOrganisationUnitsFromParent = jest.fn().mockReturnValue(resolve(orgUnits))
-    const loadTrackedEntityInstances = jest.fn().mockReturnValue(resolve(trackedEntities))
+    const loadTrackedEntityInstances = jest.fn().mockReturnValue(resolve(R.flatten(trackedEntities)))
     const postOutbreaks = () => R.identity
     const date = () => defaultDate
     const dhis2 = {

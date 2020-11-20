@@ -5,16 +5,26 @@ module.exports = {
   dhis2ContactsProgram: 'COVID-19 Contact Registration & Follow-up',
   dhis2ContactsRelationship: 'Has Been in Contact with',
   dhis2KeyProgramStages: {
+    clinicalExamination: 'Stage 1 - Clinical examination and diagnosis',
     labRequest: 'Stage 2 - Lab Request',
     labResults: 'Stage 3 - Lab Results',
+    healthOutcome: 'Stage 4 - Health Outcome',
     symptoms: 'Symptoms'
   },
   dhis2KeyAttributes: {
+    caseID: 'System Generated Case ID',
     firstName: 'First Name',
     surname: 'Surname',
     sex: 'Sex',
     dateOfBirth: 'Date of birth',
-    address: 'Home Address'
+    address: 'Home Address',
+    passport: 'Passport Number'
+  },
+  dhis2KeyDataElements: {
+    pregnancy: 'Pregnancy',
+    dateOfOnset: 'Date of symptoms onset',
+    healthOutcome: 'Health outcome',
+    typeOfVaccine: 'Type of vaccine'
   },
   dhis2DataElementsChecks: {
     confirmedTest: [
@@ -33,7 +43,6 @@ module.exports = {
     noDaysNotSeen: 1,
     noLessContacts: 1,
     noDaysNewContacts: 1,
-    reportingGeographicalLevelId: 0,
     caseIdMask: "CASE-YYYY-9999",
     contactIdMask: "CONTACT-YYYY-9999",
     longPeriodsBetweenCaseOnset: 1,
@@ -41,6 +50,11 @@ module.exports = {
     isDateOfOnsetRequired: true,
     generateFollowUpsOverwriteExisting: false,
     generateFollowUpsKeepTeamAssignment: true
+  },
+  metadata: {
+    optionSets: {
+      Vaccine: 'Vaccine types'
+    }
   }
 }
 

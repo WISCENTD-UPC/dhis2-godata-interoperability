@@ -14,7 +14,7 @@ const prop = R.curry((prop, i) => R.path([i, prop], orgUnits))
 const id = prop('id')
 const parentLocationId = R.pipe(prop('parent'), R.prop('id'))
 const name = prop('name')
-const GEOLOCATION = { lat: 0, lng: 0 }
+const geoLocation = i => R.pipe(R.path([i, 'geometry', 'coordinates']), R.zipObj(['lng', 'lat']))(orgUnits)
 const geographicalLevelId = R.pipe(prop('level'), constants.geographicalLevelId)
 const updatedAt = prop('lastUpdated')
 const createdAt = prop('created')
@@ -22,7 +22,7 @@ const location = i => ({
   id: id(i),
   parentLocationId: parentLocationId(i),
   name: name(i),
-  geoLocation: { lat: 0, lng: 0 },
+  geoLocation: geoLocation(i),
   geographicalLevelId: geographicalLevelId(i),
   updatedAt: updatedAt(i),
   createdAt: createdAt(i),
