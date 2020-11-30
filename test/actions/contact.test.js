@@ -58,57 +58,36 @@ test('contactActions.copyContacts', async () => {
   await contactActions.copyContacts(dhis2, godata, testConfig, {})()
   
   expect(getOutbreakCases).toHaveBeenCalledWith(outbreaks[0].id)
-  expect(getTrackedEntityRelationships).toHaveBeenNthCalledWith(1, outbreakCases[0].id)
-  expect(getTrackedEntityRelationships).toHaveBeenNthCalledWith(2, outbreakCases[1].id)
-  expect(getTrackedEntityRelationships).toHaveBeenNthCalledWith(3, outbreakCases[2].id)
-  expect(activateOutbreakForUser).toHaveBeenCalledWith(user.userId, outbreaks[0].id)
-  expect(createCaseRelationships).toHaveBeenCalledWith(outbreaks[0].id, outbreakCases[0].id, [
-    {
-      persons: [{
-        id: trackedEntities[1][0].trackedEntityInstance,
-        source: false,
-        target: false
-      }],
-      contactDate: relationships[0][0].created,
-      contactDateEstimated: false,
-      certaintyLevelId: constants.certaintyLevel(),
-      people: []
-    }
-  ])
+  expect(getTrackedEntityRelationships)
+    .toHaveBeenNthCalledWith(1, outbreakCases[0].id)
+  expect(getTrackedEntityRelationships)
+    .toHaveBeenNthCalledWith(2, outbreakCases[1].id)
+  expect(getTrackedEntityRelationships)
+    .toHaveBeenNthCalledWith(3, outbreakCases[2].id)
+  expect(activateOutbreakForUser)
+    .toHaveBeenCalledWith(user.userId, outbreaks[0].id)
+  expect(createCaseRelationships).toHaveBeenCalledWith(
+    outbreaks[0].id,
+    outbreakCases[0].id,
+    [
+      contact_(
+        R.assoc(
+          'relationship',
+          relationships[0][0],
+          trackedEntities[1][0])
+      ).relationship
+    ])
   const contact = relationships[1][0].from.trackedEntityInstance
-  expect(createCaseContacts).toHaveBeenCalledWith(outbreaks[0].id, outbreakCases[1].id, [
-    {
-      contact: {
-        id: contact.trackedEntityInstance,
-        firstName: contact.attributes[0].value,
-        lastName: contact.attributes[1].value,
-        gender: constants.gender(contact.attributes[2].value),
-        ocupation: constants.ocupation(),
-        dateOfReporting: contact.created,
-        riskLevel: constants.riskLevel(),
-        vaccinesReceived: null,
-        documents: [],
-        addresses: [{
-          typeID: constants.addressTypeID(),
-          locationId: contact.orgUnit,
-          address: contact.attributes[3].value
-        }],
-        dateOfBirth: contact.attributes[4].value,
-        pregnancyStatus: null
-      },
-      relationship: {
-        persons: [{
-          id: contact.trackedEntityInstance,
-          source: false,
-          target: false
-        }],
-        contactDate: relationships[1][0].created,
-        contactDateEstimated: false,
-        certaintyLevelId: constants.certaintyLevel(),
-        people: []
-      }
-    }
-  ])
+  expect(createCaseContacts).toHaveBeenCalledWith(
+    outbreaks[0].id,
+    outbreakCases[1].id,
+    [
+      contact_(
+        R.assoc(
+          'relationship',
+          relationships[1][0],
+          contact))
+    ])
 })
 
 test('contactActions.loadResources', async () => {
@@ -129,6 +108,62 @@ test('contactActions.loadResources', async () => {
 
   const response = await contactActions.loadResources(dhis2, godata, testConfig)
   expect(response).toStrictEqual([ relationshipTypes, attributes, outbreaks, user])
+})
+
+test('contactActions.processContacts', async () => {
+  const getTrackedEntityRelationships = mockPromises(relationships)
+  const getOutbreakCases = mockPromise(outbreakCases)
+  const activateOutbreakForUser = mockPromise()
+  const createCaseContacts = jest.fn()
+  const createCaseRelationships = jest.fn()
+
+  const dhis2 = {
+    getTrackedEntityRelationships
+  }
+  const godata = {
+    getOutbreakCases,
+    activateOutbreakForUser,
+    createCaseContacts,
+    createCaseRelationships
+  }
+  const testConfig = R.pipe(
+    R.clone,
+    mapAttributeNamesToIDs(attributes)
+  )(config)
+
+  await contactActions.processContacts(dhis2, godata, testConfig, user)(outbreaks)
+  
+  expect(getOutbreakCases).toHaveBeenCalledWith(outbreaks[0].id)
+  expect(getTrackedEntityRelationships)
+    .toHaveBeenNthCalledWith(1, outbreakCases[0].id)
+  expect(getTrackedEntityRelationships)
+    .toHaveBeenNthCalledWith(2, outbreakCases[1].id)
+  expect(getTrackedEntityRelationships)
+    .toHaveBeenNthCalledWith(3, outbreakCases[2].id)
+  expect(activateOutbreakForUser)
+    .toHaveBeenCalledWith(user.userId, outbreaks[0].id)
+  expect(createCaseRelationships).toHaveBeenCalledWith(
+    outbreaks[0].id,
+    outbreakCases[0].id,
+    [
+      contact_(
+        R.assoc(
+          'relationship',
+          relationships[0][0],
+          trackedEntities[1][0])
+      ).relationship
+    ])
+  const contact = relationships[1][0].from.trackedEntityInstance
+  expect(createCaseContacts).toHaveBeenCalledWith(
+    outbreaks[0].id,
+    outbreakCases[1].id,
+    [
+      contact_(
+        R.assoc(
+          'relationship',
+          relationships[1][0],
+          contact))
+    ])
 })
 
 test('contactActions.selectRelationshipSide from case', selectRelationshipSideTest({
@@ -384,14 +419,15 @@ function contact_ (contact) {
       ocupation: constants.ocupation(),
       dateOfReporting: contact.created,
       riskLevel: constants.riskLevel(),
-      vaccinesReceived: [],
+      vaccinesReceived: null,
       documents: [],
       addresses: [{
-        typeID: constants.addressTypeID,
+        typeID: constants.addressTypeID(),
         locationId: contact.orgUnit,
         address: contact.attributes[3].value
       }],
-      dateOfBirth: contact.attributes[4].value
+      dateOfBirth: contact.attributes[4].value,
+      pregnancyStatus: null
     },
     relationship: relationship_(contact)
   }

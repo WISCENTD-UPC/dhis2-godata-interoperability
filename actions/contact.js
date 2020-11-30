@@ -18,8 +18,13 @@ const { trackedEntityToRelationship } = require('../mappings/relationship')
 // Copy dhis2 contacts and create additional persons and their relationships in Go.Data
 const copyContacts = (dhis2, godata, config) => async () => {
   logAction('Fetching resources')
-  const [ relationships, attributes, outbreaks, user ] = await loadResources(dhis2, godata, config)
+  const [
+    relationships, // TODO -> this is not in use. It should filter relationship types
+    attributes,
+    outbreaks,
+    user ] = await loadResources(dhis2, godata, config)
   logDone()
+
   logAction('Reading configuration')
   config = mapAttributeNamesToIDs(attributes)(config)
   logDone()
