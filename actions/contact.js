@@ -1,22 +1,22 @@
 
-const util = require('util')
+import util from 'util'
 
-const R = require('ramda')
+import * as R from 'ramda'
 
-const { loadTrackedEntityInstances } = require('./common')
-const {
+import { loadTrackedEntityInstances } from './common'
+import {
   getIDFromDisplayName,
   mapAttributeNamesToIDs,
   completeSchema,
   allPromises,
   promisePipeline,
   logAction,
-  logDone } = require('../util')
-const { trackedEntityToContact } = require('../mappings/case')
-const { trackedEntityToRelationship } = require('../mappings/relationship')
+  logDone } from '../util'
+import { trackedEntityToContact } from '../mappings/case'
+import { trackedEntityToRelationship } from '../mappings/relationship'
 
 // Copy dhis2 contacts and create additional persons and their relationships in Go.Data
-const copyContacts = (dhis2, godata, config) => async () => {
+export const copyContacts = (dhis2, godata, config) => async () => {
   logAction('Fetching resources')
   const [
     relationships, // TODO -> this is not in use. It should filter relationship types
@@ -33,7 +33,7 @@ const copyContacts = (dhis2, godata, config) => async () => {
 }
 
 // Load resources from DHIS2 and Go.Data
-function loadResources (dhis2, godata, config) {
+export function loadResources (dhis2, godata, config) {
   return allPromises([
     dhis2.getRelationshipTypes(),
     dhis2.getTrackedEntitiesAttributes(),
@@ -43,7 +43,7 @@ function loadResources (dhis2, godata, config) {
 }
 
 // Transforms resources from dhis2 to send contacts to Go.Data
-function processContacts (dhis2, godata, config, user) {
+export function processContacts (dhis2, godata, config, user) {
   return promisePipeline(
     R.tap(() => logAction('Fetching contacts and transforming them')),
     loadContactsForOutbreaks(dhis2, godata, config),
@@ -55,7 +55,7 @@ function processContacts (dhis2, godata, config, user) {
 }
 
 // Selects the side of the relationship that represents the contact
-function selectRelationshipSide (caseID) {
+export function selectRelationshipSide (caseID) {
   return (relationship) => {
     const fromID = R.path(['from', 'trackedEntityInstance', 'trackedEntityInstance'], relationship)
     const selector = fromID !== caseID ? 'from' : 'to'
@@ -68,12 +68,12 @@ function selectRelationshipSide (caseID) {
 }
 
 // Check if the contact is already a case
-function checkIfIsCase (casesIDs) {
+export function checkIfIsCase (casesIDs) {
   return (contact) => R.assoc('isCase', R.includes(contact.trackedEntityInstance, casesIDs), contact)
 }
 
 // Groups relationship and contacts of a case
-function addRelationshipsAndContacts (config) {
+export function addRelationshipsAndContacts (config) {
   return R.reduce((acc, contact) => {
     const { isCase } = contact
     const prop = isCase ? 'relationships' : 'contacts'
@@ -89,7 +89,7 @@ function addRelationshipsAndContacts (config) {
 }
 
 // Loads contacts and relationships for a case
-async function loadContactsForCase (dhis2, config, casesIDs, caseID) {
+export async function loadContactsForCase (dhis2, config, casesIDs, caseID) {
   const contacts = await dhis2.getTrackedEntityRelationships(caseID)
   
   return R.pipe(
@@ -100,7 +100,7 @@ async function loadContactsForCase (dhis2, config, casesIDs, caseID) {
 }
 
 // Load relationships and contacts for an entire outbreaks
-function loadContactsForOutbreak (dhis2, godata, config) {
+export function loadContactsForOutbreak (dhis2, godata, config) {
   return R.map(async (outbreakID) => {
     const cases = await godata.getOutbreakCases(outbreakID)
     const casesIDs = R.pluck('id', cases)
@@ -116,7 +116,7 @@ function loadContactsForOutbreak (dhis2, godata, config) {
 }
 
 // Load relationships and contacts for all the outbreaks
-function loadContactsForOutbreaks (dhis2, godata, config) {
+export function loadContactsForOutbreaks (dhis2, godata, config) {
   return R.pipe(
     R.pluck('id'),
     loadContactsForOutbreak(dhis2, godata, config),
@@ -125,7 +125,7 @@ function loadContactsForOutbreaks (dhis2, godata, config) {
 }
 
 // Push relationships and contacts to Go.Data
-function sendContactsToGoData (godata, user) {
+export function sendContactsToGoData (godata, user) {
   return R.pipe(R.map(
     async (outbreak) => {
       const cases = outbreak.cases
@@ -143,18 +143,5 @@ function sendContactsToGoData (godata, user) {
       )
     }
   ), allPromises)
-}
-
-module.exports = { 
-  copyContacts,
-  loadResources,
-  processContacts,
-  selectRelationshipSide,
-  checkIfIsCase,
-  addRelationshipsAndContacts,
-  loadContactsForCase,
-  loadContactsForOutbreak,
-  loadContactsForOutbreaks,
-  sendContactsToGoData
 }
 

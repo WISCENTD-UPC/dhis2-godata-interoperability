@@ -1,32 +1,32 @@
 
-const R = require('ramda')
+import * as R from 'ramda'
 
-const { completeSchema } = require('../util')
-const { geographicalLevelId } = require('../config/constants')
+import { completeSchema } from '../util'
+import { geographicalLevelId } from '../config/constants'
 
 // SELECTORS
-const locationNameSelector = R.prop('name')
+export const locationNameSelector = R.prop('name')
 // const locationSynonymsSelector = R.pipe(R.prop('shortName'), _ => [ _ ]) // if name == shortName, don't add synonym
-const locationParentIDSelector = R.path(['parent', 'id'])
-const locationIDSelector = R.prop('id')
-const locationPointSelector = R.pipe(R.prop('coordinates'), R.zipObj(['lng', 'lat']))
-const locationMultiPolygonSelector = R.pipe(R.path(['coordinates', 0, 0]), R.transpose, R.map(R.mean), R.zipObj(['lng', 'lat']))
-const locationGeoLocationSelectors = {
+export const locationParentIDSelector = R.path(['parent', 'id'])
+export const locationIDSelector = R.prop('id')
+export const locationPointSelector = R.pipe(R.prop('coordinates'), R.zipObj(['lng', 'lat']))
+export const locationMultiPolygonSelector = R.pipe(R.path(['coordinates', 0, 0]), R.transpose, R.map(R.mean), R.zipObj(['lng', 'lat']))
+export const locationGeoLocationSelectors = {
   Point: locationPointSelector,
   MultiPolygon: locationMultiPolygonSelector
 }
-const locationGeoLocationSelector = R.pipe(
+export const locationGeoLocationSelector = R.pipe(
   R.ifElse(
     R.has('geometry'),
     ({ geometry }) => locationGeoLocationSelectors[geometry.type](geometry),
     _ => null)
 )
-const locationGeographicalLevelIDSelector = R.pipe(R.prop('level'), geographicalLevelId)
-const locationUpdatedAtSelector = R.prop('lastUpdated')
-const locationCreatedAtSelector = R.prop('created')
+export const locationGeographicalLevelIDSelector = R.pipe(R.prop('level'), geographicalLevelId)
+export const locationUpdatedAtSelector = R.prop('lastUpdated')
+export const locationCreatedAtSelector = R.prop('created')
 
 // MAPPINGS
-const organisationUnitToLocation = completeSchema({
+export const organisationUnitToLocation = completeSchema({
   id: locationIDSelector,
   parentLocationId: locationParentIDSelector,
   name: locationNameSelector,
@@ -42,6 +42,4 @@ const organisationUnitToLocation = completeSchema({
   synonyms: _ => [],
   children: _ => []
 })
-
-module.exports = { organisationUnitToLocation }
 

@@ -1,14 +1,14 @@
 
-const R = require('ramda')
-const { v4: uuid } = require('uuid')
-const { createUUIDs } = require('../test-util/util')
+import * as R from 'ramda'
+import { v4 as uuid } from 'uuid'
+import { createUUIDs } from '../test-util/util'
 const uuids = createUUIDs()
 
-const outbreakActions = require('../../actions/outbreak')
-const config = require('../../config')
-const constants = require('../../config/constants')
+import outbreakActions from '../../actions/outbreak'
+import config from '../../config'
+import constants from '../../config/constants'
 
-const { programs, orgUnits, trackedEntities, outbreaks } = require('../test-util/mocks')
+import { programs, orgUnits, trackedEntities, outbreaks } from '../test-util/mocks'
 
 const defaultDate = '2020-09-01'
 const resolve = Promise.resolve.bind(Promise)

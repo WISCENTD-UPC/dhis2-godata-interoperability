@@ -1,10 +1,10 @@
 
-const R = require('ramda')
-const { v4: uuid } = require('uuid')
+import * as R from 'ramda'
+import { v4 as uuid } from 'uuid'
 
-const outbreakMappings = require('../../mappings/outbreak')
-const config = require('../../config')
-const constants = require('../../config/constants')
+import outbreakMappings from '../../mappings/outbreak'
+import config from '../../config'
+import constants from '../../config/constants'
 
 test('outbreakMappings.createOutbreakMapping', () => {
   const model = {

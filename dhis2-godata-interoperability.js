@@ -1,12 +1,12 @@
 
-const DHIS2API = require('dhis2-api-wrapper')
-const GoDataAPI = require('godata-api-wrapper')
-const R = require('ramda')
-const { Command } = require('commander')
+import DHIS2API from 'dhis2-api-wrapper'
+import GoDataAPI from 'godata-api-wrapper'
+import * as R from 'ramda'
+import { Command } from 'commander'
 
-const package = require('./package.json')
-const config = require('./config')
-const {
+import package from './package.json'
+import config from './config'
+import {
   copyMetadata,
   copyOrganisationUnits,
   createOutbreaks,
@@ -15,7 +15,7 @@ const {
   fullTransfer,
   queryDHIS2,
   queryGoData
-} = require('./actions')
+} from './actions'
 
 const dhis2 = new DHIS2API(config.DHIS2APIConfig)
 const godata = new GoDataAPI(config.GoDataAPIConfig)

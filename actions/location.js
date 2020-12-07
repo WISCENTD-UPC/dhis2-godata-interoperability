@@ -1,15 +1,15 @@
 
-const fs = require('fs')
+import fs from 'fs'
 
-const R = require('ramda')
+import * as R 'ramda'
 
-const { organisationUnitToLocation } = require('../mappings/location')
-const { logAction, logDone } = require('../util')
+import { organisationUnitToLocation } from '../mappings/location'
+import { logAction, logDone } from '../util'
 
 const stringify = JSON.stringify.bind(JSON)
 
 // Copy organisation units and exports the result hierarchically in a file
-const copyOrganisationUnits = (dhis2, godata, config, _ = { fs, stringify }) =>
+export const copyOrganisationUnits = (dhis2, godata, config, _ = { fs, stringify }) =>
   async (outputFile) => {
   logAction('Fetching organisation units')
   const organisationUnits = await dhis2.getOrganisationUnitsFromParent(config.rootID)
@@ -25,7 +25,7 @@ const copyOrganisationUnits = (dhis2, godata, config, _ = { fs, stringify }) =>
 }
 
 // Recursively separates a location in two parts: the location itself and its children
-function adaptLocationToHierarchy (location) {
+export function adaptLocationToHierarchy (location) {
   return {
     location: R.dissoc('children', location),
     children: R.map(adaptLocationToHierarchy, location.children)
@@ -33,7 +33,7 @@ function adaptLocationToHierarchy (location) {
 }
 
 // Adds a location to its parent children array
-function addLocationToParent (indexedLocations, location) {
+export function addLocationToParent (indexedLocations, location) {
   const parentID = location.parentLocationId
   return parentID != null
     ? R.over(
@@ -46,7 +46,7 @@ function addLocationToParent (indexedLocations, location) {
 // Given the list of locations (already transformed from organisation units)
 // creates a hierarchy (parent-children relationships) and returns the location
 // with administrative level 0
-function createLocationHierarchy (config) {
+export function createLocationHierarchy (config) {
   return (locations) => {
     if (locations.length === 0) return {}
 
@@ -65,19 +65,11 @@ function createLocationHierarchy (config) {
 // Maps organisation unit to location, creates the hierarchy and returns and array
 // TODO: once godata supports pressisting ids through the API, push the result instead of
 // creating a file
-function sendLocationsToGoData (config, organisationUnits) {
+export function sendLocationsToGoData (config, organisationUnits) {
   return R.pipe(
     R.map(organisationUnitToLocation),
     createLocationHierarchy(config),
     Array
   )(organisationUnits)
-}
-
-module.exports = { 
-  copyOrganisationUnits,
-  adaptLocationToHierarchy,
-  addLocationToParent,
-  createLocationHierarchy,
-  sendLocationsToGoData
 }
 

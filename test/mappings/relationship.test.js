@@ -1,9 +1,9 @@
 
-const { v4: uuid } = require('uuid')
+import { v4 as uuid } from 'uuid'
 
-const relationshipMappings = require('../../mappings/relationship')
-const config = require('../../config')
-const constants = require('../../config/constants')
+import relationshipMappings from '../../mappings/relationship'
+import config from '../../config'
+import constants from '../../config/constants'
 
 const model = {
   trackedEntityInstance: uuid(),

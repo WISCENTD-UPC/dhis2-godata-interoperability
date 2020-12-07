@@ -1,13 +1,13 @@
 
-const R = require('ramda')
-const { v4: uuid } = require('uuid')
+import * as R from 'ramda'
+import { v4 as uuid } from 'uuid'
 
-const caseActions = require('../../actions/case')
-const { mapAttributeNamesToIDs } = require('../../util')
-const config = require('../../config')
-const constants = require('../../config/constants')
+import caseActions from '../../actions/case'
+import { mapAttributeNamesToIDs } from '../../util'
+import config from '../../config'
+import constants from '../../config/constants'
 
-const {
+import {
   orgUnits,
   programs,
   programStages,
@@ -16,8 +16,8 @@ const {
   trackedEntities,
   outbreaks,
   user
-} = require('../test-util/mocks')
-const { createUUIDs } = require('../test-util/util')
+} from '../test-util/mocks'
+import { createUUIDs } from '../test-util/util'
 
 const uuids = createUUIDs()
 const resolve = Promise.resolve.bind(Promise)

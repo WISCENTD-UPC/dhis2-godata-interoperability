@@ -1,45 +1,45 @@
 
-const R = require('ramda')
+import * as R from 'ramda'
 
-const { completeSchema } = require('../util')
-const constants = require('../config/constants')
+import { completeSchema } from '../util'
+import constants from '../config/constants'
 
 // SELECTORS
-const caseOutbreakSelector = R.prop('outbreak')
-const caseIDSelector = R.prop('trackedEntityInstance')
-const caseLocationIDSelector = R.prop('orgUnit')
-const caseDateOfReportingSelector = R.prop('created')
-const caseClassificationSelector = R.pipe(
+export const caseOutbreakSelector = R.prop('outbreak')
+export const caseIDSelector = R.prop('trackedEntityInstance')
+export const caseLocationIDSelector = R.prop('orgUnit')
+export const caseDateOfReportingSelector = R.prop('created')
+export const caseClassificationSelector = R.pipe(
   R.prop('caseClassification'),
   constants.caseClassification
 )
-const caseAttributeSelector = (attributeID) => R.pipe(
+export const caseAttributeSelector = (attributeID) => R.pipe(
   R.prop('attributes'),
   R.find(R.propEq('attribute', attributeID)),
   R.prop('value'))
 
-const dataElementSelector = R.curry((programStage, dataElementName) => R.pipe(
+export const dataElementSelector = R.curry((programStage, dataElementName) => R.pipe(
   R.prop(programStage),
   R.defaultTo([]),
   R.find(R.propEq('displayName', dataElementName)),
   R.prop('value'),
   R.defaultTo(null)
 ))
-const documentSelector = R.curry((documentName, attributeID) => R.pipe(
+export const documentSelector = R.curry((documentName, attributeID) => R.pipe(
   caseAttributeSelector(attributeID),
   doc => doc != null ? ({
     type: constants.documentTypes[documentName](),
     value: doc
   }) : null
 ))
-const passportSelector = documentSelector('passport')
-const documentsSelector = (config) => R.pipe(
+export const passportSelector = documentSelector('passport')
+export const documentsSelector = (config) => R.pipe(
   completeSchema([
     passportSelector(config.dhis2KeyAttributes.passportID)
   ]),
   R.filter(_ => _ != null)
 )
-const vaccinesSelector = (dataElementID) => R.pipe(
+export const vaccinesSelector = (dataElementID) => R.pipe(
   dataElementSelector('clinicalExamination', dataElementID),
   R.ifElse(
     vaccineType => vaccineType != null,
@@ -55,7 +55,7 @@ const vaccinesSelector = (dataElementID) => R.pipe(
 )
 
 // MAPPINGS
-const trackedEntityToCase = (config) => completeSchema({
+export const trackedEntityToCase = (config) => completeSchema({
   outbreak: caseOutbreakSelector,
   id: caseIDSelector,
   //visualId: caseAttributeSelector(config.dhis2KeyAttributes.caseID),
@@ -88,7 +88,7 @@ const trackedEntityToCase = (config) => completeSchema({
     config.dhis2KeyDataElements.healthOutcome)
 })
 
-const trackedEntityToContact = (config) => completeSchema({
+export const trackedEntityToContact = (config) => completeSchema({
   id: caseIDSelector,
   //visualId: caseAttributeSelector(config.dhis2KeyAttributes.caseID),
   firstName: caseAttributeSelector(config.dhis2KeyAttributes.firstName),
@@ -110,6 +110,4 @@ const trackedEntityToContact = (config) => completeSchema({
     constants.pregnancyStatus
   )
 })
-
-module.exports = { trackedEntityToCase, trackedEntityToContact }
 

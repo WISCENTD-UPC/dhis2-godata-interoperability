@@ -1,7 +1,7 @@
 
-const R = require('ramda')
+import * as R from 'ramda'
 
-const { createUUIDs } = require('./util')
+import { createUUIDs } from './util'
 
 const uuids = createUUIDs()
 const date = () => new Date().toString()
@@ -259,7 +259,7 @@ const user = {
   userId: uuids('u-0')
 }
 
-module.exports = {
+export default {
   optionSets,
   options,
   orgUnits: R.map(R.pipe(

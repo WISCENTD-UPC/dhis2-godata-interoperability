@@ -1,21 +1,21 @@
 
-const R = require('ramda')
+import * as R from 'ramda'
 
-const { processMetadata } = require('./metadata')
-const { selectGroupingLevel, processOutbreaks } = require('./outbreak')
-const { processCases } = require('./case')
-const { processContacts } = require('./contact')
-const { loadTrackedEntityInstances } = require('./common')
-const {
+import { processMetadata } from './metadata'
+import { selectGroupingLevel, processOutbreaks } from './outbreak'
+import { processCases } from './case'
+import { processContacts } from './contact'
+import { loadTrackedEntityInstances } from './common'
+import {
   getIDFromDisplayName,
   mapAttributeNamesToIDs,
   allPromises,
   promisePipeline,
   logAction,
   logDone
-} = require('../util')
+} from '../util'
 
-const fullTransfer = (dhis2, godata, config, _ = { loadTrackedEntityInstances }) => async () => {
+export const fullTransfer = (dhis2, godata, config, _ = { loadTrackedEntityInstances }) => async () => {
   const [
     user,
     optionSets,
@@ -46,7 +46,7 @@ const fullTransfer = (dhis2, godata, config, _ = { loadTrackedEntityInstances })
   )()
 }
 
-function loadResources (dhis2, godata, config) {
+export function loadResources (dhis2, godata, config) {
   return allPromises([
     godata.login(),
     dhis2.getOptionSets(),
@@ -59,6 +59,4 @@ function loadResources (dhis2, godata, config) {
     dhis2.getOrganisationUnitsFromParent(config.rootID)
   ])
 }
-
-module.exports = { fullTransfer }
 

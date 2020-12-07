@@ -1,15 +1,15 @@
 
-const R = require('ramda')
-const { v4: uuid } = require('uuid')
+import * as R from 'ramda'
+import { v4 as uuid } from 'uuid'
 
-const metadataActions = require('../../actions/metadata')
-const config = require('../../config')
-const constants = require('../../config/constants')
+import metadataActions from '../../actions/metadata'
+import config from '../../config'
+import constants from '../../config/constants'
 
-const {
+import {
   optionSets,
   options
-} = require('../test-util/mocks')
+} from '../test-util/mocks'
 
 const resolve = Promise.resolve.bind(Promise)
 

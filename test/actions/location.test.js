@@ -1,14 +1,14 @@
 
-const R = require('ramda')
-const { v4: uuid } = require('uuid')
-const { createUUIDs } = require('../test-util/util')
+import * as R from 'ramda'
+import { v4 as uuid } from 'uuid'
+import { createUUIDs } from '../test-util/util'
 const uuids = createUUIDs()
 
-const locationActions = require('../../actions/location')
-const config = require('../../config')
-const constants = require('../../config/constants')
+import locationActions from '../../actions/location'
+import config from '../../config'
+import constants from '../../config/constants'
 
-const { orgUnits } = require('../test-util/mocks')
+import { orgUnits } from '../test-util/mocks'
 
 const prop = R.curry((prop, i) => R.path([i, prop], orgUnits))
 const id = prop('id')

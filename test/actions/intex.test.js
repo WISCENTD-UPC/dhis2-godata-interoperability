@@ -1,5 +1,5 @@
 
-const actions = require('../../actions')
+import actions from '../../actions'
 
 test('actions should export all actions', () => {
   expect(actions.copyOrganisationUnits).toBeDefined()

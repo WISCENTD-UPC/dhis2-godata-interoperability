@@ -1,7 +1,7 @@
 
-const { v4: uuid } = require('uuid')
+import { v4 as uuid } from 'uuid'
 
-const commonActions = require('../../actions/common')
+import commonActions from '../../actions/common'
 
 test('commonActions.loadTrackedEntityInstances', async () => {
   const casesProgramID = uuid()

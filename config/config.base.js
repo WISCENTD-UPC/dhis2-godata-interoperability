@@ -1,5 +1,5 @@
 
-module.exports = {
+export default {
   disease: '2019_N_CO_V',
   dhis2CasesProgram: 'COVID-19 Case-based Surveillance',
   dhis2ContactsProgram: 'COVID-19 Contact Registration & Follow-up',

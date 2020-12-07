@@ -1,15 +1,13 @@
 
-const R = require('ramda')
+import * as R from 'ramda'
 
-const { completeSchema } = require('../util')
-const constants = require('../config/constants')
-const config = require('../config')
+import { completeSchema } from '../util'
+import constants from '../config/constants'
+import config from '../config'
 
-const optionToReferenceData = (optionSet) => completeSchema({
+export const optionToReferenceData = (optionSet) => completeSchema({
   active: true,
   categoryId: constants.referenceDataCategoryID(optionSet),
   value: R.prop('displayName')
 })
-
-module.exports = { optionToReferenceData }
 

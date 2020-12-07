@@ -1,9 +1,9 @@
 
-const { v4: uuid } = require('uuid')
+import { v4 as uuid } from 'uuid'
 
-const caseMappings = require('../../mappings/case')
-const config = require('../../config')
-const constants = require('../../config/constants')
+import caseMappings from '../../mappings/case'
+import config from '../../config'
+import constants from '../../config/constants'
 
 const model = {
   outbreak: uuid(),

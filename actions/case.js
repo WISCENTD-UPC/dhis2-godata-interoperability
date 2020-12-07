@@ -1,19 +1,19 @@
 
-const R = require('ramda')
+import * as R 'ramda'
 
-const { loadTrackedEntityInstances } = require('./common')
-const {
+import { loadTrackedEntityInstances } from './common'
+import {
   getIDFromDisplayName,
   mapAttributeNamesToIDs,
   allPromises,
   promisePipeline,
   logAction,
-  logDone } = require('../util')
-const { trackedEntityToCase } = require('../mappings/case')
+  logDone } from '../util'
+import { trackedEntityToCase } from '../mappings/case'
 
 // Copy tracked enitities in the case program from dhis2 to godata (transforming the schema
 // and adding extra information like case classifiction)
-const copyCases = (dhis2, godata, config, _ = { loadTrackedEntityInstances }) => async () => {
+export const copyCases = (dhis2, godata, config, _ = { loadTrackedEntityInstances }) => async () => {
   logAction('Fetching resources')
   const [
     programs,
@@ -44,7 +44,7 @@ const copyCases = (dhis2, godata, config, _ = { loadTrackedEntityInstances }) =>
 }
 
 // Load resources from dhis2 and godata
-function loadResources (dhis2, godata, config) {
+export function loadResources (dhis2, godata, config) {
   return allPromises([
     dhis2.getPrograms(),
     dhis2.getProgramStages(),
@@ -55,7 +55,7 @@ function loadResources (dhis2, godata, config) {
 }
 
 // Transform resources from dhis2 to create cases in Go.Data
-function processCases (
+export function processCases (
   godata,
   config,
   organisationUnits,
@@ -94,7 +94,7 @@ function processCases (
 
 // Find the grouping outbreak a tracked entity instance (its associated org unit)
 // belongs to from the avaliable locations.
-function findOutbreackForCase (available, orgUnits, locationID) {
+export function findOutbreackForCase (available, orgUnits, locationID) {
   if (available[locationID] != null) {
     return R.path([locationID, 0, 'id'], available)
   } else {
@@ -105,7 +105,7 @@ function findOutbreackForCase (available, orgUnits, locationID) {
 
 // Find the grouping outbreak a tracked entity instance (its associated org unit)
 // belongs to from the outbreak list.
-function assignOutbreak (outbreaks, orgUnits) {
+export function assignOutbreak (outbreaks, orgUnits) {
   const locationsAvaliable = R.pipe(
     R.reduceBy((acc, el) => R.append(el, acc), [], R.path(['locationIds', 0]))
   )(outbreaks)
@@ -116,7 +116,7 @@ function assignOutbreak (outbreaks, orgUnits) {
 }
 
 // Find an event in a list by ID and parse is dataElements, including the displayName
-function findAndTransformEvent (dataElements, programID, events) {
+export function findAndTransformEvent (dataElements, programID, events) {
   return R.pipe(
     R.find(R.propEq('programStage', programID)),
     R.prop('dataValues'),
@@ -130,7 +130,7 @@ function findAndTransformEvent (dataElements, programID, events) {
 
 // ADD the parsed data elements of an event of a tracked entity instance
 // by the program stage ID the event is part of
-function addEvent (dataElements, eventName, programStageID) {
+export function addEvent (dataElements, eventName, programStageID) {
   return (te) => {
     const event = findAndTransformEvent(dataElements, programStageID, te.events)
     return R.assoc(eventName, event, te)
@@ -138,12 +138,12 @@ function addEvent (dataElements, eventName, programStageID) {
 }
 
 // Find data value from the data values list given the id of the element
-function findDataValueByID (dataValues, id) {
+export function findDataValueByID (dataValues, id) {
   return R.find(R.propEq('dataElement', id), dataValues || [])
 }
 
 // Check that a dataElement from a list has a specific value
-function checkDataValue (dataValues, dataElement, value) {
+export function checkDataValue (dataValues, dataElement, value) {
   return R.propEq(
     'value',
     value,
@@ -152,7 +152,7 @@ function checkDataValue (dataValues, dataElement, value) {
 }
 
 // Check a series of data elements in a list have specific values
-function checkDataValuesConditions (conditions) {
+export function checkDataValuesConditions (conditions) {
   return R.allPass(
     R.map(
       ([dataElement, value]) => te => 
@@ -163,7 +163,7 @@ function checkDataValuesConditions (conditions) {
 
 // Add lab result to a tracked entity
 // TODO: support for 'inconclusive', 'not performed'... results
-function addLabResult (confirmedTestConditions) {
+export function addLabResult (confirmedTestConditions) {
   return (te) => R.ifElse(
     R.propSatisfies(_ => _ !== [], 'labResultStage'),
     R.assoc('labResult',
@@ -174,7 +174,7 @@ function addLabResult (confirmedTestConditions) {
 }
 
 // Add case classification to a tracked entity instance
-function addCaseClassification () {
+export function addCaseClassification () {
   return (te) => R.assoc('caseClassification',
     te.labResult === 'POSITIVE'
       ? 'CONFIRMED'
@@ -187,7 +187,7 @@ function addCaseClassification () {
 }
 
 // Add additional lab information and case classification to a tracked entity instance
-function addLabInformation (programsIDs, dataElements, confirmedTestConditions, config) {
+export function addLabInformation (programsIDs, dataElements, confirmedTestConditions, config) {
   const [
     clinicalExaminationID,
     labRequestID,
@@ -208,7 +208,7 @@ function addLabInformation (programsIDs, dataElements, confirmedTestConditions, 
 }
 
 // Send cases to go data, activating outbreaks and login user automatically
-function sendCasesToGoData (godata) {
+export function sendCasesToGoData (godata) {
   return R.pipe(
     R.groupBy(R.prop('outbreak')),
     async (outbreaks) => {
@@ -220,22 +220,5 @@ function sendCasesToGoData (godata) {
       }
     }
   )
-}
-
-module.exports = { 
-  copyCases, 
-  loadResources,
-  processCases,
-  assignOutbreak,
-  findAndTransformEvent,
-  addEvent,
-  findOutbreackForCase, 
-  findDataValueByID,
-  checkDataValue,
-  checkDataValuesConditions,
-  addLabResult,
-  addCaseClassification,
-  addLabInformation,
-  sendCasesToGoData
 }
 

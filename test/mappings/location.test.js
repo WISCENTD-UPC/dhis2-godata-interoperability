@@ -1,8 +1,8 @@
 
-const { v4: uuid } = require('uuid')
+import { v4 as uuid } from 'uuid'
 
-const locationMappings = require('../../mappings/location')
-const constants = require('../../config/constants')
+import locationMappings from '../../mappings/location'
+import constants from '../../config/constants'
 
 test('locationMappings.organisationUnitToLocation base', organisationUnitToLocationTest())
 

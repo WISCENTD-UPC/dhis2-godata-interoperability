@@ -1,27 +1,27 @@
 
-const R = require('ramda')
+import R from 'ramda'
 
-const { completeSchema } = require('../util')
-const { geographicalLevelId, disease, followupAssignmentAlgorithm, country } = require('../config/constants')
-const config = require('../config')
+import { completeSchema } from '../util'
+import { geographicalLevelId, disease, followupAssignmentAlgorithm, country } from '../config/constants'
+import config from '../config'
 
 // SELECTORS
-const outbreakNameSelector = R.path(['orgUnit', 'name'])
-const outbreakStartDateSelector = R.pipe(
+export const outbreakNameSelector = R.path(['orgUnit', 'name'])
+export const outbreakStartDateSelector = R.pipe(
   R.prop('trackedEntities'),
   R.sortBy(R.prop('created')),
   R.map(R.prop('created')),
   R.prop(0)
 )
-const outbreakCountriesSelector = R.map(_ => ({ id: country(_) }))
-const outbreakLocationIDsSelector = _ =>
+export const outbreakCountriesSelector = R.map(_ => ({ id: country(_) }))
+export const outbreakLocationIDsSelector = _ =>
   R.prepend(R.path(['orgUnit', 'id'], _), R.prop('mergedLocationsIDs', _))
-const outbreakReportingGeographicalLevelIdSeletor = R.pipe(
+export const outbreakReportingGeographicalLevelIdSeletor = R.pipe(
   R.path([ 'orgUnit', 'level' ]),
   geographicalLevelId)
 
 // MAPPINGS
-const createOutbreakMapping = (config, _ = { Date }) => completeSchema({
+export const createOutbreakMapping = (config, _ = { Date }) => completeSchema({
   ...config.outbreakConfig,
   name: outbreakNameSelector,
   disease: disease(config.disease),
@@ -36,6 +36,4 @@ const createOutbreakMapping = (config, _ = { Date }) => completeSchema({
   labResultsTemplate: () => [],
   arcGisServers: () => []
 })
-
-module.exports = { createOutbreakMapping }
 

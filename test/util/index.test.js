@@ -1,10 +1,10 @@
 
-const R = require('ramda')
+import * as R from 'ramda'
 
-const util = require('../../util/index')
-const config = require('../../config')
+import util from '../../util/index'
+import config from '../../config'
 
-const { attributes } = require('../test-util/mocks')
+import { attributes } from '../test-util/mocks'
 
 test('util.getIDFromDisplayName', () => {
   const arr = [

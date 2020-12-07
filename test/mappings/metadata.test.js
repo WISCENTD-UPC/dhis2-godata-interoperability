@@ -1,8 +1,8 @@
 
-const { v4: uuid } = require('uuid')
+import { v4 as uuid } from 'uuid'
 
-const metadataMappings = require('../../mappings/metadata')
-const constants = require('../../config/constants')
+import metadataMappings from '../../mappings/metadata'
+import constants from '../../config/constants'
 
 test('metadataMappings.optionToReferenceData', () => {
   const response = metadataMappings.optionToReferenceData('Vaccine')({

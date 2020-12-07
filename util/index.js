@@ -1,9 +1,9 @@
 
-const R = require('ramda')
+import * as R from 'ramda'
 
 // Given a displayName and a list of objects with ID and displayName,
 // finds an element with the given displayName and returns the ID
-const getIDFromDisplayName = R.curry((arr, displayName) => {
+export const getIDFromDisplayName = R.curry((arr, displayName) => {
   return R.pipe(
     R.find(R.propEq('displayName', displayName)),
     R.prop('id')
@@ -12,7 +12,7 @@ const getIDFromDisplayName = R.curry((arr, displayName) => {
 
 // Maps the displayNames of config.dhis2KeyAttributes to its IDs
 // given the attributes list fetched from dhis2
-function mapAttributeNamesToIDs (attributes) {
+export function mapAttributeNamesToIDs (attributes) {
   return R.over(
     R.lensProp('dhis2KeyAttributes'),
     R.mapObjIndexed((value) => {
@@ -21,7 +21,7 @@ function mapAttributeNamesToIDs (attributes) {
 }
 
 // Creates and object with data from "model" as defined by the selectors in "schema"
-const completeSchema = R.curry((schema, model) => {
+export const completeSchema = R.curry((schema, model) => {
   const completedSchema = {}
 
   if (R.is(Array, schema)) {
@@ -48,7 +48,7 @@ const completeSchema = R.curry((schema, model) => {
   }
 })
 
-const promisePipeline = (...fns) => {
+export const promisePipeline = (...fns) => {
   return (args) => {
     return fns.reduce(async (args, fn) => {
       return fn(await args)
@@ -56,24 +56,13 @@ const promisePipeline = (...fns) => {
   }
 }
 
-const allPromises = Promise.all.bind(Promise)
+export const allPromises = Promise.all.bind(Promise)
 
-const log = (str) => {
+export const log = (str) => {
   if (process.env.NODE_ENV !== 'dev') {
     process.stdout.write(str)
   }
 }
-const logAction = (str, padding = 80, separator = ' ') => log(str.concat('...').padEnd(padding, separator))
-const logDone = () => log('DONE.\n')
-
-module.exports = {
-  getIDFromDisplayName,
-  mapAttributeNamesToIDs,
-  completeSchema,
-  promisePipeline,
-  allPromises,
-  log,
-  logAction,
-  logDone
-}
+export const logAction = (str, padding = 80, separator = ' ') => log(str.concat('...').padEnd(padding, separator))
+export const logDone = () => log('DONE.\n')
 

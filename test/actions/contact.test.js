@@ -1,16 +1,16 @@
 
-const R = require('ramda')
-const { v4: uuid } = require('uuid')
-const { createUUIDs } = require('../test-util/util')
+import * as R from 'ramda'
+import { v4 as uuid } from 'uuid'
+import { createUUIDs } from '../test-util/util'
 const uuids = createUUIDs()
 
-const contactActions = require('../../actions/contact')
-const config = require('../../config')
-const constants = require('../../config/constants')
+import contactActions from '../../actions/contact'
+import config from '../../config'
+import constants from '../../config/constants'
 
-const { mapAttributeNamesToIDs } = require('../../util/index')
+import { mapAttributeNamesToIDs } from '../../util/index'
 
-const {
+import {
   relationshipTypes,
   attributes,
   trackedEntities,
@@ -18,7 +18,7 @@ const {
   outbreaks,
   outbreakCases,
   user
-} = require('../test-util/mocks')
+} from '../test-util/mocks'
 
 const resolve = Promise.resolve.bind(Promise)
 const mock = (returnValue) => jest.fn().mockReturnValue(returnValue)

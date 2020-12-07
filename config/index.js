@@ -1,13 +1,13 @@
 
-const R = require('ramda')
+import * as R from 'ramda'
 
-const base = require('./config.base')
-const prod = require('./config')
-const dev = require('./config.dev')
+import base from './config.base'
+import prod from './config'
+import dev from './config.dev'
 
 const env = process.env.NODE_ENV
 
-module.exports = R.pipe(
+export default R.pipe(
   R.mergeDeepLeft(env === 'dev' ? dev : {}),
   R.mergeDeepLeft(env !== 'dev' ? prod : {})
 )(base)

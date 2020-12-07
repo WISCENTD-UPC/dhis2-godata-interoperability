@@ -1,5 +1,5 @@
 
-module.exports = {
+export default {
   GoDataAPIConfig: {
     baseURL: 'http://localhost:8000/api',
     credentials: {

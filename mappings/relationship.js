@@ -1,15 +1,15 @@
 
-const R = require('ramda')
+import * as R from 'ramda'
 
-const { completeSchema } = require('../util')
-const constants = require('../config/constants')
+import { completeSchema } from '../util'
+import constants from '../config/constants'
 
 // SELECTORS
-const contactIDSelector = R.prop('trackedEntityInstance')
-const contactDateSelector = R.path(['relationship', 'created'])
+export const contactIDSelector = R.prop('trackedEntityInstance')
+export const contactDateSelector = R.path(['relationship', 'created'])
 
 // MAPPINGS
-const trackedEntityToRelationship = (config) => completeSchema({
+export const trackedEntityToRelationship = (config) => completeSchema({
   persons: [
     {
       id: contactIDSelector,
@@ -26,6 +26,4 @@ const trackedEntityToRelationship = (config) => completeSchema({
   // TODO -> socialRelationshipTypeId: ,
   people: []
 })
-
-module.exports = { trackedEntityToRelationship }
 
