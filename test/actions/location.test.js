@@ -1,15 +1,14 @@
 
 import * as R from 'ramda'
 import { v4 as uuid } from 'uuid'
+
+import * as locationActions from '../../src/actions/location'
+import config from '../../src/config'
+import constants from '../../src/config/constants'
 import { createUUIDs } from '../test-util/util'
-const uuids = createUUIDs()
-
-import locationActions from '../../actions/location'
-import config from '../../config'
-import constants from '../../config/constants'
-
 import { orgUnits } from '../test-util/mocks'
 
+const uuids = createUUIDs()
 const prop = R.curry((prop, i) => R.path([i, prop], orgUnits))
 const id = prop('id')
 const parentLocationId = R.pipe(prop('parent'), R.prop('id'))

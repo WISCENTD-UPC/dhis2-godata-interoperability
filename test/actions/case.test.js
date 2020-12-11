@@ -2,10 +2,10 @@
 import * as R from 'ramda'
 import { v4 as uuid } from 'uuid'
 
-import caseActions from '../../actions/case'
-import { mapAttributeNamesToIDs } from '../../util'
-import config from '../../config'
-import constants from '../../config/constants'
+import * as caseActions from '../../src/actions/case'
+import { mapAttributeNamesToIDs } from '../../src/util'
+import config from '../../src/config'
+import constants from '../../src/config/constants'
 
 import {
   orgUnits,

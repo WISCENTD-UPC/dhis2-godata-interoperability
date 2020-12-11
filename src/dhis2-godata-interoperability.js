@@ -4,7 +4,7 @@ import GoDataAPI from 'godata-api-wrapper'
 import * as R from 'ramda'
 import { Command } from 'commander'
 
-import package from './package.json'
+import _package from './package.json'
 import config from './config'
 import {
   copyMetadata,
@@ -21,7 +21,7 @@ const dhis2 = new DHIS2API(config.DHIS2APIConfig)
 const godata = new GoDataAPI(config.GoDataAPIConfig)
 const program = new Command()
 
-program.version(package.version)
+program.version(_package.version)
 
 program
   .command('copy-metadata')

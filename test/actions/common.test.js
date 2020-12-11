@@ -1,7 +1,7 @@
 
 import { v4 as uuid } from 'uuid'
 
-import commonActions from '../../actions/common'
+import * as commonActions from '../../src/actions/common'
 
 test('commonActions.loadTrackedEntityInstances', async () => {
   const casesProgramID = uuid()

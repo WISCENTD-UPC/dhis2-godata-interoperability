@@ -1,9 +1,9 @@
 
 import { v4 as uuid } from 'uuid'
 
-import caseMappings from '../../mappings/case'
-import config from '../../config'
-import constants from '../../config/constants'
+import * as caseMappings from '../../src/mappings/case'
+import config from '../../src/config'
+import constants from '../../src/config/constants'
 
 const model = {
   outbreak: uuid(),

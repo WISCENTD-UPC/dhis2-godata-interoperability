@@ -1,5 +1,5 @@
 
-import * as R 'ramda'
+import * as R from 'ramda'
 
 import { optionToReferenceData } from '../mappings/metadata'
 import { getIDFromDisplayName, allPromises, promisePipeline } from '../util'

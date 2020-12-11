@@ -1,15 +1,12 @@
 
 import * as R from 'ramda'
 import { v4 as uuid } from 'uuid'
+
+import * as contactActions from '../../src/actions/contact'
+import config from '../../src/config'
+import constants from '../../src/config/constants'
+import { mapAttributeNamesToIDs } from '../../src/util'
 import { createUUIDs } from '../test-util/util'
-const uuids = createUUIDs()
-
-import contactActions from '../../actions/contact'
-import config from '../../config'
-import constants from '../../config/constants'
-
-import { mapAttributeNamesToIDs } from '../../util/index'
-
 import {
   relationshipTypes,
   attributes,
@@ -20,6 +17,7 @@ import {
   user
 } from '../test-util/mocks'
 
+const uuids = createUUIDs()
 const resolve = Promise.resolve.bind(Promise)
 const mock = (returnValue) => jest.fn().mockReturnValue(returnValue)
 const mockPromise = R.pipe(resolve, mock)

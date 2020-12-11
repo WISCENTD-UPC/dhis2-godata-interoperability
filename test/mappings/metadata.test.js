@@ -1,8 +1,8 @@
 
 import { v4 as uuid } from 'uuid'
 
-import metadataMappings from '../../mappings/metadata'
-import constants from '../../config/constants'
+import * as metadataMappings from '../../src/mappings/metadata'
+import constants from '../../src/config/constants'
 
 test('metadataMappings.optionToReferenceData', () => {
   const response = metadataMappings.optionToReferenceData('Vaccine')({

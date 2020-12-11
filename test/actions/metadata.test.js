@@ -2,9 +2,9 @@
 import * as R from 'ramda'
 import { v4 as uuid } from 'uuid'
 
-import metadataActions from '../../actions/metadata'
-import config from '../../config'
-import constants from '../../config/constants'
+import * as metadataActions from '../../src/actions/metadata'
+import config from '../../src/config'
+import constants from '../../src/config/constants'
 
 import {
   optionSets,

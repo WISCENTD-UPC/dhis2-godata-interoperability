@@ -2,7 +2,7 @@
 import * as R from 'ramda'
 
 import { completeSchema } from '../util'
-import { geographicalLevelId } from '../config/constants'
+import constants from '../config/constants'
 
 // SELECTORS
 export const locationNameSelector = R.prop('name')
@@ -21,7 +21,7 @@ export const locationGeoLocationSelector = R.pipe(
     ({ geometry }) => locationGeoLocationSelectors[geometry.type](geometry),
     _ => null)
 )
-export const locationGeographicalLevelIDSelector = R.pipe(R.prop('level'), geographicalLevelId)
+export const locationGeographicalLevelIDSelector = R.pipe(R.prop('level'), constants.geographicalLevelId)
 export const locationUpdatedAtSelector = R.prop('lastUpdated')
 export const locationCreatedAtSelector = R.prop('created')
 

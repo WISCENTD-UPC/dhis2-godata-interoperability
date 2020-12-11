@@ -6,7 +6,7 @@ import { createUUIDs } from './util'
 const uuids = createUUIDs()
 const date = () => new Date().toString()
 
-const optionSets = [
+export const optionSets = [
   { 
     id: uuids('ops-0'),
     displayName: 'Vaccine types',
@@ -17,13 +17,14 @@ const optionSets = [
   }
 ]
 
-const options = [
+export const options = [
   { id: uuids('op-0'), displayName: 'Malaria' },
   { id: uuids('op-1'), displayName: 'Colera' }
 ]
 
-const orgUnits = [
-  {
+export const orgUnits = R.map(
+  R.pipe(R.assoc('lastUpdated', date()), R.assoc('created', date())),
+  [{
     id: uuids('ou-0'),
     parent: undefined,
     name: 'Trainingland',
@@ -72,9 +73,9 @@ const orgUnits = [
     },
     children: []
   }
-]
+])
 
-const programs = [
+export const programs = [
   { id: uuids('p-0'), displayName: 'COVID-19 Case-based Surveillance' },
   { id: uuids('p-1'), displayName: 'COVID-19 Cases (events)' },
   { id: uuids('p-2'), displayName: 'COVID-19 Commodities ' },
@@ -82,7 +83,7 @@ const programs = [
   { id: uuids('p-4'), displayName: 'COVID-19 Port of Entry Screening' }
 ]
 
-const programStages = [
+export const programStages = [
   { id: uuids('ps-0'), displayName: 'COVID-19 Cases (events)' },
   { id: uuids('ps-1'), displayName: 'Daily Supply Report' },
   { id: uuids('ps-2'), displayName: 'DELETE_Stage 5 - Contacts Followed' },
@@ -97,11 +98,11 @@ const programStages = [
   { id: uuids('ps-11'), displayName: 'Symptoms' }
 ]
 
-const dataElements = [
+export const dataElements = [
   { id: uuids('d-0'), displayName: 'Lab Test Result' }
 ]
 
-const attributes = [
+export const attributes = [
   { id: uuids('a-0'), displayName: 'Age' },
   { id: uuids('a-1'), displayName: 'Country of Residence' },
   { id: uuids('a-2'), displayName: 'Date of birth' },
@@ -127,11 +128,11 @@ const attributes = [
   { id: uuids('a-22'), displayName: 'Workplace/school physical address' }
 ]
 
-const relationshipTypes = [
+export const relationshipTypes = [
   { id: uuids('rt-0'), displayName: 'Has Been in Contact with' }
 ]
 
-const trackedEntities = [
+export const trackedEntities = [
   [
     {
       trackedEntityInstance: uuids('te-0'),
@@ -200,7 +201,7 @@ const trackedEntities = [
   ]
 ]
 
-const outbreaks = [
+export const outbreaks = [
   {
     id: uuids('o-0'),
     name: orgUnits[0].name,
@@ -208,13 +209,13 @@ const outbreaks = [
   }
 ]
 
-const outbreakCases = [
+export const outbreakCases = [
   { id: uuids('te-0') },
   { id: uuids('te-1') },
   { id: uuids('te-2') }
 ]
 
-const relationships = [
+export const relationships = [
   [{
     relationshipType: uuids('rt-0'),
     created: '2020-09-01',
@@ -255,26 +256,7 @@ const relationships = [
   []
 ]
 
-const user = {
+export const user = {
   userId: uuids('u-0')
-}
-
-export default {
-  optionSets,
-  options,
-  orgUnits: R.map(R.pipe(
-    R.assoc('lastUpdated', date()),
-    R.assoc('created', date())
-  ), orgUnits),
-  programs,
-  programStages,
-  dataElements,
-  attributes,
-  relationshipTypes,
-  trackedEntities,
-  relationships,
-  outbreaks,
-  outbreakCases,
-  user
 }
 

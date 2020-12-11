@@ -1,7 +1,7 @@
 
 import fs from 'fs'
 
-import * as R 'ramda'
+import * as R from 'ramda'
 
 import { organisationUnitToLocation } from '../mappings/location'
 import { logAction, logDone } from '../util'

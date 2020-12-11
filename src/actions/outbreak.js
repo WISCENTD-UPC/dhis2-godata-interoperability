@@ -1,5 +1,5 @@
 
-import * as R 'ramda'
+import * as R from 'ramda'
 
 import constants from '../config/constants'
 import { loadTrackedEntityInstances } from './common'

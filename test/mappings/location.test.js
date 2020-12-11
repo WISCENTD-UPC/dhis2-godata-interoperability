@@ -1,8 +1,8 @@
 
 import { v4 as uuid } from 'uuid'
 
-import locationMappings from '../../mappings/location'
-import constants from '../../config/constants'
+import * as locationMappings from '../../src/mappings/location'
+import constants from '../../src/config/constants'
 
 test('locationMappings.organisationUnitToLocation base', organisationUnitToLocationTest())
 

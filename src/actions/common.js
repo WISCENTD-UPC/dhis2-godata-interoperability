@@ -1,5 +1,5 @@
 
-import * as R 'ramda'
+import * as R from 'ramda'
 
 import { allPromises } from '../util'
 

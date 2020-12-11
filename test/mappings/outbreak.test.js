@@ -2,9 +2,9 @@
 import * as R from 'ramda'
 import { v4 as uuid } from 'uuid'
 
-import outbreakMappings from '../../mappings/outbreak'
-import config from '../../config'
-import constants from '../../config/constants'
+import * as outbreakMappings from '../../src/mappings/outbreak'
+import config from '../../src/config'
+import constants from '../../src/config/constants'
 
 test('outbreakMappings.createOutbreakMapping', () => {
   const model = {

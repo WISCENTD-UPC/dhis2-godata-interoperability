@@ -1,9 +1,9 @@
 
 import { v4 as uuid } from 'uuid'
 
-import relationshipMappings from '../../mappings/relationship'
-import config from '../../config'
-import constants from '../../config/constants'
+import * as relationshipMappings from '../../src/mappings/relationship'
+import config from '../../src/config'
+import constants from '../../src/config/constants'
 
 const model = {
   trackedEntityInstance: uuid(),

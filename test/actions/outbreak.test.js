@@ -1,15 +1,14 @@
 
 import * as R from 'ramda'
 import { v4 as uuid } from 'uuid'
+
+import * as outbreakActions from '../../src/actions/outbreak'
+import config from '../../src/config'
+import constants from '../../src/config/constants'
 import { createUUIDs } from '../test-util/util'
-const uuids = createUUIDs()
-
-import outbreakActions from '../../actions/outbreak'
-import config from '../../config'
-import constants from '../../config/constants'
-
 import { programs, orgUnits, trackedEntities, outbreaks } from '../test-util/mocks'
 
+const uuids = createUUIDs()
 const defaultDate = '2020-09-01'
 const resolve = Promise.resolve.bind(Promise)
 

@@ -1,9 +1,8 @@
 
 import * as R from 'ramda'
 
-import util from '../../util/index'
-import config from '../../config'
-
+import * as util from '../../src/util'
+import config from '../../src/config'
 import { attributes } from '../test-util/mocks'
 
 test('util.getIDFromDisplayName', () => {
