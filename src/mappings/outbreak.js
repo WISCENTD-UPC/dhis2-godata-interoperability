@@ -1,5 +1,5 @@
 
-import R from 'ramda'
+import * as R from 'ramda'
 
 import { completeSchema } from '../util'
 import constants from '../config/constants'
