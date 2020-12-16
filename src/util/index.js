@@ -59,7 +59,7 @@ export const promisePipeline = (...fns) => {
 export const allPromises = Promise.all.bind(Promise)
 
 export const log = (str) => {
-  if (process.env.NODE_ENV !== 'dev') {
+  if (process != null && process.env.NODE_ENV !== 'dev') {
     process.stdout.write(str)
   }
 }
