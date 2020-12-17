@@ -59,8 +59,10 @@ export const promisePipeline = (...fns) => {
 export const allPromises = Promise.all.bind(Promise)
 
 export const log = (str) => {
-  if (process != null && process.env != null && process.env.NODE_ENV !== 'dev') {
-    process.stdout.write(str)
+  if (process != null && process.env != null && process.env.NODE_ENV !== 'development') {
+    if (process.stdout != null) {
+      process.stdout.write(str)
+    }
   }
 }
 export const logAction = (str, padding = 80, separator = ' ') => log(str.concat('...').padEnd(padding, separator))

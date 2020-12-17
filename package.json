@@ -6,7 +6,7 @@
   "main": "dist/index.js",
   "scripts": {
     "prepare": "mkdir -p dist && babel src/ -d dist",
-    "test": "NODE_ENV=dev jest",
+    "test": "NODE_ENV=development jest",
     "test-watch": "NODE_ENV=dev jest --watch"
   },
   "repository": {
