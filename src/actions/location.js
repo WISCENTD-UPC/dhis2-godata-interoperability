@@ -17,7 +17,7 @@ export const copyOrganisationUnits = (dhis2, godata, config, _ = {
   fs,
   stringify,
   encodeURIComponent,
-  createElement: document.createElement.bind(document)
+  document
 }) =>
   async (outputFile) => {
   logAction('Fetching organisation units')
@@ -34,11 +34,13 @@ export const copyOrganisationUnits = (dhis2, godata, config, _ = {
     logDone()
   } else {
     logAction('Downloading JSON file')
-    const data = "data:text/json;charset=utf-8," + _.encodeURIComponent(_.stringify(locations));
-    const a = _.createElement('a');
-    a.setAttribute("href", data);
-    a.setAttribute("download", "organisation-units.json");
-    a.click();
+    const data = "data:text/json;charset=utf-8," + _.encodeURIComponent(_.stringify(locations))
+    const a = _.document.createElement('a')
+    _.document.body.appendChild(a)
+    a.setAttribute("href", data)
+    a.setAttribute("download", "organisation-units.json")
+    a.click()
+    a.remove()
     logDone()
   }
 }
