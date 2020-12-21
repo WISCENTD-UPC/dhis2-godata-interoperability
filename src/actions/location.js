@@ -9,7 +9,16 @@ import { logAction, logDone } from '../util'
 const stringify = JSON.stringify.bind(JSON)
 
 // Copy organisation units and exports the result hierarchically in a file
-export const copyOrganisationUnits = (dhis2, godata, config, _ = { fs, stringify }) =>
+// TEMPORAL BEHAVIOR: since we are waiting to be able to upload directly in bulk
+// to godata from this script, right now it behaves different in the browser (if no outputFile
+// is provided, the JSON file is automatically downloaded) and in the command line (if an outputFile
+// is provided, the JSON file is created with that name).
+export const copyOrganisationUnits = (dhis2, godata, config, _ = {
+  fs,
+  stringify,
+  encodeURIComponent,
+  createElement: document.createElement.bind(document)
+}) =>
   async (outputFile) => {
   logAction('Fetching organisation units')
   const organisationUnits = await dhis2.getOrganisationUnitsFromParent(config.rootID)
@@ -19,9 +28,19 @@ export const copyOrganisationUnits = (dhis2, godata, config, _ = { fs, stringify
   const locations = await sendLocationsToGoData(config, organisationUnits)
   logDone()
   
-  logAction(`Writing result into ${outputFile}`)
-  _.fs.writeFileSync(outputFile, _.stringify(locations))
-  logDone()
+  if (outputFile != null) {
+    logAction(`Writing result into ${outputFile}`)
+    _.fs.writeFileSync(outputFile, _.stringify(locations))
+    logDone()
+  } else {
+    logAction('Downloading JSON file')
+    const data = "data:text/json;charset=utf-8," + _.encodeURIComponent(_.stringify(locations));
+    const a = _.createElement('a');
+    a.setAttribute("href", data);
+    a.setAttribute("download", "organisation-units.json");
+    a.click();
+    logDone()
+  }
 }
 
 // Recursively separates a location in two parts: the location itself and its children
