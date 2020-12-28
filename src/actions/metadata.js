@@ -2,12 +2,19 @@
 import * as R from 'ramda'
 
 import { optionToReferenceData } from '../mappings/metadata'
-import { getIDFromDisplayName, allPromises, promisePipeline } from '../util'
+import {
+  getIDFromDisplayName,
+  allPromises,
+  promisePipeline,
+  logAction,
+  logDone
+} from '../util'
 
 // Copy general metadata from DHIS2 from Go.Data
-export const copyMetadata = (dhis2, godata, config) => async () => {
+export const copyMetadata = (dhis2, godata, config, _ = { logAction }) => async () => {
   const [ allSets, options ] = await loadResources(dhis2, godata, config)
   
+  _.logAction('Transfering metadata')
   return await processMetadata(dhis2, godata, config, allSets, options)
 }
 
@@ -21,7 +28,8 @@ export function processMetadata (dhis2, godata, config, allSets, options) {
     R.map(mapOptionsFromID(options)),
     R.map(transformOptions()),
     R.flatten,
-    sendOptionSetsToGoData(godata)
+    sendOptionSetsToGoData(godata),
+    R.tap(() => logDone())
   )(config.metadata.optionSets)
 }
 

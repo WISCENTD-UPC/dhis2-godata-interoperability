@@ -3,7 +3,13 @@ import * as R from 'ramda'
 
 import constants from '../config/constants'
 import { loadTrackedEntityInstances } from './common'
-import { getIDFromDisplayName, allPromises, promisePipeline, logAction, logDone } from '../util'
+import {
+  getIDFromDisplayName,
+  allPromises,
+  promisePipeline,
+  logAction,
+  logDone
+} from '../util'
 import { createOutbreakMapping } from '../mappings/outbreak'
 
 // Creates an outbreak or a series of outbreaks (depending on the configuration)
@@ -12,14 +18,15 @@ import { createOutbreakMapping } from '../mappings/outbreak'
 export const createOutbreaks = (dhis2, godata, config, _ = {
   postOutbreaks,
   loadTrackedEntityInstances,
-  Date
+  Date,
+  logAction
 }) => async () => {
-  logAction('Fetching resources')
+  _.logAction('Fetching resources')
   const [ programs, organisationUnits ] = await loadResources(dhis2, config)
   logDone()
   const casesProgramID = getIDFromDisplayName(programs, config.dhis2CasesProgram)
   const groupingLevel = selectGroupingLevel(organisationUnits, config)
-  logAction('Fetching tracked entity instances')
+  _.logAction('Fetching tracked entity instances')
   const trackedEntities = await _.loadTrackedEntityInstances(dhis2, organisationUnits, casesProgramID)
   logDone()
   
@@ -35,20 +42,20 @@ export function loadResources (dhis2, config) {
 }
 
 export function processOutbreaks (godata, config, organisationUnits, groupingLevel, _ = {
-  postOutbreaks, Date
+  postOutbreaks, Date, logAction
 }) {
-  logAction('Initializing outbreaks')
+  _.logAction('Initializing outbreaks')
   const outbreaks = initializeOutbreaks(organisationUnits)
   logDone()
   
   return promisePipeline(
-    R.tap(() => logAction('Processing outbreaks')),
+    R.tap(() => _.logAction('Processing outbreaks')),
     addTrackedEntitiesToOutbreaks(outbreaks),
     groupOutbreaks(outbreaks, groupingLevel),
     R.values,
     R.map(createOutbreakMapping(config, _)),
     R.tap(() => logDone()),
-    R.tap(() => logAction('Creating outbreaks in Go.Data')),
+    R.tap(() => _.logAction('Creating outbreaks in Go.Data')),
     _.postOutbreaks(godata),
     R.tap(() => logDone())
   )

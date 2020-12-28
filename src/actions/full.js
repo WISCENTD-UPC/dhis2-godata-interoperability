@@ -15,7 +15,7 @@ import {
   logDone
 } from '../util'
 
-export const fullTransfer = (dhis2, godata, config, _ = { loadTrackedEntityInstances }) => async () => {
+export const fullTransfer = (dhis2, godata, config, _ = { loadTrackedEntityInstances, logAction }) => async () => {
   const [
     user,
     optionSets,
@@ -28,7 +28,7 @@ export const fullTransfer = (dhis2, godata, config, _ = { loadTrackedEntityInsta
     orgUnits
   ] = await loadResources(dhis2, godata, config)
 
-  logAction('Reading configuration')
+  _.logAction('Reading configuration')
   const casesProgramID = getIDFromDisplayName(programs, config.dhis2CasesProgram)
   config = mapAttributeNamesToIDs(attributes)(config)
   const groupingLevel = selectGroupingLevel(orgUnits, config)

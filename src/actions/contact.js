@@ -16,7 +16,7 @@ import { trackedEntityToContact } from '../mappings/case'
 import { trackedEntityToRelationship } from '../mappings/relationship'
 
 // Copy dhis2 contacts and create additional persons and their relationships in Go.Data
-export const copyContacts = (dhis2, godata, config) => async () => {
+export const copyContacts = (dhis2, godata, config, _ = { logAction }) => async () => {
   logAction('Fetching resources')
   const [
     relationships, // TODO -> this is not in use. It should filter relationship types
@@ -29,7 +29,7 @@ export const copyContacts = (dhis2, godata, config) => async () => {
   config = mapAttributeNamesToIDs(attributes)(config)
   logDone()
   
-  return processContacts(dhis2, godata, config, user)(outbreaks)
+  return processContacts(dhis2, godata, config, user, _)(outbreaks)
 }
 
 // Load resources from DHIS2 and Go.Data
@@ -43,12 +43,12 @@ export function loadResources (dhis2, godata, config) {
 }
 
 // Transforms resources from dhis2 to send contacts to Go.Data
-export function processContacts (dhis2, godata, config, user) {
+export function processContacts (dhis2, godata, config, user, _ = { logAction }) {
   return promisePipeline(
-    R.tap(() => logAction('Fetching contacts and transforming them')),
+    R.tap(() => _.logAction('Fetching contacts and transforming them')),
     loadContactsForOutbreaks(dhis2, godata, config),
     R.tap(() => logDone()),
-    R.tap(() => logAction('Sending contacts to Go.Data')),
+    R.tap(() => _.logAction('Sending contacts to Go.Data')),
     sendContactsToGoData(godata, user),
     R.tap(() => logDone())
   )

@@ -48,6 +48,7 @@ export const completeSchema = R.curry((schema, model) => {
   }
 })
 
+// Similar to R.pipe but it can be used with promises
 export const promisePipeline = (...fns) => {
   return (args) => {
     return fns.reduce(async (args, fn) => {

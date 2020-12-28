@@ -10,30 +10,31 @@ const stringify = JSON.stringify.bind(JSON)
 
 // Copy organisation units and exports the result hierarchically in a file
 // TEMPORAL BEHAVIOR: since we are waiting to be able to upload directly in bulk
-// to godata from this script, right now it behaves different in the browser (if no outputFile
-// is provided, the JSON file is automatically downloaded) and in the command line (if an outputFile
-// is provided, the JSON file is created with that name).
+// to godata from this script, right now it behaves different in the browser
+// (if no outputFile is provided, the JSON file is automatically downloaded) and in the
+// command line (if an outputFile is provided, the JSON file is created with that name).
 export const copyOrganisationUnits = (dhis2, godata, config, _ = {
   fs,
   stringify,
   encodeURIComponent,
-  document
+  document,
+  logAction
 }) =>
   async (outputFile) => {
-  logAction('Fetching organisation units')
+  _.logAction('Fetching organisation units')
   const organisationUnits = await dhis2.getOrganisationUnitsFromParent(config.rootID)
   logDone()
 
-  logAction('Transforming organisation units to locations')
+  _.logAction('Transforming organisation units to locations')
   const locations = await sendLocationsToGoData(config, organisationUnits)
   logDone()
   
   if (outputFile != null) {
-    logAction(`Writing result into ${outputFile}`)
+    _.logAction(`Writing result into ${outputFile}`)
     _.fs.writeFileSync(outputFile, _.stringify(locations))
     logDone()
   } else {
-    logAction('Downloading JSON file')
+    _.logAction('Downloading JSON file')
     const data = "data:text/json;charset=utf-8," + _.encodeURIComponent(_.stringify(locations))
     const a = _.document.createElement('a')
     _.document.body.appendChild(a)
