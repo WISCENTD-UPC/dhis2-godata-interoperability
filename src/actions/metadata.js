@@ -3,6 +3,7 @@ import * as R from 'ramda'
 
 import { optionToReferenceData } from '../mappings/metadata'
 import {
+  dependencies,
   getIDFromDisplayName,
   allPromises,
   promisePipeline,
@@ -11,7 +12,9 @@ import {
 } from '../util'
 
 // Copy general metadata from DHIS2 from Go.Data
-export const copyMetadata = (dhis2, godata, config, _ = { logAction }) => async () => {
+export const copyMetadata = (dhis2, godata, config, _) => async () => {
+  _ = dependencies({ logAction }, _)
+
   const [ allSets, options ] = await loadResources(dhis2, godata, config)
   
   _.logAction('Transfering metadata')

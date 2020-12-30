@@ -7,6 +7,7 @@ import { processCases } from './case'
 import { processContacts } from './contact'
 import { loadTrackedEntityInstances } from './common'
 import {
+  dependencies,
   getIDFromDisplayName,
   mapAttributeNamesToIDs,
   allPromises,
@@ -15,7 +16,9 @@ import {
   logDone
 } from '../util'
 
-export const fullTransfer = (dhis2, godata, config, _ = { loadTrackedEntityInstances, logAction }) => async () => {
+export const fullTransfer = (dhis2, godata, config, _) => async () => {
+  _ = dependencies({ loadTrackedEntityInstances, logAction }, _)
+
   const [
     user,
     optionSets,

@@ -4,6 +4,7 @@ import * as R from 'ramda'
 import constants from '../config/constants'
 import { loadTrackedEntityInstances } from './common'
 import {
+  dependencies,
   getIDFromDisplayName,
   allPromises,
   promisePipeline,
@@ -15,12 +16,9 @@ import { createOutbreakMapping } from '../mappings/outbreak'
 // Creates an outbreak or a series of outbreaks (depending on the configuration)
 // based on the tracked entity instances (cases) fetched from dhis2
 // and uploads it/them to godata
-export const createOutbreaks = (dhis2, godata, config, _ = {
-  postOutbreaks,
-  loadTrackedEntityInstances,
-  Date,
-  logAction
-}) => async () => {
+export const createOutbreaks = (dhis2, godata, config, _) => async () => {
+  _ = dependencies({ postOutbreaks, loadTrackedEntityInstances, Date, logAction }, _)
+
   _.logAction('Fetching resources')
   const [ programs, organisationUnits ] = await loadResources(dhis2, config)
   logDone()
@@ -41,9 +39,9 @@ export function loadResources (dhis2, config) {
   ])
 }
 
-export function processOutbreaks (godata, config, organisationUnits, groupingLevel, _ = {
-  postOutbreaks, Date, logAction
-}) {
+export function processOutbreaks (godata, config, organisationUnits, groupingLevel, _) {
+  _ = dependencies({ postOutbreaks, Date, logAction }, _)
+
   _.logAction('Initializing outbreaks')
   const outbreaks = initializeOutbreaks(organisationUnits)
   logDone()

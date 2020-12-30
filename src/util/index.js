@@ -57,6 +57,8 @@ export const promisePipeline = (...fns) => {
   }
 }
 
+export const dependencies = R.curry((defaultDeps = {}, deps) => R.mergeRight(defaultDeps, R.defaultTo({}, deps)))
+
 export const allPromises = Promise.all.bind(Promise)
 
 export const log = (str) => {

@@ -5,18 +5,22 @@ import * as R from 'ramda'
 
 import { loadTrackedEntityInstances } from './common'
 import {
+  dependencies,
   getIDFromDisplayName,
   mapAttributeNamesToIDs,
   completeSchema,
   allPromises,
   promisePipeline,
   logAction,
-  logDone } from '../util'
+  logDone
+} from '../util'
 import { trackedEntityToContact } from '../mappings/case'
 import { trackedEntityToRelationship } from '../mappings/relationship'
 
 // Copy dhis2 contacts and create additional persons and their relationships in Go.Data
-export const copyContacts = (dhis2, godata, config, _ = { logAction }) => async () => {
+export const copyContacts = (dhis2, godata, config, _) => async () => {
+  _ = dependencies({ logAction }, _)
+
   logAction('Fetching resources')
   const [
     relationships, // TODO -> this is not in use. It should filter relationship types
@@ -43,7 +47,9 @@ export function loadResources (dhis2, godata, config) {
 }
 
 // Transforms resources from dhis2 to send contacts to Go.Data
-export function processContacts (dhis2, godata, config, user, _ = { logAction }) {
+export function processContacts (dhis2, godata, config, user, _) {
+  _ = dependencies({ logAction }, _)
+
   return promisePipeline(
     R.tap(() => _.logAction('Fetching contacts and transforming them')),
     loadContactsForOutbreaks(dhis2, godata, config),

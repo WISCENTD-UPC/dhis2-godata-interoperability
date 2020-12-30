@@ -3,17 +3,21 @@ import * as R from 'ramda'
 
 import { loadTrackedEntityInstances } from './common'
 import {
+  dependencies,
   getIDFromDisplayName,
   mapAttributeNamesToIDs,
   allPromises,
   promisePipeline,
   logAction,
-  logDone } from '../util'
+  logDone
+} from '../util'
 import { trackedEntityToCase } from '../mappings/case'
 
 // Copy tracked enitities in the case program from dhis2 to godata (transforming the schema
 // and adding extra information like case classifiction)
-export const copyCases = (dhis2, godata, config, _ = { loadTrackedEntityInstances, logAction }) => async () => {
+export const copyCases = (dhis2, godata, config, _) => async () => {
+  _ = dependencies({ loadTrackedEntityInstances, logAction }, _)
+
   _.logAction('Fetching resources')
   const [
     programs,
@@ -56,15 +60,9 @@ export function loadResources (dhis2, godata, config) {
 }
 
 // Transform resources from dhis2 to create cases in Go.Data
-export function processCases (
-  godata,
-  config,
-  organisationUnits,
-  programStages,
-  dataElements,
-  cases,
-  _ = { logAction }
-) {
+export function processCases (godata, config, organisationUnits, programStages, dataElements, cases, _) {
+  _ = dependencies({ logAction }, _)
+
   logAction('Transforming resources')
   const programStagesIDs = R.map(getIDFromDisplayName(programStages), [
     config.dhis2KeyProgramStages.clinicalExamination,
