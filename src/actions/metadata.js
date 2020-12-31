@@ -13,16 +13,18 @@ import {
 
 // Copy general metadata from DHIS2 from Go.Data
 export const copyMetadata = (dhis2, godata, config, _) => async () => {
-  _ = dependencies({ logAction }, _)
+  _ = dependencies({ logAction, logDone }, _)
 
   const [ allSets, options ] = await loadResources(dhis2, godata, config)
   
   _.logAction('Transfering metadata')
-  return await processMetadata(dhis2, godata, config, allSets, options)
+  return await processMetadata(dhis2, godata, config, allSets, options, _)
 }
 
 // Transforms data from the resources and push it to Go.Data
-export function processMetadata (dhis2, godata, config, allSets, options) {
+export function processMetadata (dhis2, godata, config, allSets, options, _) {
+  _ = dependencies({ logDone }, _)
+
   return promisePipeline(
     R.toPairs,
     R.map(mapOptionSetIDFromDisplayName(allSets)),
@@ -32,7 +34,7 @@ export function processMetadata (dhis2, godata, config, allSets, options) {
     R.map(transformOptions()),
     R.flatten,
     sendOptionSetsToGoData(godata),
-    R.tap(() => logDone())
+    R.tap(() => _.logDone())
   )(config.metadata.optionSets)
 }
 

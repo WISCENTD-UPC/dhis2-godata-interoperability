@@ -17,7 +17,7 @@ import {
 } from '../util'
 
 export const fullTransfer = (dhis2, godata, config, _) => async () => {
-  _ = dependencies({ loadTrackedEntityInstances, logAction }, _)
+  _ = dependencies({ loadTrackedEntityInstances, logAction, logDone }, _)
 
   const [
     user,
@@ -35,17 +35,17 @@ export const fullTransfer = (dhis2, godata, config, _) => async () => {
   const casesProgramID = getIDFromDisplayName(programs, config.dhis2CasesProgram)
   config = mapAttributeNamesToIDs(attributes)(config)
   const groupingLevel = selectGroupingLevel(orgUnits, config)
-  logDone()
+  _.logDone()
 
   const cases = await _.loadTrackedEntityInstances(dhis2, orgUnits, casesProgramID)
 
   return await promisePipeline(
     () => processMetadata(dhis2, godata, config, optionSets, options),
     () => processOutbreaks(godata, config, orgUnits, groupingLevel)(cases),
-    (outbreaks) => R.pipe(R.tap(console.log), promisePipeline(
+    (outbreaks) => promisePipeline(
       () => processCases(godata, config, orgUnits, programStages, dataElements, cases)(outbreaks),
       () => processContacts(dhis2, godata, config, user)(outbreaks)
-    ))()
+    )()
   )()
 }
 

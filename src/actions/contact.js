@@ -19,19 +19,19 @@ import { trackedEntityToRelationship } from '../mappings/relationship'
 
 // Copy dhis2 contacts and create additional persons and their relationships in Go.Data
 export const copyContacts = (dhis2, godata, config, _) => async () => {
-  _ = dependencies({ logAction }, _)
+  _ = dependencies({ logAction, logDone }, _)
 
-  logAction('Fetching resources')
+  _.logAction('Fetching resources')
   const [
     relationships, // TODO -> this is not in use. It should filter relationship types
     attributes,
     outbreaks,
     user ] = await loadResources(dhis2, godata, config)
-  logDone()
+  _.logDone()
 
-  logAction('Reading configuration')
+  _.logAction('Reading configuration')
   config = mapAttributeNamesToIDs(attributes)(config)
-  logDone()
+  _.logDone()
   
   return processContacts(dhis2, godata, config, user, _)(outbreaks)
 }
@@ -48,15 +48,15 @@ export function loadResources (dhis2, godata, config) {
 
 // Transforms resources from dhis2 to send contacts to Go.Data
 export function processContacts (dhis2, godata, config, user, _) {
-  _ = dependencies({ logAction }, _)
+  _ = dependencies({ logAction, logDone }, _)
 
   return promisePipeline(
     R.tap(() => _.logAction('Fetching contacts and transforming them')),
     loadContactsForOutbreaks(dhis2, godata, config),
-    R.tap(() => logDone()),
+    R.tap(() => _.logDone()),
     R.tap(() => _.logAction('Sending contacts to Go.Data')),
     sendContactsToGoData(godata, user),
-    R.tap(() => logDone())
+    R.tap(() => _.logDone())
   )
 }
 

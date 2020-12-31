@@ -17,16 +17,16 @@ import { createOutbreakMapping } from '../mappings/outbreak'
 // based on the tracked entity instances (cases) fetched from dhis2
 // and uploads it/them to godata
 export const createOutbreaks = (dhis2, godata, config, _) => async () => {
-  _ = dependencies({ postOutbreaks, loadTrackedEntityInstances, Date, logAction }, _)
+  _ = dependencies({ postOutbreaks, loadTrackedEntityInstances, Date, logAction, logDone }, _)
 
   _.logAction('Fetching resources')
   const [ programs, organisationUnits ] = await loadResources(dhis2, config)
-  logDone()
+  _.logDone()
   const casesProgramID = getIDFromDisplayName(programs, config.dhis2CasesProgram)
   const groupingLevel = selectGroupingLevel(organisationUnits, config)
   _.logAction('Fetching tracked entity instances')
   const trackedEntities = await _.loadTrackedEntityInstances(dhis2, organisationUnits, casesProgramID)
-  logDone()
+  _.logDone()
   
   return processOutbreaks(godata, config, organisationUnits, groupingLevel, _)(trackedEntities)
 }
@@ -40,11 +40,11 @@ export function loadResources (dhis2, config) {
 }
 
 export function processOutbreaks (godata, config, organisationUnits, groupingLevel, _) {
-  _ = dependencies({ postOutbreaks, Date, logAction }, _)
+  _ = dependencies({ postOutbreaks, Date, logAction, logDone }, _)
 
   _.logAction('Initializing outbreaks')
   const outbreaks = initializeOutbreaks(organisationUnits)
-  logDone()
+  _.logDone()
   
   return promisePipeline(
     R.tap(() => _.logAction('Processing outbreaks')),
@@ -52,10 +52,10 @@ export function processOutbreaks (godata, config, organisationUnits, groupingLev
     groupOutbreaks(outbreaks, groupingLevel),
     R.values,
     R.map(createOutbreakMapping(config, _)),
-    R.tap(() => logDone()),
+    R.tap(() => _.logDone()),
     R.tap(() => _.logAction('Creating outbreaks in Go.Data')),
     _.postOutbreaks(godata),
-    R.tap(() => logDone())
+    R.tap(() => _.logDone())
   )
 }
 
