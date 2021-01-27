@@ -18,6 +18,10 @@ export const caseAttributeSelector = (attributeID) => R.pipe(
   R.find(R.propEq('attribute', attributeID)),
   R.prop('value'))
 
+export const firstNameSelector = (config) => R.pipe(
+  caseAttributeSelector(config.dhis2KeyAttributes.firstName),
+  R.defaultTo(config.attributesDefaults.firstName))
+
 export const dataElementSelector = R.curry((programStage, dataElementName) => R.pipe(
   R.prop(programStage),
   R.defaultTo([]),
@@ -25,6 +29,7 @@ export const dataElementSelector = R.curry((programStage, dataElementName) => R.
   R.prop('value'),
   R.defaultTo(null)
 ))
+
 export const documentSelector = R.curry((documentName, attributeID) => R.pipe(
   caseAttributeSelector(attributeID),
   doc => doc != null ? ({
@@ -32,13 +37,16 @@ export const documentSelector = R.curry((documentName, attributeID) => R.pipe(
     value: doc
   }) : null
 ))
+
 export const passportSelector = documentSelector('passport')
+
 export const documentsSelector = (config) => R.pipe(
   completeSchema([
     passportSelector(config.dhis2KeyAttributes.passportID)
   ]),
   R.filter(_ => _ != null)
 )
+
 export const vaccinesSelector = (dataElementID) => R.pipe(
   dataElementSelector('clinicalExamination', dataElementID),
   R.ifElse(
@@ -59,7 +67,7 @@ export const trackedEntityToCase = (config) => completeSchema({
   outbreak: caseOutbreakSelector,
   id: caseIDSelector,
   //visualId: caseAttributeSelector(config.dhis2KeyAttributes.caseID),
-  firstName: caseAttributeSelector(config.dhis2KeyAttributes.firstName),
+  firstName: firstNameSelector(config),
   lastName: caseAttributeSelector(config.dhis2KeyAttributes.surname),
   gender: R.pipe(caseAttributeSelector(config.dhis2KeyAttributes.sex), constants.gender),
   ocupation: constants.ocupation(),
@@ -91,7 +99,7 @@ export const trackedEntityToCase = (config) => completeSchema({
 export const trackedEntityToContact = (config) => completeSchema({
   id: caseIDSelector,
   //visualId: caseAttributeSelector(config.dhis2KeyAttributes.caseID),
-  firstName: caseAttributeSelector(config.dhis2KeyAttributes.firstName),
+  firstName: firstNameSelector(config),
   lastName: caseAttributeSelector(config.dhis2KeyAttributes.surname),
   gender: R.pipe(caseAttributeSelector(config.dhis2KeyAttributes.sex), constants.gender),
   ocupation: constants.ocupation(),

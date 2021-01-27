@@ -1,5 +1,6 @@
 
 import { v4 as uuid } from 'uuid'
+import * as R from 'ramda'
 
 import * as caseMappings from '../../src/mappings/case'
 import config from '../../src/config'
@@ -50,6 +51,12 @@ test('caseMappings.trackedEntityToCase', () => {
   })
 })
 
+test('caseMappings.trackedEntityToCase no firstName', () => {
+  const modelWithoutName = R.assoc('attributes', [], model)
+  expect((caseMappings.trackedEntityToCase(config)(modelWithoutName)).firstName)
+    .toBe(config.attributesDefaults.firstName)
+})
+
 test('caseMappings.trackedEntityToContact', () => {
   expect(caseMappings.trackedEntityToContact(config)(model)).toStrictEqual({
     id: model.trackedEntityInstance,
@@ -70,4 +77,11 @@ test('caseMappings.trackedEntityToContact', () => {
     pregnancyStatus: null
   })
 })
+
+test('caseMappings.trackedEntityToContact no firstName', () => {
+  const modelWithoutName = R.assoc('attributes', [], model)
+  expect((caseMappings.trackedEntityToContact(config)(modelWithoutName)).firstName)
+    .toBe(config.attributesDefaults.firstName)
+})
+
 
