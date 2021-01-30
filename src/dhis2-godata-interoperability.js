@@ -1,10 +1,12 @@
 
+import 'core-js'
+import 'regenerator-runtime'
 import DHIS2API from 'dhis2-api-wrapper'
 import GoDataAPI from 'godata-api-wrapper'
 import * as R from 'ramda'
 import { Command } from 'commander'
 
-import _package from './package.json'
+import _package from '../package.json'
 import config from './config'
 import {
   copyMetadata,

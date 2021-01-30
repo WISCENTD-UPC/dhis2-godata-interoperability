@@ -34,7 +34,7 @@
     "ramda": "^0.27.0"
   },
   "devDependencies": {
-    "core-js": "^3.8.1",
+    "core-js": "^3.8.3",
     "jest": "^26.2.2",
     "regenerator-runtime": "^0.13.7",
     "uuid": "^8.3.0"
