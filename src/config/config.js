@@ -8,7 +8,8 @@ export default {
     }
   },
   DHIS2APIConfig: {
-    baseURL: 'https://covid19.dhis2.org/demo/api',
+    //baseURL: 'https://covid19.dhis2.org/demo/api',
+    baseURL: 'http://covid19.dhis2.org/dev/api',
     credentials: {
       user: 'COVID',
       password: 'StopCovid19!'

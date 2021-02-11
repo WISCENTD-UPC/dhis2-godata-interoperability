@@ -14,3 +14,7 @@ export function createUUIDs () {
   }
 }
 
+export function mock (ret) {
+  return jest.fn().mockReturnValue(ret)
+}
+

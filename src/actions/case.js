@@ -60,6 +60,7 @@ export function loadResources (dhis2, godata, config) {
 }
 
 // Transform resources from dhis2 to create cases in Go.Data
+// TODO -> rename variable cases to trackedEntities
 export function processCases (godata, config, organisationUnits, programStages, dataElements, cases, _) {
   _ = dependencies({ logAction, logDone }, _)
 
@@ -213,11 +214,15 @@ export function sendCasesToGoData (godata) {
     R.groupBy(R.prop('outbreak')),
     async (outbreaks) => {
       const user = await godata.login()
+      let results = []
       for (let outbreak in outbreaks) {
         const cases = outbreaks[outbreak]
         await godata.activateOutbreakForUser(user.userId, outbreak)
-        await allPromises(R.map(case_ => godata.createOutbreakCase(outbreak, R.dissoc('outbreak', case_)), cases))
+        results = R.concat(results, await allPromises(
+            R.map(case_ => godata.createOutbreakCase(outbreak, R.dissoc('outbreak', case_)), cases)
+        ))
       }
+      return results
     }
   )
 }

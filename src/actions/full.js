@@ -17,7 +17,12 @@ import {
 } from '../util'
 
 export const fullTransfer = (dhis2, godata, config, _) => async () => {
-  _ = dependencies({ loadTrackedEntityInstances, logAction, logDone }, _)
+  _ = dependencies({
+    loadResources,
+    loadTrackedEntityInstances,
+    logAction,
+    logDone
+  }, _)
 
   const [
     user,
@@ -29,7 +34,7 @@ export const fullTransfer = (dhis2, godata, config, _) => async () => {
     attributes,
     relationships,
     orgUnits
-  ] = await loadResources(dhis2, godata, config)
+  ] = await _.loadResources(dhis2, godata, config)
 
   _.logAction('Reading configuration')
   const casesProgramID = getIDFromDisplayName(programs, config.dhis2CasesProgram)
@@ -39,14 +44,16 @@ export const fullTransfer = (dhis2, godata, config, _) => async () => {
 
   const cases = await _.loadTrackedEntityInstances(dhis2, orgUnits, casesProgramID)
 
-  return await promisePipeline(
-    () => processMetadata(dhis2, godata, config, optionSets, options),
-    () => processOutbreaks(godata, config, orgUnits, groupingLevel)(cases),
-    (outbreaks) => promisePipeline(
-      () => processCases(godata, config, orgUnits, programStages, dataElements, cases)(outbreaks),
-      () => processContacts(dhis2, godata, config, user)(outbreaks)
-    )()
-  )()
+  const results = {}
+  results.metadata = await processMetadata(dhis2, godata, config, optionSets, options)
+  results.outbreaks = await processOutbreaks(
+    godata, config, orgUnits, groupingLevel)(cases)
+  results.cases = await processCases(
+    godata, config, orgUnits, programStages, dataElements, cases)(results.outbreaks)
+  results.contacts = await processContacts(
+    dhis2, godata, config, user)(results.outbreaks)
+
+  return results
 }
 
 export function loadResources (dhis2, godata, config) {
