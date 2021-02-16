@@ -19,7 +19,7 @@ export default {
     },
     debug: true
   },
-  countries: [ 'COUNTRY_NAME' ],
+  countries: [ 'Trainingland' ],
   rootID: 'ROOT_ORGANISATION_UNIT_ID'
 }
 
