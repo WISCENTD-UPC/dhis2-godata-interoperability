@@ -14,7 +14,8 @@ const stringify = JSON.stringify.bind(JSON)
 // (if no outputFile is provided, the JSON file is automatically downloaded) and in the
 // command line (if an outputFile is provided, the JSON file is created with that name).
 export const copyOrganisationUnits = (dhis2, godata, config, _) => async (outputFile) => {
-  _ = dependencies({ fs, stringify, encodeURIComponent, document, logAction, logDone }, _)
+  _ = dependencies({ fs, stringify, encodeURIComponent, logAction, logDone }, _)
+  _.document = _.document || (typeof document === 'undefined' ? undefined : document)
 
   _.logAction('Fetching organisation units')
   const organisationUnits = await dhis2.getOrganisationUnitsFromParent(config.rootID)

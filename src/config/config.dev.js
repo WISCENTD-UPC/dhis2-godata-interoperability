@@ -1,22 +1,25 @@
 
+// NOTE: This credentials are just the ones use with local instances
+// of the seriveces and just for development purposes. If you are using
+// this scripts as an end user, please use the config.js configuration file instead.
 export default {
   GoDataAPIConfig: {
-    baseURL: 'http://localhost:8000/api',
+    baseURL: 'BASE_URL',
     credentials: {
-      email: 'test@who.int',
-      password: '123412341234'
+      email: 'EMAIL',
+      password: 'PASSWORD'
     },
     debug: true
   },
   DHIS2APIConfig: {
-    baseURL: 'https://covid19.dhis2.org/demo/api',
+    baseURL: 'BASE_URL',
     credentials: {
-      user: 'COVID',
-      password: 'StopCovid19!'
+      user: 'USER',
+      password: 'PASSWORD'
     },
     debug: true
   },
-  countries: [ 'Trainingland' ],
-  rootID: 'GD7TowwI46c'
+  countries: [ 'COUNTRY_NAME' ],
+  rootID: 'ROOT_ORGANISATION_UNIT_ID'
 }
 

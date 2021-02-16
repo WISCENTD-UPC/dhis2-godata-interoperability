@@ -10,3 +10,5 @@ export {
   queryGoData
 } from './actions'
 
+export { default as config } from './config'
+

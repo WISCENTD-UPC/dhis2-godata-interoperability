@@ -1,21 +1,20 @@
 
 export default {
   GoDataAPIConfig: {
-    baseURL: 'http://localhost:8000/api',
+    baseURL: 'BASE_URL',
     credentials: {
-      email: 'test@who.int',
-      password: '123412341234'
+      email: 'EMAIL',
+      password: 'PASSWORD'
     }
   },
   DHIS2APIConfig: {
-    //baseURL: 'https://covid19.dhis2.org/demo/api',
-    baseURL: 'http://covid19.dhis2.org/dev/api',
+    baseURL: 'BASE_URL',
     credentials: {
-      user: 'COVID',
-      password: 'StopCovid19!'
+      user: 'EMAIL',
+      password: 'PASSWORD'
     }
   },
-  countries: [ 'Trainingland' ],
-  rootID: 'GD7TowwI46c'
+  countries: [ 'COUNTRY_NAME' ],
+  rootID: 'ROOT_ORGANISATION_UNIT_ID'
 }
 
