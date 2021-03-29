@@ -20,6 +20,16 @@ export function mapAttributeNamesToIDs (attributes) {
     }))
 }
 
+// Maps the displayNames of config.prop to its IDs
+// given the propList list fetched from dhis2
+export function mapListDisplayNameToIDs (propList, prop) {
+  return R.over(
+    R.lensProp(prop),
+    R.mapObjIndexed((value) => {
+      return R.find(R.propEq('displayName', value), propList).id
+    }))
+}
+
 // Creates and object with data from "model" as defined by the selectors in "schema"
 export const completeSchema = R.curry((schema, model) => {
   const completedSchema = {}

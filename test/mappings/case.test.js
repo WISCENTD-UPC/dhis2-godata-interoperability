@@ -4,7 +4,7 @@ import * as R from 'ramda'
 
 import * as caseMappings from '../../src/mappings/case'
 import config from '../../src/config'
-import constants from '../../src/config/constants'
+import constants from '../../src/config/constants/dhis'
 
 const model = {
   outbreak: uuid(),

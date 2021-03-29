@@ -4,7 +4,7 @@ import { v4 as uuid } from 'uuid'
 
 import * as metadataActions from '../../src/actions/metadata'
 import config from '../../src/config'
-import constants from '../../src/config/constants'
+import constants from '../../src/config/constants/dhis'
 
 import {
   optionSets,

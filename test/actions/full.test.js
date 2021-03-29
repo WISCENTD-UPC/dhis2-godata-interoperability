@@ -4,7 +4,7 @@ import * as R from 'ramda'
 import * as fullTransferActions from '../../src/actions/full'
 import { trackedEntityToCase } from '../../src/mappings/case'
 import { mapAttributeNamesToIDs } from '../../src/util'
-import constants from '../../src/config/constants'
+import constants from '../../src/config/constants/dhis'
 import config from '../../src/config'
 
 import { mock } from '../test-util/util'

@@ -19,3 +19,11 @@ export async function loadTrackedEntityInstances (dhis2, organisationUnits, prog
   return R.flatten(trackedEntities)
 }
 
+export async function loadCases (godata, outbreaks) {
+  const cases = await allPromises(
+    R.map(async outbreak => {
+      return await godata.getOutbreakCases(outbreak.id)
+    }, outbreaks)
+  )
+  return R.flatten(cases)
+}

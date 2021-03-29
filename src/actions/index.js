@@ -6,4 +6,6 @@ export { copyCases } from './case'
 export { copyContacts } from './contact'
 export { fullTransfer } from './full'
 export { queryDHIS2, queryGoData } from './dev'
+export { copyLocations } from './orgUnit'
+export { copyTrackedEntities } from './trackedEntity'
 

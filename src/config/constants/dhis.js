@@ -1,5 +1,5 @@
 
-import config from './'
+import config from '..'
 
 export default {
   referenceDataCategoryID: (_) => `LNG_REFERENCE_DATA_CATEGORY_${_.toUpperCase()}`,

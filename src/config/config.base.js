@@ -11,6 +11,10 @@ export default {
     healthOutcome: 'Stage 4 - Health Outcome',
     symptoms: 'Symptoms'
   },
+  dhis2KeyTrackedEntityTypes: {
+    person: 'Person',
+    commodities: 'Commodities '
+  },
   dhis2KeyAttributes: {
     caseID: 'System Generated Case ID',
     firstName: 'First Name',
@@ -27,7 +31,8 @@ export default {
     pregnancy: 'Pregnancy',
     dateOfOnset: 'Date of symptoms onset',
     healthOutcome: 'Health outcome',
-    typeOfVaccine: 'Type of vaccine'
+    typeOfVaccine: 'Type of vaccine',
+    labTestResult: 'Lab Test Result'
   },
   dhis2DataElementsChecks: {
     confirmedTest: [

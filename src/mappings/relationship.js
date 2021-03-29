@@ -2,7 +2,7 @@
 import * as R from 'ramda'
 
 import { completeSchema } from '../util'
-import constants from '../config/constants'
+import constants from '../config/constants/dhis'
 
 // SELECTORS
 export const contactIDSelector = R.prop('trackedEntityInstance')

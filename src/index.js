@@ -7,7 +7,9 @@ export {
   copyContacts,
   fullTransfer,
   queryDHIS2,
-  queryGoData
+  queryGoData,
+  copyLocations,
+  copyTrackedEntities
 } from './actions'
 
 export { default as config } from './config'

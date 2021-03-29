@@ -4,7 +4,7 @@ import { v4 as uuid } from 'uuid'
 
 import * as locationActions from '../../src/actions/location'
 import config from '../../src/config'
-import constants from '../../src/config/constants'
+import constants from '../../src/config/constants/dhis'
 import { createUUIDs } from '../test-util/util'
 import { orgUnits } from '../test-util/mocks'
 
