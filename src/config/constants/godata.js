@@ -9,7 +9,14 @@ export default {
     config.followupAssignmentAlgorithms[index]}`,
   disease: (_ = 'LNG_REFERENCE_DATA_CATEGORY_DISEASE_') => _.replace('LNG_REFERENCE_DATA_CATEGORY_DISEASE_', ''),
   country: (_) => _.replace('LNG_REFERENCE_DATA_CATEGORY_COUNTRY_', ''),
-  gender: (_) => _ != null ? _.replace('LNG_REFERENCE_DATA_CATEGORY_GENDER_', '') : null,
+  gender: (_ = null) => {
+    const base = 'LNG_REFERENCE_DATA_CATEGORY_GENDER_'
+    const options = {
+      'MALE': 'Male',
+      'FEMALE': 'Female'
+    }
+    return _ !== null ? options[ _.replace(base, '') ] : null
+  },
   //ocupation: (_ = 'LNG_REFERENCE_DATA_CATEGORY_OCCUPATION_UNKNOWN') => _.replace('LNG_REFERENCE_DATA_CATEGORY_OCCUPATION_', ''),
   riskLevel: (_ = 'LNG_REFERENCE_DATA_CATEGORY_RISK_LEVEL_NONE') => _.replace('LNG_REFERENCE_DATA_CATEGORY_RISK_LEVEL_', ''),
   addressTypeID: (_ = 'LNG_REFERENCE_DATA_CATEGORY_ADDRESS_TYPE_USUAL_PLACE_OF_RESIDENCE') => _.replace('LNG_REFERENCE_DATA_CATEGORY_ADDRESS_TYPE_', ''),
@@ -31,21 +38,21 @@ export default {
   healthOutcome: (_ = null) => {
     const base = 'LNG_REFERENCE_DATA_CATEGORY_OUTCOME_'
     const options = {
-      'ALIVE': 'HEALTHY',
-      'DECEASED': 'DEATH',
-      'RECOVERED': 'RECOVERED',
-      'NONE': 'UNKNOWN'
+      'ALIVE': 'Healthy',
+      'DECEASED': 'Death',
+      'RECOVERED': 'Recovered',
+      'NONE': 'Unknown'
     }
     return _ !== null ? options[ _.replace(base, '') ] : null
   },
   labTestResult: (_ = 'NONE') => {
     const base = 'LNG_REFERENCE_DATA_CATEGORY_CASE_CLASSIFICATION_'
     const options = {
-      'CONFIRMED': 'POSITIVE',
-      'NOT_A_CASE_DISCARDED': 'NEGATIVE',
-      'SUSPECT': 'INCONCLUSIVE',
-      'PROBABLE': 'INCONCLUSIVE',
-      'NONE': 'UNKNOWN'
+      'CONFIRMED': 'Positive',
+      'NOT_A_CASE_DISCARDED': 'Negative',
+      'SUSPECT': 'Inconclusive',
+      'PROBABLE': 'Inconclusive',
+      'NONE': 'Unknown'
     }
     return options[ _.replace(base, '') ]
   },

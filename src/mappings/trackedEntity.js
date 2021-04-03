@@ -21,44 +21,62 @@ export const classificationDateSelector = R.path(['classificationHistory', 0, 's
 
 export const firstNameSelector = (config) => R.pipe(
   R.prop('firstName'),
-  _ => _ != null ?
-    R.assoc(config.dhis2KeyAttributes.firstName, _, {})
+  _ => _ != null ? 
+    {
+      attribute: config.dhis2KeyAttributes.firstName,
+      value: _
+    }
   : null
 )
 
 export const surnameSelector = (config) => R.pipe(
   R.prop('lastName'),
   _ => _ != null ?
-    R.assoc(config.dhis2KeyAttributes.surname, _, {})
+    {
+      attribute: config.dhis2KeyAttributes.surname,
+      value: _
+    }
   : null
 ) 
 
 export const sexSelector = (config) => R.pipe(
   R.prop('gender'),
   constants.gender,
-  _ => _ != null ? R.assoc(
-    config.dhis2KeyAttributes.sex, _, {}
-  ) : null
+  _ => _ != null ? 
+    {
+      attribute: config.dhis2KeyAttributes.sex,
+      value: _
+    }
+  : null
 )
 
 export const dateOfBirthSelector = (config) => R.pipe(
   R.prop('dateOfBirth'),
   _ => _ != null ?
-    R.assoc(config.dhis2KeyAttributes.dateOfBirth, _, {})
+    {
+      attribute: config.dhis2KeyAttributes.dateOfBirth,
+      value: _
+    }
   : null
 ) 
 
 export const addressSelector = (config) => R.pipe(
   R.path(['addresses', 'address']),
   _ => _ != null ?
-    R.assoc(config.dhis2KeyAttributes.address, _, {})
+    {
+      attribute: config.dhis2KeyAttributes.address,
+      value: _
+    }
   : null
 )  
 
 export const passportSelector = (config) => R.pipe(
   R.path(['documents', 'value']),
   _ => _ != null ?
-    R.assoc(config.dhis2KeyAttributes.passport, _, {})
+    {
+      attribute: config.dhis2KeyAttributes.passport,
+      value: _
+    }
   : null
 )
 
@@ -67,6 +85,7 @@ export const healthOutcomeSelector = (config) => R.pipe(
     program: config.dhis2CasesProgram,
     orgUnit: R.prop('orgUnit'),
     programStage: config.dhis2KeyProgramStages.healthOutcome,
+    eventDate: R.prop('dateOfOutcome'),
     dataValues: [
       {
           dataElement: config.dhis2KeyDataElements.healthOutcome,
@@ -82,6 +101,7 @@ export const labResultSelector = (config) => R.pipe(
     program: config.dhis2CasesProgram,
     orgUnit: caseOrgUnitIDSelector,
     programStage: config.dhis2KeyProgramStages.labResults,
+    eventDate: classificationDateSelector,
     dataValues: [
       {
           dataElement: config.dhis2KeyDataElements.labTestResult,
@@ -97,8 +117,7 @@ export const enrollmentsSelector = (config) => R.pipe(
     program: config.dhis2CasesProgram,
     orgUnit: caseOrgUnitIDSelector,
     events: [
-      labResultSelector(config), //TODO poner positive o negative solo i guess
-      //healthOutcomeSelector(config)
+      labResultSelector(config),
     ]
   }])
 )
@@ -121,12 +140,9 @@ export const caseToTrackedEntity = (config) => completeSchema({
   orgUnit: caseOrgUnitIDSelector,
   trackedEntityInstance: caseIDSelector,
   trackedEntityType: config.dhis2KeyTrackedEntityTypes.person,
-  //code: caseIDSelector, NO VALE
   created: caseDateOfReportingSelector,
   attributes: attributesSelector(config),
   outcomeId: outcomeIdSelector,
   dateOfOutcome: dateOfOutcomeSelector,
-  //classification: classificationSelector,
-  //classificationDate: classificationDateSelector,
   enrollments: enrollmentsSelector(config)
 })

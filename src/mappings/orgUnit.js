@@ -21,7 +21,7 @@ export const locationUpdatedAtSelector = R.prop('updatedAt')
 export const locationCreatedAtSelector = R.prop('createdAt')
 
 // MAPPINGS
-export const locationToOrganizationUnit = (config) => completeSchema({
+export const locationToOrganizationUnit = completeSchema({
   id: locationIDSelector,
   code: locationIDSelector,
   parent: { id: locationParentIDSelector },
@@ -31,10 +31,6 @@ export const locationToOrganizationUnit = (config) => completeSchema({
   level: locationGeographicalLevelIDSelector,
   lastUpdated: locationUpdatedAtSelector,
   openingDate: locationCreatedAtSelector,
-  programs: [
-    { id: config.dhis2CasesProgram },
-    { id: config.dhis2ContactsProgram }
-  ],
   children: _ => []
 })
 

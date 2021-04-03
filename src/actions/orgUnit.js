@@ -2,7 +2,12 @@
 import * as R from 'ramda'
 
 import { locationToOrganizationUnit } from '../mappings/orgUnit'
-import { dependencies, logAction, logDone } from '../util'
+import { 
+  getIDFromDisplayName,
+  dependencies, 
+  logAction, 
+  logDone 
+} from '../util'
 
 export const copyLocations = (dhis2, godata, config, _) => async () => {
   _ = dependencies({ logAction, logDone }, _)
@@ -23,12 +28,13 @@ export const copyLocations = (dhis2, godata, config, _) => async () => {
       R.lensProp('dhis2ContactsProgram'),
       _ => getIDFromDisplayName(programs, _)
     ),
-  )
+  )(config)
+
   const orgUnits = transformOrgUnits(config, locations, newIds)
   _.logDone()
 
   _.logAction('Sending organisation units to DHIS2')
-  const response = await sendOrgUnitsToDHIS2(dhis2, orgUnits)
+  await sendOrgUnitsToDHIS2(config, dhis2, orgUnits)
   _.logDone()
 }
 
@@ -44,7 +50,7 @@ export function addOrgUnitToParent (orgUnitsList, orgUnit) {
 
 // Given the list of orgUnits (already transformed from locations)
 // creates a hierarchy (parent-children relationships)
-export function createOrgUnitHierarchy (config) {
+export function createOrgUnitHierarchy () {
   return (orgUnits) => {
     if (orgUnits.length === 0) return {}
 
@@ -79,13 +85,52 @@ export function transformOrgUnits (config, locations, newIds) {
 
   return {
     organisationUnits: R.pipe(
-      R.map(locationToOrganizationUnit(config)),
+      R.map(locationToOrganizationUnit),
       exchangeIds(idsDict),
       createOrgUnitHierarchy(config)
     )(locations)
   }
 }
 
-export async function sendOrgUnitsToDHIS2 (dhis2, orgUnits) {
-  return await dhis2.createOrganisationUnits(orgUnits)
+export async function sendOrgUnitsToDHIS2 (config, dhis2, orgUnits) {
+  await dhis2.createOrganisationUnits(orgUnits)
+  const user = await dhis2.getCurrentUser()
+
+  const permissions = {
+    firstName: user.firstName,
+    surname: user.surname,
+    userCredentials: user.userCredentials,
+    teiSearchOrganisationUnits: [
+      ...user.teiSearchOrganisationUnits,
+    ],
+    organisationUnits: [
+      ...user.organisationUnits,
+    ],
+    dataViewOrganisationUnits: [
+      ...user.dataViewOrganisationUnits,
+    ]
+  }
+
+  const programs = {
+    additions: [
+      { id: config.dhis2CasesProgram }, 
+      { id: config.dhis2ContactsProgram }
+    ],
+    deletions: []
+  }
+
+  orgUnits.organisationUnits.map(ou => {
+    permissions.teiSearchOrganisationUnits.push({ id: ou.id })
+    permissions.organisationUnits.push({ id: ou.id })
+    permissions.dataViewOrganisationUnits.push({ id: ou.id })
+  })
+
+  await dhis2.givePermissions(user.userCredentials.userInfo.id, permissions)
+
+  orgUnits.organisationUnits.map(async ou => {
+    try {
+      await dhis2.addProgramsToOrgUnit(ou.id, programs)
+    } catch {}
+  })
+
 }
