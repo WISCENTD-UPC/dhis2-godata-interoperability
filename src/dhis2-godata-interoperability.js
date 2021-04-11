@@ -14,11 +14,12 @@ import {
   createOutbreaks,
   copyCases,
   copyContacts,
-  fullTransfer,
+  fullTransferGoData,
   queryDHIS2,
   queryGoData,
   copyLocations,
-  copyTrackedEntities
+  copyTrackedEntities,
+  fullTransferDHIS2
 } from './actions'
 
 const dhis2 = new DHIS2API(config.DHIS2APIConfig)
@@ -48,9 +49,9 @@ program
   .description('Copy contacts from DHIS2 to Go.Data')
   .action(copyContacts(dhis2, godata, config))
 program
-  .command('full-transfer')
+  .command('full-transfer-to-godata')
   .description('Performs a full transfer from DHIS2 to Go.Data (all but organisation units)')
-  .action(fullTransfer(dhis2, godata, config))
+  .action(fullTransferGoData(dhis2, godata, config))
 program
   .command('query-dhis2 <action>')
   .description('Direct use of dhis2-api-wrapper for development purposes')
@@ -67,6 +68,10 @@ program
   .command('copy-tracked-entities')
   .description('Copy tracked entities from Go.Data to DHIS2')
   .action(copyTrackedEntities(dhis2, godata, config))
+program
+  .command('full-transfer-to-dhis2')
+  .description('Performs a full transfer from Go.Data to DHIS2')
+  .action(fullTransferDHIS2(dhis2, godata, config))
 
 async function main () {
   await godata.login()

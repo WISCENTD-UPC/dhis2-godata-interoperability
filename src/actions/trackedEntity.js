@@ -74,7 +74,7 @@ export async function processTrackedEntities (dhis2, config, organisationUnits, 
   _ = dependencies({ logAction, logDone }, _)
 
    _.logAction('Transforming cases to tracked entity instances')
-  const trackedEntities = await transformOrgUnits(dhis2, config, cases, organisationUnits, teIDs)
+  const trackedEntities = await transformCases(dhis2, config, cases, organisationUnits, teIDs)
   _.logDone()
 
   _.logAction('Sending tracked entity instances to DHIS2')
@@ -84,7 +84,7 @@ export async function processTrackedEntities (dhis2, config, organisationUnits, 
 
 // Maps case to tracked entity, assigns DHIS2 ids and returns an array
 // Saves dict with old cases IDs from godata and new tracked entities IDs from dhis2
-export async function transformOrgUnits (dhis2, config, cases, orgUnits, teIDs) {
+export async function transformCases (dhis2, config, cases, orgUnits, teIDs) {
   const oldIds = cases.map(c => c.id)
   const idsDict = R.zipObj(oldIds, teIDs)
   await dhis2.saveOnDataStore('dhis-godata-interoperability', 'trackedEntityIDs', idsDict)

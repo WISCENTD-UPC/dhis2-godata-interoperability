@@ -1,5 +1,6 @@
 
 import * as R from 'ramda'
+import { deleteDB } from 'idb'
 
 import { locationToOrganizationUnit } from '../mappings/orgUnit'
 import { 
@@ -35,6 +36,10 @@ export const copyLocations = (dhis2, godata, config, _) => async () => {
 
   _.logAction('Sending organisation units to DHIS2')
   await sendOrgUnitsToDHIS2(config, dhis2, orgUnits)
+  
+  if (indexedDB !== undefined) {
+    await deleteDB('dhis2tc')
+  }
   _.logDone()
 }
 

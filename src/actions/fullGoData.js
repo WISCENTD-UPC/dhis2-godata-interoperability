@@ -16,7 +16,7 @@ import {
   logDone
 } from '../util'
 
-export const fullTransfer = (dhis2, godata, config, _) => async () => {
+export const fullTransferGoData = (dhis2, godata, config, _) => async () => {
   _ = dependencies({
     loadResources,
     loadTrackedEntityInstances,

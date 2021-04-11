@@ -5,11 +5,12 @@ export {
   createOutbreaks,
   copyCases,
   copyContacts,
-  fullTransfer,
+  fullTransferGoData,
   queryDHIS2,
   queryGoData,
   copyLocations,
-  copyTrackedEntities
+  copyTrackedEntities,
+  fullTransferDHIS2
 } from './actions'
 
 export { default as config } from './config'

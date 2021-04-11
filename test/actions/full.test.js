@@ -1,7 +1,7 @@
 
 import * as R from 'ramda'
 
-import * as fullTransferActions from '../../src/actions/full'
+import * as fullTransferActions from '../../src/actions/fullGoData'
 import { trackedEntityToCase } from '../../src/mappings/case'
 import { mapAttributeNamesToIDs } from '../../src/util'
 import constants from '../../src/config/constants/dhis'
@@ -26,7 +26,7 @@ import {
 
 const resolve = Promise.resolve.bind(Promise)
 
-test('fullTransferActions.fullTransfer', async () => {
+test('fullTransferActions.fullTransferGoData', async () => {
   const testTrackedEntities = R.flatten(trackedEntities).slice(0, 2)
   
   const loadResources = mock(resolve([
@@ -77,7 +77,7 @@ test('fullTransferActions.fullTransfer', async () => {
     createCaseRelationships
   }
 
-  const results = await fullTransferActions.fullTransfer(dhis2, godata, config, _)()
+  const results = await fullTransferActions.fullTransferGoData(dhis2, godata, config, _)()
 
   expect(results.metadata).toStrictEqual(expected.metadata)
   expect(getOptionSet).toHaveBeenCalledWith(optionSets[0].id)

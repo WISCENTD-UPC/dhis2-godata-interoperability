@@ -1,7 +1,7 @@
 
 import * as R from 'ramda'
 
-import constants from '../config/constants'
+import constants from '../config/constants/dhis'
 import { loadTrackedEntityInstances } from './common'
 import {
   dependencies,
