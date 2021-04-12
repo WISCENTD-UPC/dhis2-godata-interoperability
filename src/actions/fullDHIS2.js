@@ -1,3 +1,4 @@
+import * as R from 'ramda'
 import { transformOrgUnits, sendOrgUnitsToDHIS2 } from './orgUnit'
 import { processTrackedEntities } from './trackedEntity'
 import { loadCases } from './common'
