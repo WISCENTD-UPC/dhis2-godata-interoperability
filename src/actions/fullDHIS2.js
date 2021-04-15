@@ -1,5 +1,4 @@
 import * as R from 'ramda'
-import { deleteDB } from 'idb'
 
 import { transformOrgUnits, sendOrgUnitsToDHIS2 } from './orgUnit'
 import { processTrackedEntities } from './trackedEntity'
@@ -27,7 +26,6 @@ export const fullTransferDHIS2 = (dhis2, godata, config, _) => async () => {
         dataElements,
         attributes,
         trackedEntityTypes,
-        organisationUnits,
         outbreaks,
         locations 
     ] = await loadResources(dhis2, godata, config)
@@ -35,8 +33,12 @@ export const fullTransferDHIS2 = (dhis2, godata, config, _) => async () => {
     _.logAction('Reading configuration')
     config = R.pipe(
         R.over(
-        R.lensProp('dhis2CasesProgram'),
-        _ => getIDFromDisplayName(programs, _)
+            R.lensProp('dhis2CasesProgram'),
+            _ => getIDFromDisplayName(programs, _)
+        ),
+        R.over(
+            R.lensProp('dhis2ContactsProgram'),
+            _ => getIDFromDisplayName(programs, _)
         ),
         mapListDisplayNameToIDs(attributes, 'dhis2KeyAttributes'), 
         mapListDisplayNameToIDs(trackedEntityTypes, 'dhis2KeyTrackedEntityTypes'),
@@ -45,16 +47,14 @@ export const fullTransferDHIS2 = (dhis2, godata, config, _) => async () => {
     )(config)
     _.logDone()
 
-    _.logAction('Transforming organisation units to locations')
+    _.logAction('Transforming locations to organisation units')
     const newIds = await dhis2.getNewIds(locations.length)
     const orgUnits = transformOrgUnits(config, locations, newIds)
     _.logDone()
 
     _.logAction('Sending organisation units to DHIS2')
     await sendOrgUnitsToDHIS2(config, dhis2, orgUnits)
-    if (indexedDB !== undefined) {
-        await deleteDB('dhis2tc')
-    }
+    await _.cleanCache()
     _.logDone()
 
     _.logAction('Fetching cases from Go.Data')
@@ -65,7 +65,7 @@ export const fullTransferDHIS2 = (dhis2, godata, config, _) => async () => {
     await processTrackedEntities(
         dhis2,
         config,
-        organisationUnits,
+        orgUnits.organisationUnits,
         teIDs,
         cases,
         _
@@ -80,7 +80,6 @@ export function loadResources (dhis2, godata) {
         dhis2.getDataElements(),
         dhis2.getTrackedEntitiesAttributes(),
         dhis2.getTrackedEntityTypes(),
-        dhis2.getOrganisationUnits(),
         godata.getOutbreaks(),
         godata.getLocations()
     ])

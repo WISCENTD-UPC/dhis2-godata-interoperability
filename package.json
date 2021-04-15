@@ -31,7 +31,6 @@
     "commander": "^5.1.0",
     "dhis2-api-wrapper": "git+ssh://git@github.com/WISCENTD-UPC/dhis2-api-wrapper.git#develop",
     "godata-api-wrapper": "git+ssh://git@github.com/WISCENTD-UPC/godata-api-wrapper.git#develop",
-    "idb": "^6.0.0",
     "ramda": "^0.27.0"
   },
   "devDependencies": {

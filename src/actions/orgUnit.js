@@ -1,6 +1,5 @@
 
 import * as R from 'ramda'
-import { deleteDB } from 'idb'
 
 import { locationToOrganizationUnit } from '../mappings/orgUnit'
 import { 
@@ -17,7 +16,7 @@ export const copyLocations = (dhis2, godata, config, _) => async () => {
   const locations = await godata.getLocations()
   _.logDone()
 
-  _.logAction('Transforming organisation units to locations')
+  _.logAction('Transforming locations to organisation units')
   const newIds = await dhis2.getNewIds(locations.length)
   const programs = await dhis2.getPrograms()
   config = R.pipe(
@@ -36,10 +35,7 @@ export const copyLocations = (dhis2, godata, config, _) => async () => {
 
   _.logAction('Sending organisation units to DHIS2')
   await sendOrgUnitsToDHIS2(config, dhis2, orgUnits)
-  
-  if (indexedDB !== undefined) {
-    await deleteDB('dhis2tc')
-  }
+  await _.cleanCache()
   _.logDone()
 }
 
