@@ -9,7 +9,8 @@ import {
   mapListDisplayNameToIDs,
   allPromises,
   logAction,
-  logDone
+  logDone,
+  cleanCache
 } from '../util'
 
 export const fullTransferDHIS2 = (dhis2, godata, config, _) => async () => {
@@ -17,7 +18,8 @@ export const fullTransferDHIS2 = (dhis2, godata, config, _) => async () => {
         loadResources,
         loadCases,
         logAction,
-        logDone
+        logDone,
+        cleanCache
     }, _)
 
     const [

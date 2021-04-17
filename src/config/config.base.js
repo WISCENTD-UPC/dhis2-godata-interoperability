@@ -21,6 +21,7 @@ export default {
     surname: 'Surname',
     sex: 'Sex',
     dateOfBirth: 'Date of birth',
+    age: 'Age',
     address: 'Home Address',
     passport: 'Passport Number'
   },

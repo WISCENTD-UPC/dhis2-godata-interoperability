@@ -6,11 +6,12 @@ import {
   getIDFromDisplayName,
   dependencies, 
   logAction, 
-  logDone 
+  logDone,
+  cleanCache
 } from '../util'
 
 export const copyLocations = (dhis2, godata, config, _) => async () => {
-  _ = dependencies({ logAction, logDone }, _)
+  _ = dependencies({ logAction, logDone, cleanCache }, _)
   
   _.logAction('Fetching locations')
   const locations = await godata.getLocations()
@@ -86,7 +87,7 @@ export function transformOrgUnits (config, locations, newIds) {
 
   return {
     organisationUnits: R.pipe(
-      R.map(locationToOrganizationUnit),
+      R.map(locationToOrganizationUnit()),
       exchangeIds(idsDict),
       createOrgUnitHierarchy(config)
     )(locations)

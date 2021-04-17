@@ -25,7 +25,8 @@ test('util.mapAttributeNamesToIDs', () => {
       sex: attributes[15].id,
       dateOfBirth: attributes[2].id,
       address: attributes[11].id,
-      passport: attributes[14].id
+      passport: attributes[14].id,
+      age: attributes[0].id
     })
 })
 

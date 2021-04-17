@@ -21,7 +21,7 @@ export const locationUpdatedAtSelector = R.prop('updatedAt')
 export const locationCreatedAtSelector = R.prop('createdAt')
 
 // MAPPINGS
-export const locationToOrganizationUnit = completeSchema({
+export const locationToOrganizationUnit = () => completeSchema({
   id: locationIDSelector,
   code: locationIDSelector,
   parent: { id: locationParentIDSelector },

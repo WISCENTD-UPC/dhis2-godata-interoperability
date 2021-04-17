@@ -50,19 +50,19 @@ export const sexSelector = (config) => R.pipe(
   : null
 )
 
-export const dateOfBirthSelector = (config) => R.pipe(
-  R.prop('dateOfBirth'),
+export const ageSelector = (config) => R.pipe(
+  R.path(['age', 'years']),
   _ => _ != null ?
     {
-      attribute: config.dhis2KeyAttributes.dateOfBirth,
+      attribute: config.dhis2KeyAttributes.age,
       value: _
     }
   : null
 ) 
 
 export const addressSelector = (config) => R.pipe(
-  R.path(['addresses', 'address']),
-  _ => _ != null ?
+  R.path(['addresses', 0, 'addressLine1']),
+  _ => _ !== null ?
     {
       attribute: config.dhis2KeyAttributes.address,
       value: _
@@ -71,8 +71,8 @@ export const addressSelector = (config) => R.pipe(
 )  
 
 export const passportSelector = (config) => R.pipe(
-  R.path(['documents', 'value']),
-  _ => _ != null ?
+  R.path(['documents', 0, 'number']),
+  _ => _ !== null ?
     {
       attribute: config.dhis2KeyAttributes.passport,
       value: _
@@ -127,7 +127,7 @@ export const attributesSelector = (config) => R.pipe(
     firstNameSelector(config),
     surnameSelector(config),
     sexSelector(config),
-    dateOfBirthSelector(config),
+    ageSelector(config),
     addressSelector(config),
     passportSelector(config)
   ]),

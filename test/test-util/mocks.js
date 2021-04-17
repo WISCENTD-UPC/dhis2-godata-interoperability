@@ -260,3 +260,59 @@ export const user = {
   userId: uuids('u-0')
 }
 
+export const locations = [
+  {
+    name: 'Trainingland',
+    parentLocationId: null,
+    geoLocation: { lat: 46, lng: -163 },
+    geographicalLevelId: 'LNG_REFERENCE_DATA_CATEGORY_LOCATION_GEOGRAPHICAL_LEVEL_ADMIN_LEVEL_0',
+    id: uuids('loc-0'),
+    createdAt: date(),
+    updatedAt: date(),
+  },
+  {
+    name: 'Animal Region',
+    parentLocationId: uuids('loc-0'),
+    geoLocation: { lat: 46, lng: -163 },
+    geographicalLevelId: 'LNG_REFERENCE_DATA_CATEGORY_LOCATION_GEOGRAPHICAL_LEVEL_ADMIN_LEVEL_1',
+    id: uuids('loc-1'),
+    createdAt: date(),
+    updatedAt: date(),
+  },
+  {
+    name: 'Food Region',
+    parentLocationId: uuids('loc-0'),
+    geoLocation: { lat: 46, lng: -163 },
+    geographicalLevelId: 'LNG_REFERENCE_DATA_CATEGORY_LOCATION_GEOGRAPHICAL_LEVEL_ADMIN_LEVEL_1',
+    id: uuids('loc-2'),
+    createdAt: date(),
+    updatedAt: date(),
+  },
+  {
+    name: 'Bird Region',
+    parentLocationId: uuids('loc-1'),
+    geoLocation: { lat: 46, lng: -163 },
+    geographicalLevelId: 'LNG_REFERENCE_DATA_CATEGORY_LOCATION_GEOGRAPHICAL_LEVEL_ADMIN_LEVEL_2',
+    id: uuids('loc-3'),
+    createdAt: date(),
+    updatedAt: date(),
+  }
+]
+
+export const orgUnitsIDs = [
+  uuids('ou-loc-0'),
+  uuids('ou-loc-1'),
+  uuids('ou-loc-2'),
+  uuids('ou-loc-3'),
+]
+
+export const dhis2User = {
+  firstName: '__firstName__',
+  surname: '__surname__',
+  userCredentials: {
+    userInfo: { id: uuids('user-0') }
+  },
+  teiSearchOrganisationUnits: [{ id: uuids() }],
+  organisationUnits: [],
+  dataViewOrganisationUnits: []
+}

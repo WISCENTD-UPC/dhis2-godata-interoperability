@@ -80,4 +80,5 @@ export const log = (str) => {
 }
 export const logAction = (str, padding = 80, separator = ' ') => log(str.concat('...').padEnd(padding, separator))
 export const logDone = () => log('DONE.\n')
+export const cleanCache = () => log('Use DHIS2 Browser Cache Cleaner to clear your cache.\n')
 
