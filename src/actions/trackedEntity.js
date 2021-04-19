@@ -78,7 +78,7 @@ export async function processTrackedEntities (dhis2, config, organisationUnits, 
   _.logDone()
 
   _.logAction('Sending tracked entity instances to DHIS2')
-  const response = await sendTrackedEntitiesToDHIS2(dhis2, trackedEntities)
+  const response = await dhis2.createTrackedEntityInstances(trackedEntities)
   _.logDone()
 }
 
@@ -87,7 +87,7 @@ export async function processTrackedEntities (dhis2, config, organisationUnits, 
 export async function transformCases (dhis2, config, cases, orgUnits, teIDs) {
   const oldIds = cases.map(c => c.id)
   const idsDict = R.zipObj(oldIds, teIDs)
-  await dhis2.saveOnDataStore('dhis-godata-interoperability', 'trackedEntityIDs', idsDict)
+  //await dhis2.saveOnDataStore('dhis-godata-interoperability', 'trackedEntityIDs', idsDict) TODO for contacts transfer
 
   return {
     trackedEntityInstances: R.pipe(
@@ -132,9 +132,4 @@ export function addEvents (config) {
     }
     )(trackedEntities)
   }
-}
-
-// Send tracked entity instances to DHIS2
-export function sendTrackedEntitiesToDHIS2 (dhis2, trackedEntities) {
-  return dhis2.createTrackedEntityInstances(trackedEntities)
 }

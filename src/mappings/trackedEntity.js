@@ -13,6 +13,7 @@ export const outcomeIdSelector = R.pipe(
   _ => constants.healthOutcome(_)
 )
 export const dateOfOutcomeSelector = R.prop('dateOfOutcome')
+export const outcomeIdValue = R.prop('outcomeId')
 export const classificationSelector = R.pipe(
   R.path(['classificationHistory', 0, 'classification']),
   _ => constants.labTestResult(_)
@@ -52,7 +53,7 @@ export const sexSelector = (config) => R.pipe(
 
 export const ageSelector = (config) => R.pipe(
   R.path(['age', 'years']),
-  _ => _ != null ?
+  _ => _ != 0 ?
     {
       attribute: config.dhis2KeyAttributes.age,
       value: _
@@ -60,9 +61,19 @@ export const ageSelector = (config) => R.pipe(
   : null
 ) 
 
+export const dateOfBirthSelector = (config) => R.pipe(
+  R.prop('dob'),
+  _ => _ != null ?
+    {
+      attribute: config.dhis2KeyAttributes.dateOfBirth,
+      value: _
+    }
+  : null
+) 
+
 export const addressSelector = (config) => R.pipe(
   R.path(['addresses', 0, 'addressLine1']),
-  _ => _ !== null ?
+  _ => _ != null ?
     {
       attribute: config.dhis2KeyAttributes.address,
       value: _
@@ -72,7 +83,7 @@ export const addressSelector = (config) => R.pipe(
 
 export const passportSelector = (config) => R.pipe(
   R.path(['documents', 0, 'number']),
-  _ => _ !== null ?
+  _ => _ != null ?
     {
       attribute: config.dhis2KeyAttributes.passport,
       value: _
@@ -89,7 +100,7 @@ export const healthOutcomeSelector = (config) => R.pipe(
     dataValues: [
       {
           dataElement: config.dhis2KeyDataElements.healthOutcome,
-          value: R.prop('outcomeId'),
+          value: outcomeIdSelector,
           created: R.prop('dateOfOutcome')
       }
     ]
@@ -127,6 +138,7 @@ export const attributesSelector = (config) => R.pipe(
     firstNameSelector(config),
     surnameSelector(config),
     sexSelector(config),
+    dateOfBirthSelector(config),
     ageSelector(config),
     addressSelector(config),
     passportSelector(config)
@@ -142,7 +154,7 @@ export const caseToTrackedEntity = (config) => completeSchema({
   trackedEntityType: config.dhis2KeyTrackedEntityTypes.person,
   created: caseDateOfReportingSelector,
   attributes: attributesSelector(config),
-  outcomeId: outcomeIdSelector,
+  outcomeId: outcomeIdValue,
   dateOfOutcome: dateOfOutcomeSelector,
   enrollments: enrollmentsSelector(config)
 })

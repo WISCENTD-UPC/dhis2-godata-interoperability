@@ -26,6 +26,7 @@ export const orgUnits = R.map(
   R.pipe(R.assoc('lastUpdated', date()), R.assoc('created', date())),
   [{
     id: uuids('ou-0'),
+    code: uuids('loc-0'),
     parent: undefined,
     name: 'Trainingland',
     level: 1,
@@ -40,6 +41,7 @@ export const orgUnits = R.map(
   },
   {
     id: uuids('ou-1'),
+    code: uuids('loc-1'),
     parent: { id: uuids('ou-0') },
     name: 'Animal Region',
     level: 2,
@@ -53,6 +55,7 @@ export const orgUnits = R.map(
   },
   {
     id: uuids('ou-2'),
+    code: uuids('loc-2'),
     parent: { id: uuids('ou-0') },
     name: 'Food Region',
     level: 2,
@@ -64,6 +67,7 @@ export const orgUnits = R.map(
   },
   {
     id: uuids('ou-3'),
+    code: uuids('loc-3'),
     parent: { id: uuids('ou-1') },
     name: 'Bird Region',
     level: 3,
@@ -99,7 +103,11 @@ export const programStages = [
 ]
 
 export const dataElements = [
-  { id: uuids('d-0'), displayName: 'Lab Test Result' }
+  { id: uuids('d-0'), displayName: 'Lab Test Result' },
+  { id: uuids('d-1'), displayName: 'Health outcome' }, 
+  { id: uuids('d-2'), displayName: 'Pregnancy' },
+  { id: uuids('d-3'), displayName: 'Date of symptoms onset' }, 
+  { id: uuids('d-4'), displayName: 'Type of vaccine' }
 ]
 
 export const attributes = [
@@ -130,6 +138,11 @@ export const attributes = [
 
 export const relationshipTypes = [
   { id: uuids('rt-0'), displayName: 'Has Been in Contact with' }
+]
+
+export const trackedEntityTypes = [
+  { id: uuids('tt-0'), displayName: 'Person' },
+  { id: uuids('tt-1'), displayName: 'Commodities '}
 ]
 
 export const trackedEntities = [
@@ -300,10 +313,17 @@ export const locations = [
 ]
 
 export const orgUnitsIDs = [
-  uuids('ou-loc-0'),
-  uuids('ou-loc-1'),
-  uuids('ou-loc-2'),
-  uuids('ou-loc-3'),
+  uuids('ou-0'),
+  uuids('ou-1'),
+  uuids('ou-2'),
+  uuids('ou-3')
+]
+
+export const trackedEntityIDs = [
+  uuids('tr-ca-0'),
+  uuids('tr-ca-1'),
+  uuids('tr-ca-2'),
+  uuids('tr-ca-3'),
 ]
 
 export const dhis2User = {
@@ -316,3 +336,98 @@ export const dhis2User = {
   organisationUnits: [],
   dataViewOrganisationUnits: []
 }
+
+export const cases = [
+  [
+    {
+      firstName: 'Tom',
+      lastName: 'Stark',
+      dob: date(),
+      age: { years: 0, months: 0 },
+      gender: 'LNG_REFERENCE_DATA_CATEGORY_GENDER_MALE',
+      outcomeId: 'LNG_REFERENCE_DATA_CATEGORY_OUTCOME_ALIVE',
+      classification: 'LNG_REFERENCE_DATA_CATEGORY_CASE_CLASSIFICATION_SUSPECT',
+      id: uuids('ca-0'),
+      documents: [],
+      addresses: [{
+        typeId: 'LNG_REFERENCE_DATA_CATEGORY_ADDRESS_TYPE_USUAL_PLACE_OF_RESIDENCE',
+        addressLine1: 'La Habana',
+        locationId: uuids('loc-0'),
+      }],
+      dateOfReporting: date(),
+      classificationHistory: [{
+        classification: 'LNG_REFERENCE_DATA_CATEGORY_CASE_CLASSIFICATION_SUSPECT',
+        startDate: date()
+      }],
+      dateOfOutcome: date(),
+      usualPlaceOfResidenceLocationId: uuids('loc-0'),
+      createdAt: date(),
+      updatedAt: date()
+    }
+  ],
+  [
+    {
+      firstName: 'Minnie',
+      lastName: 'Mouse',
+      age: { years: 10, months: 0 },
+      gender: 'LNG_REFERENCE_DATA_CATEGORY_GENDER_FEMALE',
+      outcomeId: 'LNG_REFERENCE_DATA_CATEGORY_OUTCOME_RECOVERED',
+      classification: 'LNG_REFERENCE_DATA_CATEGORY_CASE_CLASSIFICATION_CONFIRMED',
+      id: uuids('ca-1'),
+      documents: [{
+        type: 'LNG_REFERENCE_DATA_CATEGORY_DOCUMENT_TYPE_PASSPORT',
+        number: '123456789'
+      }],
+      addresses: [],
+      dateOfReporting: date(),
+      classificationHistory: [{
+        classification: 'LNG_REFERENCE_DATA_CATEGORY_CASE_CLASSIFICATION_CONFIRMED',
+        startDate: date()
+      }],
+      dateOfOutcome: date(),
+      usualPlaceOfResidenceLocationId: uuids('loc-1'),
+      createdAt: date(),
+      updatedAt: date()
+    }
+  ],
+  [
+    {
+      firstName: 'Strawberry',
+      lastName: 'Red',
+      age: { years: 0, months: 0 },
+      gender: 'LNG_REFERENCE_DATA_CATEGORY_GENDER_FEMALE',
+      classification: 'LNG_REFERENCE_DATA_CATEGORY_CASE_CLASSIFICATION_PROBABLE',
+      id: uuids('ca-2'),
+      documents: [],
+      addresses: [],
+      dateOfReporting: date(),
+      classificationHistory: [{
+        classification: 'LNG_REFERENCE_DATA_CATEGORY_CASE_CLASSIFICATION_PROBABLE',
+        startDate: date()
+      }],
+      usualPlaceOfResidenceLocationId: uuids('loc-2'),
+      createdAt: date(),
+      updatedAt: date()
+    }
+  ],
+  [
+    {
+      firstName: 'Canary',
+      lastName: 'Golden',
+      age: { years: 0, months: 0 },
+      gender: 'LNG_REFERENCE_DATA_CATEGORY_GENDER_MALE',
+      classification: 'LNG_REFERENCE_DATA_CATEGORY_CASE_CLASSIFICATION_NOT_A_CASE_DISCARDED',
+      id: uuids('ca-3'),
+      documents: [],
+      addresses: [],
+      dateOfReporting: date(),
+      classificationHistory: [{
+        classification: 'LNG_REFERENCE_DATA_CATEGORY_CASE_CLASSIFICATION_NOT_A_CASE_DISCARDED',
+        startDate: date()
+      }],
+      usualPlaceOfResidenceLocationId: uuids('loc-3'),
+      createdAt: date(),
+      updatedAt: date()
+    }
+  ]
+]

@@ -15,7 +15,7 @@ export default {
       'MALE': 'Male',
       'FEMALE': 'Female'
     }
-    return _ !== null ? options[ _.replace(base, '') ] : null
+    return _ != null ? options[ _.replace(base, '') ] : null
   },
   //ocupation: (_ = 'LNG_REFERENCE_DATA_CATEGORY_OCCUPATION_UNKNOWN') => _.replace('LNG_REFERENCE_DATA_CATEGORY_OCCUPATION_', ''),
   riskLevel: (_ = 'LNG_REFERENCE_DATA_CATEGORY_RISK_LEVEL_NONE') => _.replace('LNG_REFERENCE_DATA_CATEGORY_RISK_LEVEL_', ''),
@@ -43,7 +43,7 @@ export default {
       'RECOVERED': 'Recovered',
       'NONE': 'Unknown'
     }
-    return _ !== null ? options[ _.replace(base, '') ] : null
+    return _ != null ? options[ _.replace(base, '') ] : null
   },
   labTestResult: (_ = 'NONE') => {
     const base = 'LNG_REFERENCE_DATA_CATEGORY_CASE_CLASSIFICATION_'

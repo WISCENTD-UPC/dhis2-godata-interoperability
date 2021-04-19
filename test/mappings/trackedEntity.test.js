@@ -9,6 +9,7 @@ test('trackedEntityMappings.caseToTrackedEntity', () => {
         firstName: '__name__',
         lastName: '__lastName__',
         gender: 'LNG_REFERENCE_DATA_CATEGORY_GENDER_FEMALE',
+        dob: '__dateOfBirth__',
         age: { years: 20, months: 0 },
         classification: 'LNG_REFERENCE_DATA_CATEGORY_CASE_CLASSIFICATION_CONFIRMED',
         id: uuid(),
@@ -50,6 +51,10 @@ test('trackedEntityMappings.caseToTrackedEntity', () => {
                 value: constants.gender(model.gender)
             },
             {
+                attribute: config.dhis2KeyAttributes.dateOfBirth,
+                value: model.dob
+            },
+            {
                 attribute: config.dhis2KeyAttributes.age,
                 value: model.age.years
             },
@@ -62,7 +67,7 @@ test('trackedEntityMappings.caseToTrackedEntity', () => {
                 value: model.documents[0].number
             }
         ],
-        outcomeId: constants.healthOutcome(model.outcomeId),
+        outcomeId: model.outcomeId,
         dateOfOutcome: model.dateOfOutcome,
         enrollments: [{
             program: config.dhis2CasesProgram,
