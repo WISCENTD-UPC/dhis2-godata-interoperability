@@ -110,10 +110,6 @@ test('trackedEntityActions.processTrackedEntities', async () => {
           {
             attribute: testConfig.dhis2KeyAttributes.age,
             value: testCases[1].age.years
-          },
-          {
-            attribute: testConfig.dhis2KeyAttributes.passport,
-            value: testCases[1].documents[0].number
           }
         ],
         [ outcomeSelector(1, testConfig, testCases[1]) ]

@@ -61,10 +61,6 @@ test('trackedEntityMappings.caseToTrackedEntity', () => {
             {
                 attribute: config.dhis2KeyAttributes.address,
                 value: model.addresses[0].addressLine1
-            },
-            {
-                attribute: config.dhis2KeyAttributes.passport,
-                value: model.documents[0].number
             }
         ],
         outcomeId: model.outcomeId,

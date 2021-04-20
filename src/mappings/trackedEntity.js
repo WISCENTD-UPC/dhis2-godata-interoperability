@@ -141,7 +141,7 @@ export const attributesSelector = (config) => R.pipe(
     dateOfBirthSelector(config),
     ageSelector(config),
     addressSelector(config),
-    passportSelector(config)
+    //passportSelector(config)
   ]),
   R.filter(_ => _ != null)
 )
