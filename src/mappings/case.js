@@ -88,9 +88,10 @@ export const trackedEntityToCase = (config) => completeSchema({
     dataElementSelector('clinicalExamination', config.dhis2KeyDataElements.pregnancy),
     constants.pregnancyStatus
   ),
-  dateOfOnset: dataElementSelector(
-    'clinicalExamination',
-    config.dhis2KeyDataElements.dateOfOnset),
+  // dateOfOnset: dataElementSelector(
+  //   'clinicalExamination',
+  //   config.dhis2KeyDataElements.dateOfOnset),
+  dateOfOnset: caseAttributeSelector(config.dhis2KeyAttributes.dateOfOnset),
   outcomeId: dataElementSelector(
     'healthOutcome',
     config.dhis2KeyDataElements.healthOutcome)

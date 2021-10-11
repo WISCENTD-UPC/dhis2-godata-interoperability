@@ -23,6 +23,7 @@ export default {
     dateOfBirth: 'Date of birth',
     age: 'Age',
     address: 'Home Address',
+    dateOfOnset: 'dateOfOnset',
     passport: 'Passport Number'
   },
   attributesDefaults: {
@@ -30,7 +31,7 @@ export default {
   },
   dhis2KeyDataElements: {
     pregnancy: 'Pregnancy',
-    dateOfOnset: 'Date of symptoms onset',
+    //dateOfOnset: 'Date of symptoms onset',
     healthOutcome: 'Health outcome',
     typeOfVaccine: 'Type of vaccine',
     labTestResult: 'Lab Test Result'
