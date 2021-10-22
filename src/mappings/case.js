@@ -18,6 +18,17 @@ export const caseAttributeSelector = (attributeID) => R.pipe(
   R.find(R.propEq('attribute', attributeID)),
   R.prop('value'))
 
+export const dateOfBirthSelector = (config) => R.pipe(
+  R.prop('dob'),
+  _ => _ != null ?
+    {
+      attribute: config.dhis2KeyAttributes.dateOfBirth,
+      value: _
+    }
+  : null
+) 
+  
+
 export const firstNameSelector = (config) => R.pipe(
   caseAttributeSelector(config.dhis2KeyAttributes.firstName),
   R.defaultTo(config.attributesDefaults.firstName))
@@ -83,7 +94,7 @@ export const trackedEntityToCase = (config) => completeSchema({
   classification: caseClassificationSelector,
   dateRanges: [],
   questionnaireAnswers: {},
-  dateOfBirth: caseAttributeSelector(config.dhis2KeyAttributes.dateOfBirth),
+  dateOfBirth: dateOfBirthSelector(config.dhis2KeyAttributes.dateOfBirth),
   pregnancyStatus: R.pipe(
     dataElementSelector('clinicalExamination', config.dhis2KeyDataElements.pregnancy),
     constants.pregnancyStatus
