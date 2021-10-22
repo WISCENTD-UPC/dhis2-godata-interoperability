@@ -84,7 +84,7 @@ export const trackedEntityToCase = (config) => completeSchema({
   dateRanges: [],
   questionnaireAnswers: {},
   dob: caseAttributeSelector(config.dhis2KeyAttributes.dateOfBirth),
-  pregnancyStatus: caseAttributeSelector(config.dhis2KeyAttributes.pregnancy),
+  pregnancyStatus: R.pipe(caseAttributeSelector(config.dhis2KeyAttributes.pregnancy), constants.pregnancyStatus),
   // pregnancyStatus: R.pipe(
   //   dataElementSelector('clinicalExamination', config.dhis2KeyDataElements.pregnancy),
   //   constants.pregnancyStatus

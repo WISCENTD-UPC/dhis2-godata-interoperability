@@ -30,8 +30,8 @@ export default {
   pregnancyStatus: (_) => {
     const base = 'LNG_REFERENCE_DATA_CATEGORY_PREGNANCY_STATUS_'
     const options = {
-      'YES_TRIMESTER_UNKNOWN': 'YES',
-      'NO': 'NO'
+      'YES_TRIMESTER_UNKNOWN': 'YNUNKNA_YES',
+      'NO': 'YNUNKNA_NO'
     }
     return value != null ? options[ _.replace(base, '') ] : null
   },

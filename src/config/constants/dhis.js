@@ -22,8 +22,8 @@ export default {
   pregnancyStatus: (value) => {
     const base = 'LNG_REFERENCE_DATA_CATEGORY_PREGNANCY_STATUS_'
     const options = {
-      'YES': 'YES_TRIMESTER_UNKNOWN',
-      'NO': 'NO'
+      'YNUNKNA_YES': 'YES_TRIMESTER_UNKNOWN',
+      'YNUNKNA_NO': 'NO'
     }
     return value != null ? `${base}${options[value.toUpperCase()]}` : null
   },
