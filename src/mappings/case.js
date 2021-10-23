@@ -78,7 +78,7 @@ export const trackedEntityToCase = (config) => completeSchema({
   addresses: [{
     typeID: constants.addressTypeID(),
     locationId: caseLocationIDSelector,
-    address: caseAttributeSelector(config.dhis2KeyAttributes.address)
+    addressLine1: caseAttributeSelector(config.dhis2KeyAttributes.address)
   }],
   classification: caseClassificationSelector,
   dateRanges: [],
