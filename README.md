@@ -23,7 +23,7 @@ The functionallity of the package is splitted among different steps.
   
   ![](/home/pablo/git/covid-upc/dhis2-godata-interoperability/images/copy-metadata.png)
 
-+ **node dist/dhis2-godata-interoperability.js copy-organisation-units <dest>**: get all organisation units from DHIS2, transforms them to fit Go.Data's schema and saves them hierarchally in a json file in <dest>.
++ **node dist/dhis2-godata-interoperability.js copy-organisation-units \<dest\>**: get all organisation units from DHIS2, transforms them to fit Go.Data's schema and saves them hierarchally in a json file in \<dest\>.
   
   ![](/home/pablo/git/covid-upc/dhis2-godata-interoperability/images/copy-org-units.png)
 
