@@ -30,9 +30,9 @@ export default {
   healthOutcome: (outcome = '') => {
     const base = 'LNG_REFERENCE_DATA_CATEGORY_OUTCOME_'
     const options = {
-      'HEALTHY': 'ALIVE',
-      'DEATH': 'DECEASED',
-      'RECOVERED': 'RECOVERED'
+      'VITAL_STATUS_ALIVE': 'ALIVE',
+      'VITAL_STATUS_DEAD': 'DECEASED',
+      'VITAL_STATUS_UNK': 'UNKNOWN'
     }
     const mapped = options[ outcome.toUpperCase() ]
     return mapped != null ? `${base}${mapped}` : null
