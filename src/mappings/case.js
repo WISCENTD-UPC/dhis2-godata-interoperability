@@ -80,7 +80,9 @@ export const trackedEntityToCase = (config) => completeSchema({
     locationId: caseLocationIDSelector,
     addressLine1: caseAttributeSelector(config.dhis2KeyAttributes.address)
   }],
-  classification: caseClassificationSelector,
+  classification: R.pipe(dataElementSelector(
+    'clinicalExamination',
+    config.dhis2KeyDataElements.caseClassification), constants.caseClassification),
   dateRanges: [],
   questionnaireAnswers: {},
   dob: caseAttributeSelector(config.dhis2KeyAttributes.dateOfBirth),
@@ -93,9 +95,9 @@ export const trackedEntityToCase = (config) => completeSchema({
   //   'clinicalExamination',
   //   config.dhis2KeyDataElements.dateOfOnset),
   dateOfOnset: caseAttributeSelector(config.dhis2KeyAttributes.dateOfOnset),
-  outcomeId: dataElementSelector(
+  outcomeId: R.pipe(dataElementSelector(
     'healthOutcome',
-    config.dhis2KeyDataElements.healthOutcome)
+    config.dhis2KeyDataElements.healthOutcome), constants.healthOutcome)
 })
 
 export const trackedEntityToContact = (config) => completeSchema({

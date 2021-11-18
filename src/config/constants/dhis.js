@@ -12,7 +12,19 @@ export default {
   ocupation: (ocupation = 'UNKNOWN') => `LNG_REFERENCE_DATA_CATEGORY_OCCUPATION_${ocupation.toUpperCase()}`,
   riskLevel: (level = 'NONE') => `LNG_REFERENCE_DATA_CATEGORY_RISK_LEVEL_${level.toUpperCase()}`,
   addressTypeID: (type = 'USUAL_PLACE_OF_RESIDENCE') => `LNG_REFERENCE_DATA_CATEGORY_ADDRESS_TYPE_${type}`,
-  caseClassification: (classification = 'SUSPECT') => `LNG_REFERENCE_DATA_CATEGORY_CASE_CLASSIFICATION_${classification.toUpperCase()}`,
+  caseClassification: (value) => {
+    const base = 'LNG_REFERENCE_DATA_CATEGORY_CASE_CLASSIFICATION_'
+    const options = {
+      'FIN_CASE_CLASS_ASYMPTOMATIC': 'CONFIRMED',
+      'FIN_CASE_CLASS_CONFIRM_CLIN': 'CONFIRMED',
+      'FIN_CASE_CLASS_CONFIRM_LAB': 'CONFIRMED',
+      'FIN_CASE_CLASS_PROBABLE': 'PROBABLE',
+      'FIN_CASE_CLASS_SUSPECT': 'SUSPECT',
+      'FIN_CASE_CLASS_NOT_CASE': 'NOT_A_CASE_DISCARDED',
+      'FIN_CASE_CLASS_OTHER': 'NOT_A_CASE_DISCARDED' 
+    }
+    return value != null ? `${base}${options[value.toUpperCase()]}` : null;
+  },
   certaintyLevel: (level = '3_HIGH') => `LNG_REFERENCE_DATA_CATEGORY_CERTAINTY_LEVEL_${level.toUpperCase()}`,
   vaccineStatus: (status) => `LNG_REFERENCE_DATA_CATEGORY_VACCINE_STATUS_${status}`,
   vaccineType: (type) => `LNG_REFERENCE_DATA_CATEGORY_VACCINE_${type}`,
@@ -27,15 +39,14 @@ export default {
     }
     return value != null ? `${base}${options[value.toUpperCase()]}` : null
   },
-  healthOutcome: (outcome = '') => {
+  healthOutcome: (outcome) => {
     const base = 'LNG_REFERENCE_DATA_CATEGORY_OUTCOME_'
     const options = {
       'VITAL_STATUS_ALIVE': 'ALIVE',
       'VITAL_STATUS_DEAD': 'DECEASED',
       'VITAL_STATUS_UNK': 'UNKNOWN'
     }
-    const mapped = options[ outcome.toUpperCase() ]
-    return mapped != null ? `${base}${mapped}` : null
+    return outcome != null ? `${base}${options[ outcome.toUpperCase() ]}` : null
   },
   OUTBREAK_CREATION_MODE: {
     GROUP: 0,
