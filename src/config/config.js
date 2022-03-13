@@ -1,20 +1,20 @@
 
 export default {
   GoDataAPIConfig: {
-    baseURL: 'BASE_URL',
+    baseURL: 'http://localhost:8000/api',
     credentials: {
-      email: 'EMAIL',
-      password: 'PASSWORD'
+      email: 'test@test.com',
+      password: 'adminadminadmin'
     }
   },
   DHIS2APIConfig: {
-    baseURL: 'BASE_URL',
+    baseURL: 'http://localhost:8080/api',
     credentials: {
-      user: 'EMAIL',
-      password: 'PASSWORD'
+      user: 'admin',
+      password: 'district'
     }
   },
-  countries: [ 'COUNTRY_NAME' ],
-  rootID: 'ROOT_ORGANISATION_UNIT_ID'
+  countries: [ 'Sierra Leone' ],
+  rootID: 'Plmg8ikyfrK'
 }
 

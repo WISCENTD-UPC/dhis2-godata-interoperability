@@ -5,6 +5,8 @@ import { allPromises } from '../util'
 
 // Loads tracked entity instances related to an organisation unit and a program
 export async function loadTrackedEntityInstances (dhis2, organisationUnits, programID) {
+  console.log(organisationUnits);
+  console.log(programID);
   const trackedEntities = await allPromises(
     R.map(async ou => {
       const trackedEntityInstances = await dhis2.getTrackedEntityInstances(ou.id, { program: programID })
@@ -16,7 +18,13 @@ export async function loadTrackedEntityInstances (dhis2, organisationUnits, prog
         )(trackedEntityInstances))
     }, organisationUnits)
   )
+  console.log(R.flatten(trackedEntities))
   return R.flatten(trackedEntities)
+}
+
+export async function fastLoadTrackedEntityInstances(dhis2, programID) {
+  const trackedEntityInstances = await dhis2.getAllTrackedEntityInstances({ program: programID })
+  return trackedEntityInstances;
 }
 
 export async function loadCases (godata, outbreaks) {

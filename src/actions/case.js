@@ -1,7 +1,7 @@
 
 import * as R from 'ramda'
 
-import { loadTrackedEntityInstances } from './common'
+import { fastLoadTrackedEntityInstances, loadTrackedEntityInstances } from './common'
 import {
   dependencies,
   getIDFromDisplayName,
@@ -16,7 +16,7 @@ import { trackedEntityToCase } from '../mappings/case'
 // Copy tracked enitities in the case program from dhis2 to godata (transforming the schema
 // and adding extra information like case classifiction)
 export const copyCases = (dhis2, godata, config, _) => async () => {
-  _ = dependencies({ loadTrackedEntityInstances, logAction, logDone }, _)
+  _ = dependencies({ fastLoadTrackedEntityInstances, loadTrackedEntityInstances, logAction, logDone }, _)
 
   _.logAction('Fetching resources')
   const [
@@ -34,7 +34,7 @@ export const copyCases = (dhis2, godata, config, _) => async () => {
   _.logDone()
 
   _.logAction('Fetching tracked entity instances')
-  const cases = await _.loadTrackedEntityInstances(dhis2, organisationUnits, casesProgramID)
+  const cases = await _.fastLoadTrackedEntityInstances(dhis2, casesProgramID)
   _.logDone()
   
   return await processCases(
@@ -82,7 +82,7 @@ export function processCases (godata, config, organisationUnits, programStages, 
     R.map(assignOutbreak(outbreaks, organisationUnits)),
     R.tap(() => _.logDone()),
     R.tap(() => _.logAction('Adding additional information to tracked entity instances')),
-    R.map(addLabInformation(programStagesIDs, dataElements, confirmedTestConditions, config)),
+    //R.map(addLabInformation(programStagesIDs, dataElements, confirmedTestConditions, config)),
     R.tap(() => _.logDone()),
     R.tap(() => _.logAction('Transforming tracked entity instances to cases')),
     R.map(trackedEntityToCase(config)),

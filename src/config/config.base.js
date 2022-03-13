@@ -8,8 +8,7 @@ export default {
     clinicalExamination: 'Stage 1 - Clinical examination and diagnosis',
     labRequest: 'Stage 2 - Lab Request',
     labResults: 'Stage 3 - Lab Results',
-    healthOutcome: 'Stage 4 - Health Outcome',
-    symptoms: 'Symptoms'
+    healthOutcome: 'Stage 4 - Health Outcome'
   },
   dhis2KeyTrackedEntityTypes: {
     person: 'Person',
@@ -22,8 +21,7 @@ export default {
     sex: 'Sex',
     dateOfBirth: 'Date of birth',
     age: 'Age',
-    address: 'Home Address',
-    passport: 'Passport Number'
+    address: 'Home Address'
   },
   attributesDefaults: {
     firstName: 'NOT_PROVIDED'
